@@ -1,0 +1,515 @@
+package com.ahnafnafee.pinnedcalendar
+
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.FlowRowScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import com.ahnafnafee.pinnedcalendar.data.AgendaRepository
+import com.ahnafnafee.pinnedcalendar.data.AppFont
+import com.ahnafnafee.pinnedcalendar.data.AppPalette
+import com.ahnafnafee.pinnedcalendar.data.AppSettings
+import com.ahnafnafee.pinnedcalendar.data.SettingsRepository
+import com.ahnafnafee.pinnedcalendar.data.ThemeMode
+import com.ahnafnafee.pinnedcalendar.data.WindowMode
+import com.ahnafnafee.pinnedcalendar.data.calendar.CalendarInfo
+import com.ahnafnafee.pinnedcalendar.data.calendar.CalendarsRepository
+import com.ahnafnafee.pinnedcalendar.data.settingsDataStore
+import com.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
+import com.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
+import com.ahnafnafee.pinnedcalendar.domain.model.ItemKind
+import com.ahnafnafee.pinnedcalendar.system.BatteryOptimization
+import com.ahnafnafee.pinnedcalendar.ui.theme.PinnedCalendarTheme
+import com.ahnafnafee.pinnedcalendar.work.AgendaScheduler
+import java.time.LocalDate
+import java.time.ZoneId
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class MainActivity : ComponentActivity() {
+
+    private val reloadTick = mutableIntStateOf(0)
+
+    private val requestPerms =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            reloadTick.intValue++
+            AgendaScheduler.refreshNow(this)
+        }
+
+    override fun onResume() {
+        super.onResume()
+        reloadTick.intValue++
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val needed = buildList {
+            add(Manifest.permission.READ_CALENDAR)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) add(Manifest.permission.POST_NOTIFICATIONS)
+        }.filter { ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED }
+        if (needed.isNotEmpty()) requestPerms.launch(needed.toTypedArray())
+
+        val settings = SettingsRepository(applicationContext.settingsDataStore)
+        val todos = TodoRepository(applicationContext.settingsDataStore)
+        val activity = this
+
+        setContent {
+            val s by settings.settings.collectAsState(initial = AppSettings())
+
+            PinnedCalendarTheme(settings = s) {
+                val scope = rememberCoroutineScope()
+                val todoList by todos.todos.collectAsState(initial = emptyList())
+                var newTitle by remember { mutableStateOf("") }
+                var calendars by remember { mutableStateOf<List<CalendarInfo>>(emptyList()) }
+                var ignoringBattery by remember { mutableStateOf(false) }
+                var agendaItems by remember { mutableStateOf<List<AgendaItem>>(emptyList()) }
+
+                LaunchedEffect(reloadTick.intValue) {
+                    calendars = withContext(Dispatchers.IO) {
+                        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CALENDAR) ==
+                            PackageManager.PERMISSION_GRANTED
+                        ) CalendarsRepository(activity).calendars() else emptyList()
+                    }
+                    ignoringBattery = BatteryOptimization.isIgnoring(activity)
+                }
+
+                LaunchedEffect(reloadTick.intValue, s.windowMode, s.excludedCalendarIds, todoList) {
+                    agendaItems = withContext(Dispatchers.IO) {
+                        AgendaRepository(activity).agenda(s.windowMode, s.excludedCalendarIds)
+                    }
+                }
+
+                fun refresh() = AgendaScheduler.refreshNow(activity)
+                fun edit(block: suspend SettingsRepository.() -> Unit) =
+                    scope.launch { settings.block(); refresh() }
+
+                Scaffold { innerPadding ->
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .verticalScroll(rememberScrollState()),
+                    ) {
+                        Text(
+                            "Pinned Calendar",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 10.dp),
+                        )
+
+                        WeekOverviewCard(agendaItems)
+
+                        SettingsCard("Notifications") {
+                            CardItem(
+                                title = "Pin to notifications",
+                                subtitle = "Keep this week's agenda in the drawer",
+                                trailing = {
+                                    Switch(checked = s.pinEnabled, onCheckedChange = { v -> edit { setPinEnabled(v) } })
+                                },
+                            )
+                        }
+
+                        SettingsCard("Time window") {
+                            ChipRow {
+                                WindowMode.entries.forEach { mode ->
+                                    PillChip(s.windowMode == mode, { edit { setWindowMode(mode) } }, mode.label)
+                                }
+                            }
+                        }
+
+                        SettingsCard("Calendars") {
+                            if (calendars.isEmpty()) {
+                                CardCaption("Grant calendar access to choose which calendars appear.")
+                            }
+                            calendars.forEach { cal ->
+                                val enabled = !s.excludedCalendarIds.contains(cal.id)
+                                ListItem(
+                                    colors = transparentListItem(),
+                                    leadingContent = { ColorDot(cal.colorHex) },
+                                    headlineContent = { Text(cal.name) },
+                                    trailingContent = {
+                                        Switch(
+                                            checked = enabled,
+                                            onCheckedChange = { on -> edit { setCalendarExcluded(cal.id, !on) } },
+                                        )
+                                    },
+                                )
+                            }
+                        }
+
+                        SettingsCard("Display") {
+                            CardItem(
+                                title = "Group by day",
+                                trailing = {
+                                    Switch(checked = s.groupByDay, onCheckedChange = { v -> edit { setGroupByDay(v) } })
+                                },
+                            )
+                            CardItem(
+                                title = "Hide completed to-dos",
+                                trailing = {
+                                    Switch(checked = s.hideCompletedTasks, onCheckedChange = { v -> edit { setHideCompleted(v) } })
+                                },
+                            )
+                            Text(
+                                "Max items in notification: ${s.maxItems}",
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(start = 20.dp, top = 6.dp),
+                            )
+                            Slider(
+                                value = s.maxItems.toFloat(),
+                                onValueChange = { v -> edit { setMaxItems(v.toInt()) } },
+                                valueRange = 3f..12f,
+                                steps = 8,
+                                modifier = Modifier.padding(horizontal = 20.dp),
+                            )
+                        }
+
+                        SettingsCard("Appearance") {
+                            ChipRow {
+                                ThemeMode.entries.forEach { mode ->
+                                    PillChip(
+                                        s.themeMode == mode,
+                                        { edit { setThemeMode(mode) } },
+                                        mode.name.lowercase().replaceFirstChar { it.uppercase() },
+                                    )
+                                }
+                            }
+                            CardItem(
+                                title = "Material You",
+                                subtitle = "Use the wallpaper colour scheme",
+                                trailing = {
+                                    Switch(checked = s.materialYou, onCheckedChange = { v -> edit { setMaterialYou(v) } })
+                                },
+                            )
+                            CardItem(
+                                title = "AMOLED black",
+                                subtitle = "Pure-black surfaces in dark mode",
+                                trailing = {
+                                    Switch(checked = s.amoled, onCheckedChange = { v -> edit { setAmoled(v) } })
+                                },
+                            )
+                            CardCaption("Accent (used when Material You is off)")
+                            FlowRow(
+                                Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            ) {
+                                SEED_SWATCHES.forEach { argb ->
+                                    val selected = s.seedColorArgb == argb
+                                    Box(
+                                        Modifier
+                                            .size(36.dp)
+                                            .clip(CircleShape)
+                                            .background(Color(argb))
+                                            .border(
+                                                width = if (selected) 3.dp else 1.dp,
+                                                color = if (selected) MaterialTheme.colorScheme.primary
+                                                else MaterialTheme.colorScheme.outlineVariant,
+                                                shape = CircleShape,
+                                            )
+                                            .clickable { edit { setSeedColor(argb) } },
+                                    )
+                                }
+                            }
+                            CardCaption("Palette")
+                            ChipRow {
+                                AppPalette.entries.forEach { p ->
+                                    PillChip(s.palette == p, { edit { setPalette(p) } }, p.label)
+                                }
+                            }
+                            CardCaption("Font")
+                            ChipRow {
+                                AppFont.entries.forEach { f ->
+                                    PillChip(s.font == f, { edit { setFont(f) } }, f.label)
+                                }
+                            }
+                        }
+
+                        SettingsCard("Reliability") {
+                            ListItem(
+                                colors = transparentListItem(),
+                                headlineContent = { Text("Ignore battery optimizations") },
+                                supportingContent = {
+                                    Text(
+                                        if (ignoringBattery) "On — the pin stays reliable in the background"
+                                        else "Recommended on aggressive devices so the pin keeps updating",
+                                    )
+                                },
+                                trailingContent = {
+                                    if (ignoringBattery) {
+                                        Text("On", color = MaterialTheme.colorScheme.primary)
+                                    } else {
+                                        Button(onClick = {
+                                            runCatching { activity.startActivity(BatteryOptimization.requestIntent(activity)) }
+                                        }) { Text("Allow") }
+                                    }
+                                },
+                            )
+                        }
+
+                        SettingsCard("To-dos") {
+                            Row(
+                                Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                OutlinedTextField(
+                                    value = newTitle,
+                                    onValueChange = { newTitle = it },
+                                    label = { Text("New to-do (due today)") },
+                                    singleLine = true,
+                                    shape = RoundedCornerShape(16.dp),
+                                    modifier = Modifier.weight(1f),
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Button(onClick = {
+                                    val title = newTitle
+                                    if (title.isNotBlank()) {
+                                        newTitle = ""
+                                        scope.launch { todos.add(title, System.currentTimeMillis()); refresh() }
+                                    }
+                                }) { Text("Add") }
+                            }
+                            if (todoList.isEmpty()) {
+                                CardCaption("No to-dos yet.")
+                            }
+                            todoList.forEach { todo ->
+                                ListItem(
+                                    colors = transparentListItem(),
+                                    leadingContent = {
+                                        Checkbox(
+                                            checked = todo.completed,
+                                            onCheckedChange = { scope.launch { todos.toggle(todo.id); refresh() } },
+                                        )
+                                    },
+                                    headlineContent = {
+                                        Text(
+                                            todo.title,
+                                            textDecoration = if (todo.completed) TextDecoration.LineThrough else null,
+                                        )
+                                    },
+                                    trailingContent = {
+                                        TextButton(onClick = { scope.launch { todos.delete(todo.id); refresh() } }) { Text("Delete") }
+                                    },
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.height(24.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WeekOverviewCard(items: List<AgendaItem>) {
+    val zone = ZoneId.systemDefault()
+    val today = LocalDate.now()
+    val days = (0L..6L).map { today.plusDays(it) }
+    val countByDate = items.mapNotNull { it.start?.atZone(zone)?.toLocalDate() }
+        .groupingBy { it }.eachCount()
+    val counts = days.map { countByDate[it] ?: 0 }
+    val maxCount = (counts.maxOrNull() ?: 0).coerceAtLeast(1)
+    val events = items.count { it.kind == ItemKind.EVENT }
+    val tasks = items.count { it.kind == ItemKind.TASK }
+    val onColor = MaterialTheme.colorScheme.onPrimaryContainer
+
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+    ) {
+        Column(Modifier.padding(20.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    "${items.size}",
+                    style = MaterialTheme.typography.displaySmall,
+                    fontWeight = FontWeight.Bold,
+                    color = onColor,
+                )
+                Spacer(Modifier.width(12.dp))
+                Text("items pinned\nthis week", style = MaterialTheme.typography.titleMedium, color = onColor)
+            }
+            Spacer(Modifier.height(18.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                days.forEachIndexed { i, d ->
+                    Column(
+                        modifier = Modifier.weight(1f).height(72.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        val frac = counts[i].toFloat() / maxCount
+                        Box(
+                            Modifier
+                                .width(16.dp)
+                                .height((8 + frac * 42).dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (counts[i] > 0) MaterialTheme.colorScheme.primary else onColor.copy(alpha = 0.18f)),
+                        )
+                        Spacer(Modifier.height(6.dp))
+                        Text(dayInitial(d), style = MaterialTheme.typography.labelSmall, color = onColor)
+                    }
+                }
+            }
+            Spacer(Modifier.height(14.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                StatPill("$events events", onColor)
+                StatPill("$tasks to-dos", onColor)
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatPill(text: String, onColor: Color) {
+    Box(
+        Modifier
+            .clip(RoundedCornerShape(50))
+            .background(onColor.copy(alpha = 0.12f))
+            .padding(horizontal = 14.dp, vertical = 6.dp),
+    ) {
+        Text(text, style = MaterialTheme.typography.labelLarge, color = onColor)
+    }
+}
+
+private fun dayInitial(d: LocalDate): String =
+    d.dayOfWeek.getDisplayName(java.time.format.TextStyle.NARROW, java.util.Locale.getDefault())
+
+@Composable
+private fun PillChip(selected: Boolean, onClick: () -> Unit, label: String) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(label) },
+        shape = RoundedCornerShape(12.dp),
+        border = null,
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+    )
+}
+
+@Composable
+private fun SettingsCard(title: String, content: @Composable ColumnScope.() -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+    ) {
+        Column(Modifier.padding(top = 14.dp, bottom = 12.dp)) {
+            Text(
+                title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 6.dp),
+            )
+            content()
+        }
+    }
+}
+
+@Composable
+private fun CardItem(title: String, subtitle: String? = null, trailing: @Composable () -> Unit) {
+    ListItem(
+        colors = transparentListItem(),
+        headlineContent = { Text(title) },
+        supportingContent = subtitle?.let { { Text(it) } },
+        trailingContent = trailing,
+    )
+}
+
+@Composable
+private fun transparentListItem() = ListItemDefaults.colors(containerColor = Color.Transparent)
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ChipRow(content: @Composable FlowRowScope.() -> Unit) {
+    FlowRow(
+        Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        content = content,
+    )
+}
+
+@Composable
+private fun CardCaption(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 20.dp, top = 10.dp, bottom = 2.dp),
+    )
+}
+
+@Composable
+private fun ColorDot(hex: String?) {
+    val color = hex?.let { runCatching { Color(android.graphics.Color.parseColor(it)) }.getOrNull() }
+        ?: MaterialTheme.colorScheme.primary
+    Spacer(Modifier.size(14.dp).background(color, CircleShape))
+}
+
+private val SEED_SWATCHES = listOf(
+    0xFF1A73E8, 0xFF00897B, 0xFF7E57C2, 0xFFD81B60, 0xFFF4511E, 0xFF43A047,
+).map { it.toInt() }

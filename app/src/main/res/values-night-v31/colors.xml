@@ -1,0 +1,6 @@
+<resources>
+    <!-- Launcher icon: dark theme with Material You. Background = dark neutral tonal surface,
+         glyph = a lighter tone of the wallpaper accent for contrast. -->
+    <color name="ic_launcher_bg">@android:color/system_neutral1_900</color>
+    <color name="ic_launcher_fg">@android:color/system_accent1_200</color>
+</resources>

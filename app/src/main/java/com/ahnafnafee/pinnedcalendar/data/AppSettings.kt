@@ -1,0 +1,32 @@
+package com.ahnafnafee.pinnedcalendar.data
+
+enum class WindowMode(val label: String, val days: Long) {
+    THREE_DAYS("3 days", 3),
+    THIS_WEEK("This week", 7), // end computed by WindowCalculator, not `days`
+    SEVEN_DAYS("7 days", 7),
+    FOURTEEN_DAYS("14 days", 14),
+}
+
+enum class ThemeMode { SYSTEM, LIGHT, DARK }
+
+/** Font choices (bundled OFL fonts); SYSTEM = platform default. */
+enum class AppFont(val label: String) { SYSTEM("System"), FIGTREE("Figtree"), OUTFIT("Outfit"), INTER("Inter") }
+
+/** MaterialKolor palette styles (subset). */
+enum class AppPalette(val label: String) { TONAL_SPOT("Tonal"), VIBRANT("Vibrant"), EXPRESSIVE("Expressive"), NEUTRAL("Neutral") }
+
+data class AppSettings(
+    val pinEnabled: Boolean = true,
+    val windowMode: WindowMode = WindowMode.THIS_WEEK,
+    val excludedCalendarIds: Set<String> = emptySet(),
+    val groupByDay: Boolean = true,
+    val hideCompletedTasks: Boolean = true,
+    val maxItems: Int = 6,
+    // Appearance: Material 3 Expressive + seed-based color theming
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val materialYou: Boolean = true,           // wallpaper dynamic color (API 31+)
+    val amoled: Boolean = false,               // pure-black dark theme
+    val seedColorArgb: Int = 0xFF1A73E8.toInt(), // seed when Material You is off
+    val palette: AppPalette = AppPalette.TONAL_SPOT,
+    val font: AppFont = AppFont.FIGTREE,
+)
