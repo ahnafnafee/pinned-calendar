@@ -14,7 +14,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#-contributing)
 
-[![GitHub stars](https://img.shields.io/github/stars/d11dev/pinned-google-calendar?style=social)](https://github.com/d11dev/pinned-google-calendar/stargazers)
+[![Latest release](https://img.shields.io/github/v/release/ahnafnafee/pinned-calendar?sort=semver)](https://github.com/ahnafnafee/pinned-calendar/releases/latest)
+[![GitHub stars](https://img.shields.io/github/stars/ahnafnafee/pinned-calendar?style=social)](https://github.com/ahnafnafee/pinned-calendar/stargazers)
 
 </div>
 
@@ -95,6 +96,12 @@ No accounts. No ads. No trackers. No cloud.
 
 ---
 
+## 📥 Download
+
+Grab the latest signed APK from the **[Releases page](https://github.com/ahnafnafee/pinned-calendar/releases/latest)** and install it on your device (you may need to allow installs from unknown sources). No Play Store account required.
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -102,8 +109,8 @@ No accounts. No ads. No trackers. No cloud.
 
 ### Build & run
 ```bash
-git clone https://github.com/d11dev/pinned-google-calendar.git
-cd pinned-google-calendar
+git clone https://github.com/ahnafnafee/pinned-calendar.git
+cd pinned-calendar
 ./gradlew :app:assembleDebug          # build a debug APK
 ./gradlew :app:installDebug           # install on a connected device/emulator
 ```
@@ -149,7 +156,7 @@ Everything is on one Material You settings screen:
 - [ ] Recurring-task support
 - [ ] Wear OS tile
 
-Have an idea? [Open an issue](https://github.com/d11dev/pinned-google-calendar/issues)!
+Have an idea? [Open an issue](https://github.com/ahnafnafee/pinned-calendar/issues)!
 
 ---
 
