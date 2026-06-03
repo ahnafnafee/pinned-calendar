@@ -15,3 +15,4 @@ app/build/
 keystore.properties
 *.jks
 *.keystore
+RELEASE_SIGNING.local.md
