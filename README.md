@@ -52,7 +52,7 @@ It reads the calendars already synced to your phone — **no Google sign-in, no 
 
 ## 🎯 Features
 
-- 📌 **Persistent, self-healing notification** — an ongoing pin that re-posts itself the instant an accidental swipe dismisses it.
+- 📌 **Persistent, self-healing notification** — an ongoing pin that re-posts itself the instant an accidental swipe dismisses it, with a **configurable priority** (Top keeps it above other notifications, silently).
 - 📅 **Reads your device Google Calendar** via the system Calendar Provider — **no sign-in, no OAuth, no network.** Per-calendar colours included.
 - ✅ **Local to-dos** — add quick tasks right in the app; they merge into the same pinned agenda.
 - 🗂️ **Day-grouped agenda** — TODAY / TOMORROW / weekday sections, color-coded bars per calendar, tasks shown as distinct rows.
@@ -138,6 +138,7 @@ A pure-Kotlin core (windowing, day-bucketing, content building) is unit-tested a
 
 Everything is on one Material You settings screen:
 
+- **Notifications** — pin on/off and **priority** (Top · Normal · Silent); Top keeps the pin above the everyday notification stream
 - **Time window** — 3 days · this week · 7 days · 14 days
 - **Calendars** — toggle each synced calendar on/off
 - **Display** — group by day, hide completed to-dos, max items
