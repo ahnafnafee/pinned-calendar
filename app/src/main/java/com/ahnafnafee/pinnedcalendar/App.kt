@@ -5,7 +5,6 @@ import android.database.ContentObserver
 import android.os.Handler
 import android.os.Looper
 import android.provider.CalendarContract
-import com.ahnafnafee.pinnedcalendar.notify.ChannelManager
 import com.ahnafnafee.pinnedcalendar.work.AgendaScheduler
 
 class App : Application() {
@@ -20,7 +19,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        ChannelManager.ensureChannel(this)
+        // The notification channel is created by the post path (NotificationPoster) using the
+        // user's chosen priority; refreshNow() below triggers that immediately.
         AgendaScheduler.schedulePeriodic(this)
         AgendaScheduler.refreshNow(this)
         runCatching {

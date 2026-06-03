@@ -15,8 +15,20 @@ enum class AppFont(val label: String) { SYSTEM("System"), FIGTREE("Figtree"), OU
 /** MaterialKolor palette styles (subset). */
 enum class AppPalette(val label: String) { TONAL_SPOT("Tonal"), VIBRANT("Vibrant"), EXPRESSIVE("Expressive"), NEUTRAL("Neutral") }
 
+/**
+ * How the pinned notification ranks in the shade. Each level maps to an Android channel importance
+ * in [com.ahnafnafee.pinnedcalendar.notify.ChannelManager]; all levels stay silent (no sound/vibration).
+ * TOP uses IMPORTANCE_HIGH so the pin sits above the everyday notification stream.
+ */
+enum class NotificationPriority(val label: String) {
+    TOP("Top"),       // above normal notifications; may briefly peek the first time it posts
+    NORMAL("Normal"), // mixes with everyday notifications
+    SILENT("Silent"), // below the shade's "Silent" divider
+}
+
 data class AppSettings(
     val pinEnabled: Boolean = true,
+    val notificationPriority: NotificationPriority = NotificationPriority.TOP,
     val windowMode: WindowMode = WindowMode.THIS_WEEK,
     val excludedCalendarIds: Set<String> = emptySet(),
     val groupByDay: Boolean = true,

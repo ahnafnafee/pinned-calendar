@@ -5,31 +5,49 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.core.content.getSystemService
 import com.ahnafnafee.pinnedcalendar.R
+import com.ahnafnafee.pinnedcalendar.data.NotificationPriority
 
 object ChannelManager {
-    // A channel's importance can't be raised from code once it exists, so lifting the pin out of
-    // the shade's "Silent" section requires a fresh channel id. The legacy low-importance channel
-    // is retired below.
-    const val CHANNEL_ID = "pinned_agenda_v2"
     const val NOTIFICATION_ID = 1001
 
-    private const val LEGACY_CHANNEL_ID = "pinned_agenda"
+    // A channel's importance can't be raised from code once it exists, so each priority level owns
+    // its own channel id with a fixed importance. Switching levels posts on a different channel and
+    // removes the others, leaving a single "Pinned agenda" entry in system settings at a time.
+    private val CHANNELS = mapOf(
+        NotificationPriority.TOP to "pinned_agenda_high",
+        NotificationPriority.NORMAL to "pinned_agenda_default",
+        NotificationPriority.SILENT to "pinned_agenda_low",
+    )
 
-    fun ensureChannel(context: Context) {
+    // Channel ids shipped by earlier versions, superseded by the per-level channels above.
+    private val LEGACY_CHANNEL_IDS = listOf("pinned_agenda", "pinned_agenda_v2")
+
+    fun channelId(priority: NotificationPriority): String = CHANNELS.getValue(priority)
+
+    private fun importance(priority: NotificationPriority): Int = when (priority) {
+        NotificationPriority.TOP -> NotificationManager.IMPORTANCE_HIGH
+        NotificationPriority.NORMAL -> NotificationManager.IMPORTANCE_DEFAULT
+        NotificationPriority.SILENT -> NotificationManager.IMPORTANCE_LOW
+    }
+
+    /** Ensures the channel for [priority] exists and retires every other channel we own. */
+    fun ensureChannel(context: Context, priority: NotificationPriority) {
         val mgr = context.getSystemService<NotificationManager>() ?: return
+        val activeId = channelId(priority)
 
-        if (mgr.getNotificationChannel(LEGACY_CHANNEL_ID) != null) {
-            mgr.deleteNotificationChannel(LEGACY_CHANNEL_ID)
+        // Remove legacy channels and the channels for the non-selected levels so only one shows.
+        (LEGACY_CHANNEL_IDS + (CHANNELS.values - activeId)).forEach { id ->
+            if (mgr.getNotificationChannel(id) != null) mgr.deleteNotificationChannel(id)
         }
 
-        if (mgr.getNotificationChannel(CHANNEL_ID) == null) {
-            // DEFAULT importance keeps the pin in the shade's main (non-silent) area so it ranks
-            // near the top; a null sound and disabled vibration keep it quiet. DEFAULT — unlike
-            // HIGH — never triggers a heads-up pop.
+        if (mgr.getNotificationChannel(activeId) == null) {
+            // All levels stay silent (null sound, no vibration). TOP uses IMPORTANCE_HIGH so the pin
+            // ranks above everyday notifications; HIGH — unlike a normal alerting notification — may
+            // show a brief heads-up the first time it posts, which setOnlyAlertOnce limits to once.
             val channel = NotificationChannel(
-                CHANNEL_ID,
+                activeId,
                 context.getString(R.string.channel_name),
-                NotificationManager.IMPORTANCE_DEFAULT,
+                importance(priority),
             ).apply {
                 description = context.getString(R.string.channel_desc)
                 setShowBadge(false)

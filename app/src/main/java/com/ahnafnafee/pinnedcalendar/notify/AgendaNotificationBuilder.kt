@@ -13,7 +13,7 @@ class AgendaNotificationBuilder(private val context: Context) {
 
     private val renderer = AgendaRemoteViewsRenderer(context)
 
-    fun build(content: NotificationContent): Notification {
+    fun build(content: NotificationContent, channelId: String): Notification {
         // Tapping the pin opens the Google Calendar app at today's agenda.
         val calendarUri = CalendarContract.CONTENT_URI.buildUpon()
             .appendPath("time")
@@ -30,7 +30,7 @@ class AgendaNotificationBuilder(private val context: Context) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
-        return NotificationCompat.Builder(context, ChannelManager.CHANNEL_ID)
+        return NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_calendar)
             .setColor(AccentResolver.accentColor(context))
             .setColorized(false)

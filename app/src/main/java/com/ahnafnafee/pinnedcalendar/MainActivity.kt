@@ -65,6 +65,7 @@ import com.ahnafnafee.pinnedcalendar.data.AgendaRepository
 import com.ahnafnafee.pinnedcalendar.data.AppFont
 import com.ahnafnafee.pinnedcalendar.data.AppPalette
 import com.ahnafnafee.pinnedcalendar.data.AppSettings
+import com.ahnafnafee.pinnedcalendar.data.NotificationPriority
 import com.ahnafnafee.pinnedcalendar.data.SettingsRepository
 import com.ahnafnafee.pinnedcalendar.data.ThemeMode
 import com.ahnafnafee.pinnedcalendar.data.WindowMode
@@ -74,6 +75,7 @@ import com.ahnafnafee.pinnedcalendar.data.settingsDataStore
 import com.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
 import com.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
 import com.ahnafnafee.pinnedcalendar.domain.model.ItemKind
+import com.ahnafnafee.pinnedcalendar.notify.NotificationSettingsIntent
 import com.ahnafnafee.pinnedcalendar.system.BatteryOptimization
 import com.ahnafnafee.pinnedcalendar.ui.theme.PinnedCalendarTheme
 import com.ahnafnafee.pinnedcalendar.work.AgendaScheduler
@@ -165,6 +167,31 @@ class MainActivity : ComponentActivity() {
                                     Switch(checked = s.pinEnabled, onCheckedChange = { v -> edit { setPinEnabled(v) } })
                                 },
                             )
+                            CardCaption("Priority")
+                            ChipRow {
+                                NotificationPriority.entries.forEach { p ->
+                                    PillChip(
+                                        s.notificationPriority == p,
+                                        { edit { setNotificationPriority(p) } },
+                                        p.label,
+                                    )
+                                }
+                            }
+                            CardCaption(
+                                when (s.notificationPriority) {
+                                    NotificationPriority.TOP ->
+                                        "Sits above other notifications. May briefly pop in the first time — never makes a sound."
+                                    NotificationPriority.NORMAL ->
+                                        "Mixes in with your everyday notifications."
+                                    NotificationPriority.SILENT ->
+                                        "Stays below the shade's 'Silent' divider."
+                                },
+                            )
+                            Row(Modifier.padding(start = 8.dp)) {
+                                TextButton(onClick = {
+                                    runCatching { activity.startActivity(NotificationSettingsIntent.forApp(activity)) }
+                                }) { Text("Fine-tune in system settings") }
+                            }
                         }
 
                         SettingsCard("Time window") {
