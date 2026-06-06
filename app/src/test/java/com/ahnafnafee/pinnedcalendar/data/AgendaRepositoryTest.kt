@@ -13,6 +13,7 @@ import org.robolectric.RuntimeEnvironment
 import java.io.File
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 
 @RunWith(RobolectricTestRunner::class)
@@ -45,6 +46,28 @@ class AgendaRepositoryTest {
         val ctx = RuntimeEnvironment.getApplication()
         val todos = freshTodoRepo()
         todos.add("Someday", null)
+        val repo = AgendaRepository(ctx, clock, zone, todos)
+
+        assertEquals(0, repo.agenda(WindowMode.SEVEN_DAYS, emptySet()).size)
+    }
+
+    @Test fun overdue_open_todo_carries_forward_to_today() = runTest {
+        val ctx = RuntimeEnvironment.getApplication()
+        val todos = freshTodoRepo()
+        todos.add("Email prof", Instant.parse("2026-05-30T18:00:00Z").toEpochMilli()) // 3 days before "today"
+        val repo = AgendaRepository(ctx, clock, zone, todos)
+
+        val items = repo.agenda(WindowMode.SEVEN_DAYS, emptySet())
+        assertEquals(1, items.size)
+        assertEquals("Email prof", items[0].title)
+        assertEquals(LocalDate.of(2026, 6, 2), items[0].start!!.atZone(zone).toLocalDate()) // re-anchored to today
+    }
+
+    @Test fun overdue_completed_todo_is_dropped() = runTest {
+        val ctx = RuntimeEnvironment.getApplication()
+        val todos = freshTodoRepo()
+        todos.add("Old done task", Instant.parse("2026-05-30T18:00:00Z").toEpochMilli())
+        todos.toggle(todos.snapshot()[0].id)
         val repo = AgendaRepository(ctx, clock, zone, todos)
 
         assertEquals(0, repo.agenda(WindowMode.SEVEN_DAYS, emptySet()).size)

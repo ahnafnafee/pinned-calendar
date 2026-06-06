@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,11 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
 
     suspend fun setPinEnabled(value: Boolean) = update { it[PIN] = value }
     suspend fun setNotificationPriority(p: NotificationPriority) = update { it[NOTIF_PRIORITY] = p.name }
+    suspend fun setDoubleSwipeDismiss(value: Boolean) = update { it[DOUBLE_SWIPE] = value }
+
+    /** Epoch-millis of the last pin dismissal (0 = none). Drives the double-swipe-to-remove gesture. */
+    suspend fun lastDismissAt(): Long = dataStore.data.map { it[LAST_DISMISS] ?: 0L }.first()
+    suspend fun setLastDismissAt(value: Long) = update { it[LAST_DISMISS] = value }
     suspend fun setWindowMode(mode: WindowMode) = update { it[WINDOW] = mode.name }
     suspend fun setGroupByDay(value: Boolean) = update { it[GROUP] = value }
     suspend fun setHideCompleted(value: Boolean) = update { it[HIDE_DONE] = value }
@@ -47,6 +53,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     private fun Preferences.toAppSettings() = AppSettings(
         pinEnabled = this[PIN] ?: true,
         notificationPriority = this[NOTIF_PRIORITY].toEnum(NotificationPriority.TOP) { NotificationPriority.valueOf(it) },
+        doubleSwipeDismiss = this[DOUBLE_SWIPE] ?: false,
         windowMode = this[WINDOW].toEnum(WindowMode.THIS_WEEK) { WindowMode.valueOf(it) },
         excludedCalendarIds = this[EXCLUDED] ?: emptySet(),
         groupByDay = this[GROUP] ?: true,
@@ -66,6 +73,8 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     private companion object {
         val PIN = booleanPreferencesKey("pin_enabled")
         val NOTIF_PRIORITY = stringPreferencesKey("notif_priority")
+        val DOUBLE_SWIPE = booleanPreferencesKey("double_swipe_dismiss")
+        val LAST_DISMISS = longPreferencesKey("last_dismiss_at")
         val WINDOW = stringPreferencesKey("window_mode")
         val EXCLUDED = stringSetPreferencesKey("excluded_cal_ids")
         val GROUP = booleanPreferencesKey("group_by_day")

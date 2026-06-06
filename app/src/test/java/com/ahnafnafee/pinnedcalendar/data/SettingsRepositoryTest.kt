@@ -30,4 +30,18 @@ class SettingsRepositoryTest {
         repo.setPinEnabled(false)
         assertEquals(false, repo.isPinEnabled())
     }
+
+    @Test fun double_swipe_defaults_off_and_persists() = runTest {
+        val repo = newRepo()
+        assertEquals(false, repo.snapshot().doubleSwipeDismiss)
+        repo.setDoubleSwipeDismiss(true)
+        assertTrue(repo.snapshot().doubleSwipeDismiss)
+    }
+
+    @Test fun last_dismiss_at_roundtrips() = runTest {
+        val repo = newRepo()
+        assertEquals(0L, repo.lastDismissAt())
+        repo.setLastDismissAt(123_456L)
+        assertEquals(123_456L, repo.lastDismissAt())
+    }
 }

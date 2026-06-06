@@ -29,6 +29,8 @@ enum class NotificationPriority(val label: String) {
 data class AppSettings(
     val pinEnabled: Boolean = true,
     val notificationPriority: NotificationPriority = NotificationPriority.TOP,
+    // When on, dismissing the pin twice in quick succession turns it off instead of self-healing.
+    val doubleSwipeDismiss: Boolean = false,
     val windowMode: WindowMode = WindowMode.THIS_WEEK,
     val excludedCalendarIds: Set<String> = emptySet(),
     val groupByDay: Boolean = true,

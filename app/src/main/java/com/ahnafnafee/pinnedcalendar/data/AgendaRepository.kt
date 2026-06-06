@@ -35,21 +35,29 @@ class AgendaRepository(
             items += events.eventsInWindow(start, end, excludedCalendarIds)
         }
 
-        // Local to-dos: dated items from start-of-today through the window end. Undated excluded.
-        val todayStart = LocalDate.now(clock.withZone(zone)).atStartOfDay(zone).toInstant().toEpochMilli()
+        // Local to-dos within the window. Undated ones are excluded; a still-open task whose due
+        // date has already passed carries forward to today (keeping its time of day) instead of
+        // dropping out, so manual tasks persist until completed or deleted. Completed past tasks fall off.
+        val today = LocalDate.now(clock.withZone(zone))
+        val todayStart = today.atStartOfDay(zone).toInstant().toEpochMilli()
         todoRepo.snapshot().forEach { t ->
             val due = t.dueMillis ?: return@forEach
-            if (due in todayStart until end) {
-                items += AgendaItem(
-                    id = "todo_${t.id}",
-                    kind = ItemKind.TASK,
-                    title = t.title,
-                    start = Instant.ofEpochMilli(due),
-                    allDay = false,
-                    colorHex = null,
-                    completed = t.completed,
-                )
+            if (due >= end) return@forEach // due beyond the window — not yet relevant
+            val start = when {
+                due >= todayStart -> Instant.ofEpochMilli(due) // today or later in window — keep its slot
+                t.completed -> return@forEach                  // overdue and done — drop it
+                else -> Instant.ofEpochMilli(due).atZone(zone) // overdue and open — re-anchor to today
+                    .toLocalTime().atDate(today).atZone(zone).toInstant()
             }
+            items += AgendaItem(
+                id = "todo_${t.id}",
+                kind = ItemKind.TASK,
+                title = t.title,
+                start = start,
+                allDay = false,
+                colorHex = null,
+                completed = t.completed,
+            )
         }
 
         return items.sortedBy { it.start }
