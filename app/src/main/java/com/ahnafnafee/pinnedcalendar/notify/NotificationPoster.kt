@@ -15,7 +15,7 @@ class NotificationPoster(private val context: Context) {
         val mgr = context.getSystemService<NotificationManager>() ?: return false
         return if (pinEnabled) {
             ChannelManager.ensureChannel(context, priority)
-            mgr.notify(ChannelManager.NOTIFICATION_ID, builder.build(content, ChannelManager.channelId(priority)))
+            mgr.notify(ChannelManager.NOTIFICATION_ID, builder.build(content, priority))
             true
         } else {
             mgr.cancel(ChannelManager.NOTIFICATION_ID)

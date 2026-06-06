@@ -187,6 +187,16 @@ class MainActivity : ComponentActivity() {
                                         "Stays below the shade's 'Silent' divider."
                                 },
                             )
+                            CardItem(
+                                title = "Swipe twice to remove",
+                                subtitle = "Swipe the pin away twice within a few seconds to turn it off",
+                                trailing = {
+                                    Switch(
+                                        checked = s.doubleSwipeDismiss,
+                                        onCheckedChange = { v -> edit { setDoubleSwipeDismiss(v) } },
+                                    )
+                                },
+                            )
                             Row(Modifier.padding(start = 8.dp)) {
                                 TextButton(onClick = {
                                     runCatching { activity.startActivity(NotificationSettingsIntent.forApp(activity)) }
