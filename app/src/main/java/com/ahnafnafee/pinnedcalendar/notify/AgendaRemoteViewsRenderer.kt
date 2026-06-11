@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.view.View
 import android.widget.RemoteViews
-import com.ahnafnafee.pinnedcalendar.MainActivity
 import com.ahnafnafee.pinnedcalendar.R
 import com.ahnafnafee.pinnedcalendar.domain.model.NotificationContent
 import com.ahnafnafee.pinnedcalendar.domain.model.NotificationRow
@@ -61,7 +60,7 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
             row.setTextViewText(R.id.row_title, "Nothing scheduled 🎉")
             row.setTextColor(R.id.row_title, primaryText)
             rv.addView(R.id.expanded_container, row)
-            rv.setTextViewText(R.id.expanded_more, "")
+            rv.setViewVisibility(R.id.expanded_more, View.GONE)
             return rv
         }
 
@@ -87,26 +86,28 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
                 rv.addView(R.id.expanded_container, row)
             }
         }
-        rv.setTextViewText(
-            R.id.expanded_more,
-            if (content.moreCount > 0) "⌄ ${content.moreCount} more this week" else "",
-        )
-        rv.setTextColor(R.id.expanded_more, accent)
+        if (content.moreCount > 0) {
+            rv.setViewVisibility(R.id.expanded_more, View.VISIBLE)
+            rv.setTextViewText(R.id.expanded_more, "+${content.moreCount} more this week")
+            rv.setTextColor(R.id.expanded_more, accent)
+            rv.setOnClickPendingIntent(R.id.expanded_more, AppLaunch.pendingIntent(context))
+        } else {
+            rv.setViewVisibility(R.id.expanded_more, View.GONE)
+        }
         return rv
     }
 
     /** Per-row tap: open the event in the calendar app; open this app for local to-dos. */
-    private fun itemClickIntent(row: NotificationRow, requestCode: Int): PendingIntent {
-        val intent = if (!row.isTask && row.deepLink != null) {
-            Intent(Intent.ACTION_VIEW, Uri.parse(row.deepLink)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    private fun itemClickIntent(row: NotificationRow, requestCode: Int): PendingIntent =
+        if (!row.isTask && row.deepLink != null) {
+            PendingIntent.getActivity(
+                context, requestCode,
+                Intent(Intent.ACTION_VIEW, Uri.parse(row.deepLink)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
         } else {
-            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            AppLaunch.pendingIntent(context)
         }
-        return PendingIntent.getActivity(
-            context, requestCode, intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-    }
 
     private fun parseColor(hex: String?): Int =
         try {

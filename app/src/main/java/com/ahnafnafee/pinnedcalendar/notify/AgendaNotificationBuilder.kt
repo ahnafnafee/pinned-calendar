@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.provider.CalendarContract
 import androidx.core.app.NotificationCompat
 import com.ahnafnafee.pinnedcalendar.R
 import com.ahnafnafee.pinnedcalendar.data.NotificationPriority
@@ -15,16 +14,8 @@ class AgendaNotificationBuilder(private val context: Context) {
     private val renderer = AgendaRemoteViewsRenderer(context)
 
     fun build(content: NotificationContent, priority: NotificationPriority): Notification {
-        // Tapping the pin opens the Google Calendar app at today's agenda.
-        val calendarUri = CalendarContract.CONTENT_URI.buildUpon()
-            .appendPath("time")
-            .appendPath(System.currentTimeMillis().toString())
-            .build()
-        val contentIntent = PendingIntent.getActivity(
-            context, 0,
-            Intent(Intent.ACTION_VIEW, calendarUri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
+        // Tapping the pin's header or icon opens this app; rows keep their own deep links.
+        val contentIntent = AppLaunch.pendingIntent(context)
         val deleteIntent = PendingIntent.getBroadcast(
             context, 1,
             Intent(context, SelfHealReceiver::class.java),

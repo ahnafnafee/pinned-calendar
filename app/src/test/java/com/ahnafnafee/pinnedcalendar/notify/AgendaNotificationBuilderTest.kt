@@ -46,6 +46,7 @@ class AgendaNotificationBuilderTest {
         assertEquals(channelId, n.channelId)
         assertTrue("expected FLAG_ONGOING_EVENT", (n.flags and Notification.FLAG_ONGOING_EVENT) != 0)
         assertNotNull("expected a delete intent for self-heal", n.deleteIntent)
+        assertNotNull("expected a content intent that opens the app", n.contentIntent)
     }
 
     @Test fun empty_content_still_builds() {

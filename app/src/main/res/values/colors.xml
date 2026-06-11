@@ -2,4 +2,7 @@
     <!-- Launcher icon: light theme, baseline (pre-Material You) fallback. -->
     <color name="ic_launcher_bg">#F3EFE7</color>
     <color name="ic_launcher_fg">#2A2A2A</color>
+
+    <!-- Overflow pill in the expanded notification; translucent so it sits on any shade surface. -->
+    <color name="notif_more_bg">#141F1F1F</color>
 </resources>

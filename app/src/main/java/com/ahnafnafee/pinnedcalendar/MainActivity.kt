@@ -35,9 +35,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -52,11 +55,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -72,6 +77,7 @@ import com.ahnafnafee.pinnedcalendar.data.WindowMode
 import com.ahnafnafee.pinnedcalendar.data.calendar.CalendarInfo
 import com.ahnafnafee.pinnedcalendar.data.calendar.CalendarsRepository
 import com.ahnafnafee.pinnedcalendar.data.settingsDataStore
+import com.ahnafnafee.pinnedcalendar.data.todo.LocalTodo
 import com.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
 import com.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
 import com.ahnafnafee.pinnedcalendar.domain.model.ItemKind
@@ -119,10 +125,10 @@ class MainActivity : ComponentActivity() {
             PinnedCalendarTheme(settings = s) {
                 val scope = rememberCoroutineScope()
                 val todoList by todos.todos.collectAsState(initial = emptyList())
-                var newTitle by remember { mutableStateOf("") }
                 var calendars by remember { mutableStateOf<List<CalendarInfo>>(emptyList()) }
                 var ignoringBattery by remember { mutableStateOf(false) }
                 var agendaItems by remember { mutableStateOf<List<AgendaItem>>(emptyList()) }
+                var selectedTab by rememberSaveable { mutableStateOf(0) }
 
                 LaunchedEffect(reloadTick.intValue) {
                     calendars = withContext(Dispatchers.IO) {
@@ -143,249 +149,60 @@ class MainActivity : ComponentActivity() {
                 fun edit(block: suspend SettingsRepository.() -> Unit) =
                     scope.launch { settings.block(); refresh() }
 
-                Scaffold { innerPadding ->
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar {
+                            NavigationBarItem(
+                                selected = selectedTab == 0,
+                                onClick = { selectedTab = 0 },
+                                icon = { Icon(painterResource(R.drawable.ic_tab_todos), contentDescription = null) },
+                                label = { Text("To-dos") },
+                            )
+                            NavigationBarItem(
+                                selected = selectedTab == 1,
+                                onClick = { selectedTab = 1 },
+                                icon = { Icon(painterResource(R.drawable.ic_tab_settings), contentDescription = null) },
+                                label = { Text("Settings") },
+                            )
+                        }
+                    },
+                ) { innerPadding ->
+                    val todoScroll = rememberScrollState()
+                    val settingsScroll = rememberScrollState()
                     Column(
                         Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
-                            .verticalScroll(rememberScrollState()),
+                            .verticalScroll(if (selectedTab == 0) todoScroll else settingsScroll),
                     ) {
                         Text(
-                            "Pinned Calendar",
+                            if (selectedTab == 0) "Pinned Calendar" else "Settings",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 10.dp),
                         )
 
-                        WeekOverviewCard(agendaItems)
-
-                        SettingsCard("Notifications") {
-                            CardItem(
-                                title = "Pin to notifications",
-                                subtitle = "Keep this week's agenda in the drawer",
-                                trailing = {
-                                    Switch(checked = s.pinEnabled, onCheckedChange = { v -> edit { setPinEnabled(v) } })
-                                },
+                        if (selectedTab == 0) {
+                            TodosTab(
+                                agendaItems = agendaItems,
+                                todoList = todoList,
+                                onAdd = { title -> scope.launch { todos.add(title, System.currentTimeMillis()); refresh() } },
+                                onToggle = { id -> scope.launch { todos.toggle(id); refresh() } },
+                                onDelete = { id -> scope.launch { todos.delete(id); refresh() } },
                             )
-                            CardCaption("Priority")
-                            ChipRow {
-                                NotificationPriority.entries.forEach { p ->
-                                    PillChip(
-                                        s.notificationPriority == p,
-                                        { edit { setNotificationPriority(p) } },
-                                        p.label,
-                                    )
-                                }
-                            }
-                            CardCaption(
-                                when (s.notificationPriority) {
-                                    NotificationPriority.TOP ->
-                                        "Sits above other notifications. May briefly pop in the first time — never makes a sound."
-                                    NotificationPriority.NORMAL ->
-                                        "Mixes in with your everyday notifications."
-                                    NotificationPriority.SILENT ->
-                                        "Stays below the shade's 'Silent' divider."
-                                },
-                            )
-                            CardItem(
-                                title = "Swipe twice to remove",
-                                subtitle = "Swipe the pin away twice within a few seconds to turn it off",
-                                trailing = {
-                                    Switch(
-                                        checked = s.doubleSwipeDismiss,
-                                        onCheckedChange = { v -> edit { setDoubleSwipeDismiss(v) } },
-                                    )
-                                },
-                            )
-                            Row(Modifier.padding(start = 8.dp)) {
-                                TextButton(onClick = {
+                        } else {
+                            SettingsTab(
+                                s = s,
+                                calendars = calendars,
+                                ignoringBattery = ignoringBattery,
+                                edit = { block -> edit(block) },
+                                onOpenNotificationSettings = {
                                     runCatching { activity.startActivity(NotificationSettingsIntent.forApp(activity)) }
-                                }) { Text("Fine-tune in system settings") }
-                            }
-                        }
-
-                        SettingsCard("Time window") {
-                            ChipRow {
-                                WindowMode.entries.forEach { mode ->
-                                    PillChip(s.windowMode == mode, { edit { setWindowMode(mode) } }, mode.label)
-                                }
-                            }
-                        }
-
-                        SettingsCard("Calendars") {
-                            if (calendars.isEmpty()) {
-                                CardCaption("Grant calendar access to choose which calendars appear.")
-                            }
-                            calendars.forEach { cal ->
-                                val enabled = !s.excludedCalendarIds.contains(cal.id)
-                                ListItem(
-                                    colors = transparentListItem(),
-                                    leadingContent = { ColorDot(cal.colorHex) },
-                                    headlineContent = { Text(cal.name) },
-                                    trailingContent = {
-                                        Switch(
-                                            checked = enabled,
-                                            onCheckedChange = { on -> edit { setCalendarExcluded(cal.id, !on) } },
-                                        )
-                                    },
-                                )
-                            }
-                        }
-
-                        SettingsCard("Display") {
-                            CardItem(
-                                title = "Group by day",
-                                trailing = {
-                                    Switch(checked = s.groupByDay, onCheckedChange = { v -> edit { setGroupByDay(v) } })
+                                },
+                                onRequestBatteryExemption = {
+                                    runCatching { activity.startActivity(BatteryOptimization.requestIntent(activity)) }
                                 },
                             )
-                            CardItem(
-                                title = "Hide completed to-dos",
-                                trailing = {
-                                    Switch(checked = s.hideCompletedTasks, onCheckedChange = { v -> edit { setHideCompleted(v) } })
-                                },
-                            )
-                            Text(
-                                "Max items in notification: ${s.maxItems}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(start = 20.dp, top = 6.dp),
-                            )
-                            Slider(
-                                value = s.maxItems.toFloat(),
-                                onValueChange = { v -> edit { setMaxItems(v.toInt()) } },
-                                valueRange = 3f..12f,
-                                steps = 8,
-                                modifier = Modifier.padding(horizontal = 20.dp),
-                            )
-                        }
-
-                        SettingsCard("Appearance") {
-                            ChipRow {
-                                ThemeMode.entries.forEach { mode ->
-                                    PillChip(
-                                        s.themeMode == mode,
-                                        { edit { setThemeMode(mode) } },
-                                        mode.name.lowercase().replaceFirstChar { it.uppercase() },
-                                    )
-                                }
-                            }
-                            CardItem(
-                                title = "Material You",
-                                subtitle = "Use the wallpaper colour scheme",
-                                trailing = {
-                                    Switch(checked = s.materialYou, onCheckedChange = { v -> edit { setMaterialYou(v) } })
-                                },
-                            )
-                            CardItem(
-                                title = "AMOLED black",
-                                subtitle = "Pure-black surfaces in dark mode",
-                                trailing = {
-                                    Switch(checked = s.amoled, onCheckedChange = { v -> edit { setAmoled(v) } })
-                                },
-                            )
-                            CardCaption("Accent (used when Material You is off)")
-                            FlowRow(
-                                Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            ) {
-                                SEED_SWATCHES.forEach { argb ->
-                                    val selected = s.seedColorArgb == argb
-                                    Box(
-                                        Modifier
-                                            .size(36.dp)
-                                            .clip(CircleShape)
-                                            .background(Color(argb))
-                                            .border(
-                                                width = if (selected) 3.dp else 1.dp,
-                                                color = if (selected) MaterialTheme.colorScheme.primary
-                                                else MaterialTheme.colorScheme.outlineVariant,
-                                                shape = CircleShape,
-                                            )
-                                            .clickable { edit { setSeedColor(argb) } },
-                                    )
-                                }
-                            }
-                            CardCaption("Palette")
-                            ChipRow {
-                                AppPalette.entries.forEach { p ->
-                                    PillChip(s.palette == p, { edit { setPalette(p) } }, p.label)
-                                }
-                            }
-                            CardCaption("Font")
-                            ChipRow {
-                                AppFont.entries.forEach { f ->
-                                    PillChip(s.font == f, { edit { setFont(f) } }, f.label)
-                                }
-                            }
-                        }
-
-                        SettingsCard("Reliability") {
-                            ListItem(
-                                colors = transparentListItem(),
-                                headlineContent = { Text("Ignore battery optimizations") },
-                                supportingContent = {
-                                    Text(
-                                        if (ignoringBattery) "On — the pin stays reliable in the background"
-                                        else "Recommended on aggressive devices so the pin keeps updating",
-                                    )
-                                },
-                                trailingContent = {
-                                    if (ignoringBattery) {
-                                        Text("On", color = MaterialTheme.colorScheme.primary)
-                                    } else {
-                                        Button(onClick = {
-                                            runCatching { activity.startActivity(BatteryOptimization.requestIntent(activity)) }
-                                        }) { Text("Allow") }
-                                    }
-                                },
-                            )
-                        }
-
-                        SettingsCard("To-dos") {
-                            Row(
-                                Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                OutlinedTextField(
-                                    value = newTitle,
-                                    onValueChange = { newTitle = it },
-                                    label = { Text("New to-do (due today)") },
-                                    singleLine = true,
-                                    shape = RoundedCornerShape(16.dp),
-                                    modifier = Modifier.weight(1f),
-                                )
-                                Spacer(Modifier.width(8.dp))
-                                Button(onClick = {
-                                    val title = newTitle
-                                    if (title.isNotBlank()) {
-                                        newTitle = ""
-                                        scope.launch { todos.add(title, System.currentTimeMillis()); refresh() }
-                                    }
-                                }) { Text("Add") }
-                            }
-                            if (todoList.isEmpty()) {
-                                CardCaption("No to-dos yet.")
-                            }
-                            todoList.forEach { todo ->
-                                ListItem(
-                                    colors = transparentListItem(),
-                                    leadingContent = {
-                                        Checkbox(
-                                            checked = todo.completed,
-                                            onCheckedChange = { scope.launch { todos.toggle(todo.id); refresh() } },
-                                        )
-                                    },
-                                    headlineContent = {
-                                        Text(
-                                            todo.title,
-                                            textDecoration = if (todo.completed) TextDecoration.LineThrough else null,
-                                        )
-                                    },
-                                    trailingContent = {
-                                        TextButton(onClick = { scope.launch { todos.delete(todo.id); refresh() } }) { Text("Delete") }
-                                    },
-                                )
-                            }
                         }
 
                         Spacer(Modifier.height(24.dp))
@@ -393,6 +210,254 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun TodosTab(
+    agendaItems: List<AgendaItem>,
+    todoList: List<LocalTodo>,
+    onAdd: (String) -> Unit,
+    onToggle: (String) -> Unit,
+    onDelete: (String) -> Unit,
+) {
+    var newTitle by rememberSaveable { mutableStateOf("") }
+
+    WeekOverviewCard(agendaItems)
+
+    SettingsCard("To-dos") {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedTextField(
+                value = newTitle,
+                onValueChange = { newTitle = it },
+                label = { Text("New to-do (due today)") },
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.weight(1f),
+            )
+            Spacer(Modifier.width(8.dp))
+            Button(onClick = {
+                val title = newTitle
+                if (title.isNotBlank()) {
+                    newTitle = ""
+                    onAdd(title)
+                }
+            }) { Text("Add") }
+        }
+        if (todoList.isEmpty()) {
+            CardCaption("No to-dos yet.")
+        }
+        todoList.forEach { todo ->
+            ListItem(
+                colors = transparentListItem(),
+                leadingContent = {
+                    Checkbox(
+                        checked = todo.completed,
+                        onCheckedChange = { onToggle(todo.id) },
+                    )
+                },
+                headlineContent = {
+                    Text(
+                        todo.title,
+                        textDecoration = if (todo.completed) TextDecoration.LineThrough else null,
+                    )
+                },
+                trailingContent = {
+                    TextButton(onClick = { onDelete(todo.id) }) { Text("Delete") }
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsTab(
+    s: AppSettings,
+    calendars: List<CalendarInfo>,
+    ignoringBattery: Boolean,
+    edit: (suspend SettingsRepository.() -> Unit) -> Unit,
+    onOpenNotificationSettings: () -> Unit,
+    onRequestBatteryExemption: () -> Unit,
+) {
+    SettingsCard("Notifications") {
+        CardItem(
+            title = "Pin to notifications",
+            subtitle = "Keep this week's agenda in the drawer",
+            trailing = {
+                Switch(checked = s.pinEnabled, onCheckedChange = { v -> edit { setPinEnabled(v) } })
+            },
+        )
+        CardCaption("Priority")
+        ChipRow {
+            NotificationPriority.entries.forEach { p ->
+                PillChip(
+                    s.notificationPriority == p,
+                    { edit { setNotificationPriority(p) } },
+                    p.label,
+                )
+            }
+        }
+        CardCaption(
+            when (s.notificationPriority) {
+                NotificationPriority.TOP ->
+                    "Sits above other notifications. May briefly pop in the first time — never makes a sound."
+                NotificationPriority.NORMAL ->
+                    "Mixes in with your everyday notifications."
+                NotificationPriority.SILENT ->
+                    "Stays below the shade's 'Silent' divider."
+            },
+        )
+        CardItem(
+            title = "Swipe twice to remove",
+            subtitle = "Swipe the pin away twice within a few seconds to turn it off",
+            trailing = {
+                Switch(
+                    checked = s.doubleSwipeDismiss,
+                    onCheckedChange = { v -> edit { setDoubleSwipeDismiss(v) } },
+                )
+            },
+        )
+        Row(Modifier.padding(start = 8.dp)) {
+            TextButton(onClick = onOpenNotificationSettings) { Text("Fine-tune in system settings") }
+        }
+    }
+
+    SettingsCard("Time window") {
+        ChipRow {
+            WindowMode.entries.forEach { mode ->
+                PillChip(s.windowMode == mode, { edit { setWindowMode(mode) } }, mode.label)
+            }
+        }
+    }
+
+    SettingsCard("Calendars") {
+        if (calendars.isEmpty()) {
+            CardCaption("Grant calendar access to choose which calendars appear.")
+        }
+        calendars.forEach { cal ->
+            val enabled = !s.excludedCalendarIds.contains(cal.id)
+            ListItem(
+                colors = transparentListItem(),
+                leadingContent = { ColorDot(cal.colorHex) },
+                headlineContent = { Text(cal.name) },
+                trailingContent = {
+                    Switch(
+                        checked = enabled,
+                        onCheckedChange = { on -> edit { setCalendarExcluded(cal.id, !on) } },
+                    )
+                },
+            )
+        }
+    }
+
+    SettingsCard("Display") {
+        CardItem(
+            title = "Group by day",
+            trailing = {
+                Switch(checked = s.groupByDay, onCheckedChange = { v -> edit { setGroupByDay(v) } })
+            },
+        )
+        CardItem(
+            title = "Hide completed to-dos",
+            trailing = {
+                Switch(checked = s.hideCompletedTasks, onCheckedChange = { v -> edit { setHideCompleted(v) } })
+            },
+        )
+        Text(
+            "Max items in notification: ${s.maxItems}",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
+        )
+        Slider(
+            value = s.maxItems.toFloat(),
+            onValueChange = { v -> edit { setMaxItems(v.toInt()) } },
+            valueRange = 3f..12f,
+            steps = 8,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+    }
+
+    SettingsCard("Appearance") {
+        ChipRow {
+            ThemeMode.entries.forEach { mode ->
+                PillChip(
+                    s.themeMode == mode,
+                    { edit { setThemeMode(mode) } },
+                    mode.name.lowercase().replaceFirstChar { it.uppercase() },
+                )
+            }
+        }
+        CardItem(
+            title = "Material You",
+            subtitle = "Use the wallpaper colour scheme",
+            trailing = {
+                Switch(checked = s.materialYou, onCheckedChange = { v -> edit { setMaterialYou(v) } })
+            },
+        )
+        CardItem(
+            title = "AMOLED black",
+            subtitle = "Pure-black surfaces in dark mode",
+            trailing = {
+                Switch(checked = s.amoled, onCheckedChange = { v -> edit { setAmoled(v) } })
+            },
+        )
+        CardCaption("Accent (used when Material You is off)")
+        FlowRow(
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            SEED_SWATCHES.forEach { argb ->
+                val selected = s.seedColorArgb == argb
+                Box(
+                    Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(Color(argb))
+                        .border(
+                            width = if (selected) 3.dp else 1.dp,
+                            color = if (selected) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.outlineVariant,
+                            shape = CircleShape,
+                        )
+                        .clickable { edit { setSeedColor(argb) } },
+                )
+            }
+        }
+        CardCaption("Palette")
+        ChipRow {
+            AppPalette.entries.forEach { p ->
+                PillChip(s.palette == p, { edit { setPalette(p) } }, p.label)
+            }
+        }
+        CardCaption("Font")
+        ChipRow {
+            AppFont.entries.forEach { f ->
+                PillChip(s.font == f, { edit { setFont(f) } }, f.label)
+            }
+        }
+    }
+
+    SettingsCard("Reliability") {
+        ListItem(
+            colors = transparentListItem(),
+            headlineContent = { Text("Ignore battery optimizations") },
+            supportingContent = {
+                Text(
+                    if (ignoringBattery) "On — the pin stays reliable in the background"
+                    else "Recommended on aggressive devices so the pin keeps updating",
+                )
+            },
+            trailingContent = {
+                if (ignoringBattery) {
+                    Text("On", color = MaterialTheme.colorScheme.primary)
+                } else {
+                    Button(onClick = onRequestBatteryExemption) { Text("Allow") }
+                }
+            },
+        )
     }
 }
 
