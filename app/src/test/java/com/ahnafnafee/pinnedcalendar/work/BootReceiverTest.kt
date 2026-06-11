@@ -28,4 +28,13 @@ class BootReceiverTest {
             .getWorkInfosForUniqueWork("agenda_refresh_periodic").get()
         assertEquals(1, work.size)
     }
+
+    @Test fun app_update_reposts_the_pin() {
+        // Updating the package force-stops the app and clears its notifications;
+        // MY_PACKAGE_REPLACED must restore the pin without waiting for an app open.
+        BootReceiver().onReceive(ctx, Intent(Intent.ACTION_MY_PACKAGE_REPLACED))
+        val wm = WorkManager.getInstance(ctx)
+        assertEquals(1, wm.getWorkInfosForUniqueWork("agenda_refresh_periodic").get().size)
+        assertEquals(1, wm.getWorkInfosForUniqueWork("agenda_refresh_now").get().size)
+    }
 }

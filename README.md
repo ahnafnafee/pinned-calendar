@@ -46,7 +46,7 @@ The pin is self-healing: swipe it away by accident and it re-posts itself. When 
 - Light, dark, and system themes, plus a theme- and accent-adaptive launcher icon.
 - Configurable window: the next 3 days, this week, 7 days, or 14 days. Choose which calendars appear and cap the item count.
 - Background refresh with WorkManager and a ContentObserver for instant updates, plus an optional battery-optimization exemption for aggressive OEMs.
-- No foreground service, so it stays light on battery and survives reboots.
+- No foreground service, so it stays light on battery; the pin restores itself after reboots and app updates.
 - Offline by design: no analytics, no accounts, and minimal permissions.
 
 ## Privacy and permissions
