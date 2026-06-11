@@ -58,16 +58,31 @@ class AgendaNotificationBuilderTest {
     }
 
     @Suppress("DEPRECATION") // legacy Notification.priority is the field this lever populates
-    @Test fun top_priority_sorts_newest_with_max_priority() {
+    @Test fun every_build_stamps_a_fresh_ranking_timestamp_with_mapped_priority() {
         ChannelManager.ensureChannel(ctx, NotificationPriority.TOP)
+        val before = System.currentTimeMillis()
         val top = AgendaNotificationBuilder(ctx).build(sampleContent(), NotificationPriority.TOP)
+        val after = System.currentTimeMillis()
         assertEquals(Notification.PRIORITY_MAX, top.priority)
-        // Far-future post time keeps Top at the head of the High bucket as new notifications arrive.
-        assertTrue("Top should post far in the future", top.`when` > System.currentTimeMillis())
+        // The shade breaks importance ties by ranking time, and the OS refreshes that only from
+        // an app-provided, NON-future 'when' (future values are ignored and updates inherit the
+        // old time). A fresh stamp on every build keeps the pin newest in its tier.
+        assertTrue("'when' must be a fresh, non-future timestamp", top.`when` in before..after)
 
         ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
         val normal = AgendaNotificationBuilder(ctx).build(sampleContent(), NotificationPriority.NORMAL)
         assertEquals(Notification.PRIORITY_DEFAULT, normal.priority)
+        assertTrue("'when' is stamped for every priority", normal.`when` >= before)
+    }
+
+    @Test fun pin_is_silent_so_it_never_heads_up() {
+        // Every fresh post (first pin, self-heal, app update) must slide into the shade without
+        // peeking on screen. Compat's setSilent contract: alerts are deferred to a group summary
+        // that never exists.
+        ChannelManager.ensureChannel(ctx, NotificationPriority.TOP)
+        val n = AgendaNotificationBuilder(ctx).build(sampleContent(), NotificationPriority.TOP)
+        assertEquals("silent", n.group)
+        assertEquals(Notification.GROUP_ALERT_SUMMARY, n.groupAlertBehavior)
     }
 
     @Test fun each_priority_maps_to_its_importance() {
