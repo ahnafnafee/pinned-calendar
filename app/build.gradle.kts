@@ -20,8 +20,8 @@ android {
         applicationId = "com.ahnafnafee.pinnedcalendar"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.2.0"
+        versionCode = 5
+        versionName = "1.3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,6 +37,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Distinct id + label (src/debug/res) so a debug build installs alongside the release app.
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

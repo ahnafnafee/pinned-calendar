@@ -41,7 +41,7 @@ The pin is self-healing: swipe it away by accident and it re-posts itself. When 
 - Reads your device calendars through Android's Calendar Provider, with per-calendar colours. No sign-in, no OAuth, no network.
 - Local to-dos: add quick tasks in the app and they merge into the same agenda. Tasks carry forward day to day until you complete or delete them.
 - Day-grouped agenda: Today, Tomorrow, and weekday sections, color-coded per calendar, with tasks shown as their own rows.
-- Tap an event row to open it directly in Google Calendar.
+- Tap an event row to open it directly in Google Calendar; tap anywhere else on the pin to jump into the app.
 - Material 3 and Material You: wallpaper-based dynamic colour, seed colours, palette styles, AMOLED black, and selectable fonts.
 - Light, dark, and system themes, plus a theme- and accent-adaptive launcher icon.
 - Configurable window: the next 3 days, this week, 7 days, or 14 days. Choose which calendars appear and cap the item count.
@@ -106,7 +106,14 @@ A pure-Kotlin core (windowing, day-bucketing, content building) is unit-tested a
 
 ## Configuration
 
-Everything lives on one Material You settings screen:
+The app is split into two tabs.
+
+To-dos — the week at a glance:
+
+- Week overview card — how many items are pinned, day by day.
+- Add, complete, and delete local to-dos that merge into the pinned agenda.
+
+Settings — everything else, Material You styled:
 
 - Notifications — pin on/off, priority (Top · Normal · Silent), and optional swipe-twice-to-remove. Top keeps the pin above your everyday notifications.
 - Time window — 3 days · this week · 7 days · 14 days.
@@ -114,7 +121,6 @@ Everything lives on one Material You settings screen:
 - Display — group by day, hide completed to-dos, and a max-items cap.
 - Appearance — theme, Material You, AMOLED, accent seed, palette style, and font.
 - Reliability — battery-optimization exemption.
-- To-dos — add, complete, and delete.
 
 ## Roadmap
 

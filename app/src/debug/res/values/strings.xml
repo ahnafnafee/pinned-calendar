@@ -1,0 +1,5 @@
+<resources>
+    <!-- Debug-build overrides so the side-by-side install is distinguishable from the release app. -->
+    <string name="app_name">Pinned Calendar Dev</string>
+    <string name="app_short_name">Pinned Dev</string>
+</resources>
