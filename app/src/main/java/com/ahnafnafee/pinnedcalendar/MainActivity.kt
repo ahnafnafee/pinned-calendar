@@ -303,7 +303,7 @@ private fun SettingsTab(
         CardCaption(
             when (s.notificationPriority) {
                 NotificationPriority.TOP ->
-                    "Sits above other notifications. May briefly pop in the first time — never makes a sound."
+                    "Sits above other notifications — never pops up or makes a sound."
                 NotificationPriority.NORMAL ->
                     "Mixes in with your everyday notifications."
                 NotificationPriority.SILENT ->

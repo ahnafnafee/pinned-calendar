@@ -25,18 +25,20 @@ The pin is self-healing: swipe it away by accident and it re-posts itself. When 
   <tr>
     <td align="center"><b>Pinned agenda (light)</b></td>
     <td align="center"><b>Pinned agenda (dark)</b></td>
-    <td align="center"><b>Material You settings</b></td>
+    <td align="center"><b>To-dos tab</b></td>
+    <td align="center"><b>Settings tab</b></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/notification-light.png" width="240" alt="Persistent calendar notification showing the week's agenda in light mode" /></td>
-    <td><img src="docs/screenshots/notification-dark.png" width="240" alt="Persistent calendar notification showing the week's agenda in dark mode" /></td>
-    <td><img src="docs/screenshots/settings.png" width="240" alt="Material You settings screen with week overview card and pill chips" /></td>
+    <td><img src="docs/screenshots/notification-light.png" width="200" alt="Persistent calendar notification showing the week's agenda in light mode" /></td>
+    <td><img src="docs/screenshots/notification-dark.png" width="200" alt="Persistent calendar notification showing the week's agenda in dark mode" /></td>
+    <td><img src="docs/screenshots/todos.png" width="200" alt="To-dos tab with the week overview card and task list" /></td>
+    <td><img src="docs/screenshots/settings.png" width="200" alt="Settings tab with Material You cards for notifications, time window, and calendars" /></td>
   </tr>
 </table>
 
 ## Features
 
-- Persistent, self-healing notification: an ongoing pin that re-posts itself after an accidental swipe. Set its priority to Top, Normal, or Silent — Top keeps it above your everyday notifications without ever making a sound.
+- Persistent, self-healing notification: an ongoing pin that re-posts itself after an accidental swipe. Set its priority to Top, Normal, or Silent — Top keeps it above your everyday notifications without ever popping up or making a sound.
 - Swipe twice to remove: an optional gesture to dismiss the pin for good without opening settings.
 - Reads your device calendars through Android's Calendar Provider, with per-calendar colours. No sign-in, no OAuth, no network.
 - Local to-dos: add quick tasks in the app and they merge into the same agenda. Tasks carry forward day to day until you complete or delete them.
