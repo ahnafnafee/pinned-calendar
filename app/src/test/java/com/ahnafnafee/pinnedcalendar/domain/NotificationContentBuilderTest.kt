@@ -34,7 +34,7 @@ class NotificationContentBuilderTest {
 
     @Test fun collapsed_line_is_the_chronologically_next_item() {
         val c = builder.build(listOf(item(1, 10, "B"), item(0, 9, "A")), DisplaySettings())
-        assertEquals("9:00 A", c.collapsedLine)
+        assertEquals("9:00 AM A", c.collapsedLine)
         assertFalse(c.isEmpty)
     }
 

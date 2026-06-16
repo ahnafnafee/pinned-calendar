@@ -2,11 +2,18 @@ package com.ahnafnafee.pinnedcalendar
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.database.ContentObserver
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.CalendarContract
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,7 +34,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -43,7 +49,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -83,10 +88,15 @@ import com.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
 import com.ahnafnafee.pinnedcalendar.domain.model.ItemKind
 import com.ahnafnafee.pinnedcalendar.notify.NotificationSettingsIntent
 import com.ahnafnafee.pinnedcalendar.system.BatteryOptimization
+import com.ahnafnafee.pinnedcalendar.ui.theme.AppShape
+import com.ahnafnafee.pinnedcalendar.ui.theme.CircleToCookieMorph
+import com.ahnafnafee.pinnedcalendar.ui.theme.MorphableShape
 import com.ahnafnafee.pinnedcalendar.ui.theme.PinnedCalendarTheme
 import com.ahnafnafee.pinnedcalendar.work.AgendaScheduler
+import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import java.time.LocalDate
 import java.time.ZoneId
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -95,11 +105,31 @@ class MainActivity : ComponentActivity() {
 
     private val reloadTick = mutableIntStateOf(0)
 
+    // Reloads the in-app agenda live when the calendar changes while the screen is visible
+    // (e.g. a sync lands, or an event is added from a split-screen calendar).
+    private val calendarObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+        override fun onChange(selfChange: Boolean) {
+            reloadTick.intValue++
+        }
+    }
+
     private val requestPerms =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             reloadTick.intValue++
             AgendaScheduler.refreshNow(this)
         }
+
+    override fun onStart() {
+        super.onStart()
+        runCatching {
+            contentResolver.registerContentObserver(CalendarContract.CONTENT_URI, true, calendarObserver)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        runCatching { contentResolver.unregisterContentObserver(calendarObserver) }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -108,6 +138,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         val needed = buildList {
             add(Manifest.permission.READ_CALENDAR)
@@ -235,7 +266,7 @@ private fun TodosTab(
                 onValueChange = { newTitle = it },
                 label = { Text("New to-do (due today)") },
                 singleLine = true,
-                shape = RoundedCornerShape(16.dp),
+                shape = AppShape.field,
                 modifier = Modifier.weight(1f),
             )
             Spacer(Modifier.width(8.dp))
@@ -366,16 +397,22 @@ private fun SettingsTab(
                 Switch(checked = s.hideCompletedTasks, onCheckedChange = { v -> edit { setHideCompleted(v) } })
             },
         )
+        CardItem(
+            title = "24-hour time",
+            subtitle = "Show event times as 14:30 instead of 2:30 PM",
+            trailing = {
+                Switch(checked = s.use24HourClock, onCheckedChange = { v -> edit { setUse24HourClock(v) } })
+            },
+        )
         Text(
             "Max items in notification: ${s.maxItems}",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 20.dp, top = 6.dp),
         )
-        Slider(
+        WavySlider(
             value = s.maxItems.toFloat(),
-            onValueChange = { v -> edit { setMaxItems(v.toInt()) } },
+            onValueChange = { v -> edit { setMaxItems(v.roundToInt()) } },
             valueRange = 3f..12f,
-            steps = 8,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
     }
@@ -411,16 +448,23 @@ private fun SettingsTab(
         ) {
             SEED_SWATCHES.forEach { argb ->
                 val selected = s.seedColorArgb == argb
+                // Expressive accent: the chosen swatch blooms from a disc into a scalloped cookie.
+                val morph by animateFloatAsState(
+                    targetValue = if (selected) 1f else 0f,
+                    animationSpec = tween(durationMillis = 350),
+                    label = "swatchMorph",
+                )
+                val shape = MorphableShape(CircleToCookieMorph, morph)
                 Box(
                     Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
+                        .size(40.dp)
+                        .clip(shape)
                         .background(Color(argb))
                         .border(
                             width = if (selected) 3.dp else 1.dp,
                             color = if (selected) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.outlineVariant,
-                            shape = CircleShape,
+                            shape = shape,
                         )
                         .clickable { edit { setSeedColor(argb) } },
                 )
@@ -476,7 +520,8 @@ private fun WeekOverviewCard(items: List<AgendaItem>) {
 
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
-        shape = RoundedCornerShape(28.dp),
+        shape = AppShape.cardLarge,
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
     ) {
         Column(Modifier.padding(20.dp)) {
@@ -503,7 +548,7 @@ private fun WeekOverviewCard(items: List<AgendaItem>) {
                             Modifier
                                 .width(16.dp)
                                 .height((8 + frac * 42).dp)
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(AppShape.bar)
                                 .background(if (counts[i] > 0) MaterialTheme.colorScheme.primary else onColor.copy(alpha = 0.18f)),
                         )
                         Spacer(Modifier.height(6.dp))
@@ -524,7 +569,7 @@ private fun WeekOverviewCard(items: List<AgendaItem>) {
 private fun StatPill(text: String, onColor: Color) {
     Box(
         Modifier
-            .clip(RoundedCornerShape(50))
+            .clip(AppShape.pill)
             .background(onColor.copy(alpha = 0.12f))
             .padding(horizontal = 14.dp, vertical = 6.dp),
     ) {
@@ -541,7 +586,7 @@ private fun PillChip(selected: Boolean, onClick: () -> Unit, label: String) {
         selected = selected,
         onClick = onClick,
         label = { Text(label) },
-        shape = RoundedCornerShape(12.dp),
+        shape = AppShape.chip,
         border = null,
         colors = FilterChipDefaults.filterChipColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -556,7 +601,8 @@ private fun PillChip(selected: Boolean, onClick: () -> Unit, label: String) {
 private fun SettingsCard(title: String, content: @Composable ColumnScope.() -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
-        shape = RoundedCornerShape(28.dp),
+        shape = AppShape.card,
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
     ) {
         Column(Modifier.padding(top = 14.dp, bottom = 12.dp)) {

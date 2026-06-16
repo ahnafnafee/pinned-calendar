@@ -17,7 +17,8 @@ class AgendaNotifier(
         val settings = SettingsRepository(context.applicationContext.settingsDataStore)
         val s = settings.snapshot()
         val items = AgendaRepository(context, clock).agenda(s.windowMode, s.excludedCalendarIds)
-        val content = NotificationContentBuilder(DayBucketer(clock)).build(items, settings.displaySettings(s))
+        val bucketer = DayBucketer(clock, use24Hour = s.use24HourClock)
+        val content = NotificationContentBuilder(bucketer).build(items, settings.displaySettings(s))
         NotificationPoster(context).apply(s.pinEnabled, s.notificationPriority, content)
     }
 }

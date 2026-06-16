@@ -15,8 +15,11 @@ import java.util.Locale
 class DayBucketer(
     private val clock: Clock,
     private val zone: ZoneId = ZoneId.systemDefault(),
+    use24Hour: Boolean = false,
 ) {
-    private val timeFmt = DateTimeFormatter.ofPattern("H:mm", Locale.getDefault())
+    // 12-hour with AM/PM by default (9:00 AM); 24-hour drops the suffix (09:00).
+    private val timeFmt =
+        DateTimeFormatter.ofPattern(if (use24Hour) "H:mm" else "h:mm a", Locale.getDefault())
 
     fun bucket(items: List<AgendaItem>): List<DaySection> {
         val today = LocalDate.now(clock.withZone(zone))
