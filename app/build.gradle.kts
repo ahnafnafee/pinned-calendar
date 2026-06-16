@@ -20,8 +20,8 @@ android {
         applicationId = "com.ahnafnafee.pinnedcalendar"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.3.2"
+        versionCode = 8
+        versionName = "1.4.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -72,6 +72,8 @@ dependencies {
     implementation(libs.materialkolor)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.graphics.shapes)
+    implementation(libs.wavy.slider)
     implementation(libs.kotlinx.coroutines.android)
 
     debugImplementation(libs.androidx.ui.tooling)

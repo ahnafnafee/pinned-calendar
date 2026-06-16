@@ -1,13 +1,17 @@
 package com.ahnafnafee.pinnedcalendar.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import com.ahnafnafee.pinnedcalendar.data.AppPalette
 import com.ahnafnafee.pinnedcalendar.data.AppSettings
 import com.ahnafnafee.pinnedcalendar.data.ThemeMode
@@ -44,6 +48,18 @@ fun PinnedCalendarTheme(
             if (settings.amoled && dark) sys.copy(background = Color.Black, surface = Color.Black) else sys
         }
         else -> seedScheme
+    }
+
+    // Edge-to-edge: keep the system bar icons legible against the app surface behind them.
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as? Activity)?.window ?: return@SideEffect
+            WindowCompat.getInsetsController(window, view).run {
+                isAppearanceLightStatusBars = !dark
+                isAppearanceLightNavigationBars = !dark
+            }
+        }
     }
 
     MaterialTheme(

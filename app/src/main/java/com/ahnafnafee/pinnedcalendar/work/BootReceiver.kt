@@ -15,6 +15,7 @@ class BootReceiver : BroadcastReceiver() {
             Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
                 AgendaScheduler.schedulePeriodic(context)
                 AgendaScheduler.refreshNow(context)
+                AgendaScheduler.observeCalendarChanges(context)
             }
         }
     }

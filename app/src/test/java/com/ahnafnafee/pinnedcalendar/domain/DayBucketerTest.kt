@@ -44,7 +44,20 @@ class DayBucketerTest {
         assertEquals("allday", sections[0].rows[0].title)
         assertEquals("All day", sections[0].rows[0].time)
         assertEquals("timed", sections[0].rows[1].title)
-        assertEquals("9:00", sections[0].rows[1].time)
+        assertEquals("9:00 AM", sections[0].rows[1].time)
+    }
+
+    @Test fun formats_times_in_twelve_hour_with_am_pm_by_default() {
+        val sections = bucketer.bucket(listOf(event(0, 9, 0, "morning"), event(0, 14, 30, "afternoon")))
+        assertEquals("9:00 AM", sections[0].rows[0].time)
+        assertEquals("2:30 PM", sections[0].rows[1].time)
+    }
+
+    @Test fun formats_times_in_twenty_four_hour_when_enabled() {
+        val h24 = DayBucketer(clock, zone, use24Hour = true)
+        val sections = h24.bucket(listOf(event(0, 9, 0, "morning"), event(0, 14, 30, "afternoon")))
+        assertEquals("9:00", sections[0].rows[0].time)
+        assertEquals("14:30", sections[0].rows[1].time)
     }
 
     @Test fun tasks_render_as_task_rows_without_color() {

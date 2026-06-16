@@ -32,6 +32,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     suspend fun setGroupByDay(value: Boolean) = update { it[GROUP] = value }
     suspend fun setHideCompleted(value: Boolean) = update { it[HIDE_DONE] = value }
     suspend fun setMaxItems(value: Int) = update { it[MAX] = value }
+    suspend fun setUse24HourClock(value: Boolean) = update { it[CLOCK_24H] = value }
     suspend fun setThemeMode(mode: ThemeMode) = update { it[THEME] = mode.name }
     suspend fun setMaterialYou(value: Boolean) = update { it[MATERIAL_YOU] = value }
     suspend fun setAmoled(value: Boolean) = update { it[AMOLED] = value }
@@ -59,12 +60,13 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         groupByDay = this[GROUP] ?: true,
         hideCompletedTasks = this[HIDE_DONE] ?: true,
         maxItems = this[MAX] ?: 6,
+        use24HourClock = this[CLOCK_24H] ?: false,
         themeMode = this[THEME].toEnum(ThemeMode.SYSTEM) { ThemeMode.valueOf(it) },
         materialYou = this[MATERIAL_YOU] ?: true,
         amoled = this[AMOLED] ?: false,
         seedColorArgb = this[SEED] ?: 0xFF1A73E8.toInt(),
         palette = this[PALETTE].toEnum(AppPalette.TONAL_SPOT) { AppPalette.valueOf(it) },
-        font = this[FONT].toEnum(AppFont.FIGTREE) { AppFont.valueOf(it) },
+        font = this[FONT].toEnum(AppFont.GOOGLE_SANS) { AppFont.valueOf(it) },
     )
 
     private inline fun <T> String?.toEnum(default: T, parse: (String) -> T): T =
@@ -80,6 +82,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         val GROUP = booleanPreferencesKey("group_by_day")
         val HIDE_DONE = booleanPreferencesKey("hide_completed")
         val MAX = intPreferencesKey("max_items")
+        val CLOCK_24H = booleanPreferencesKey("clock_24h")
         val THEME = stringPreferencesKey("theme_mode")
         val MATERIAL_YOU = booleanPreferencesKey("material_you")
         val AMOLED = booleanPreferencesKey("amoled")

@@ -44,4 +44,11 @@ class SettingsRepositoryTest {
         repo.setLastDismissAt(123_456L)
         assertEquals(123_456L, repo.lastDismissAt())
     }
+
+    @Test fun clock_defaults_to_twelve_hour_and_persists() = runTest {
+        val repo = newRepo()
+        assertEquals(false, repo.snapshot().use24HourClock)
+        repo.setUse24HourClock(true)
+        assertTrue(repo.snapshot().use24HourClock)
+    }
 }
