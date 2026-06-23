@@ -8,16 +8,16 @@ Package: `dev.ahnafnafee.pinnedcalendar` · Default language: English (US)
 
 ---
 
-## App name (max 30 — currently 15)
+## App name (max 30 — currently 29)
 
 ```
-Pinned Calendar
+Pinned Calendar: To-Do Agenda
 ```
 
-## Short description (max 80 — currently 76)
+## Short description (max 80 — currently 79)
 
 ```
-Your week's events & to-dos in one always-on pin. No sign-in, fully offline.
+Your week's calendar & to-dos in one always-on agenda pin. No sign-in, offline.
 ```
 
 ## Full description (max 4000 — currently ~1.9k)
