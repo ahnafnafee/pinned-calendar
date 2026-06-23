@@ -1,0 +1,32 @@
+---
+import Base from './Base.astro';
+const { title, kicker, updated, path, other } = Astro.props;
+---
+<Base title={title} path={path}>
+  <nav class="site-nav layer">
+    <div class="row" style="width:min(820px,92vw); margin-inline:auto;">
+      <a class="brand" href="/">
+        <span class="ic"><img src="/app-icon.png" alt="Pinned Calendar" width="32" height="32" /></span>
+        <span class="name">PINNED&nbsp;CALENDAR</span>
+      </a>
+      <a href="/" style="font-family:var(--mono); font-size:13px; letter-spacing:.5px;">← BACK TO SITE</a>
+    </div>
+  </nav>
+
+  <main class="legal-main layer" style="width:min(720px,92vw); margin-inline:auto;">
+    <div class="kicker">{kicker}</div>
+    <h1>{title}</h1>
+    <div class="legal-updated">LAST UPDATED: {updated}</div>
+    <slot />
+  </main>
+
+  <footer class="legal-footer layer">
+    <div class="row" style="width:min(820px,92vw); margin-inline:auto;">
+      <span>© 2026 PINNED CALENDAR</span>
+      <span style="display:flex; gap:20px;">
+        <a href="/">Home</a>
+        <a href={other.href}>{other.label}</a>
+      </span>
+    </div>
+  </footer>
+</Base>

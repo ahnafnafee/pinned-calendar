@@ -13,15 +13,18 @@ val keystoreProps = Properties().apply {
 }
 
 android {
-    namespace = "com.ahnafnafee.pinnedcalendar"
+    namespace = "dev.ahnafnafee.pinnedcalendar"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.ahnafnafee.pinnedcalendar"
+        applicationId = "dev.ahnafnafee.pinnedcalendar"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.4.0"
+        // Release builds receive these from the Release workflow via -PversionName /
+        // -PversionCode (the code is derived from the semver version). Local builds use
+        // the defaults below.
+        versionCode = (project.findProperty("versionCode") as String?)?.toInt() ?: 8
+        versionName = (project.findProperty("versionName") as String?) ?: "1.4.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

@@ -1,0 +1,58 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { GITHUB, CONTACT_URL } from '../config.mjs';
+---
+<Legal
+  title="Terms of Service"
+  kicker="LEGAL / TERMS"
+  updated="JUNE 23, 2026"
+  path="/terms/"
+  other={{ label: 'Privacy Policy', href: '/privacy/' }}
+>
+  <div class="legal-short">
+    <div class="h">IN SHORT</div>
+    <p>Pinned Calendar is free, open source software provided as is. Use it, fork it, and enjoy it. We cannot promise it is perfect, and we are not liable for how you use it.</p>
+  </div>
+
+  <div class="legal-body">
+    <section>
+      <div class="head"><span class="n">01</span><h2>Acceptance</h2></div>
+      <p>By downloading, installing, or using Pinned Calendar (the app), you agree to these Terms of Service. If you do not agree, please do not use the app.</p>
+    </section>
+
+    <section>
+      <div class="head"><span class="n">02</span><h2>License</h2></div>
+      <p>The app is free and open source under the MIT License. Your use of the source code is governed by the license published in the project repository at <a href={GITHUB} target="_blank" rel="noopener">github.com/ahnafnafee/pinned-calendar</a>. These terms cover your use of the published app itself.</p>
+    </section>
+
+    <section>
+      <div class="head"><span class="n">03</span><h2>Acceptable use</h2></div>
+      <p>You agree to use the app only for lawful purposes and not to misuse it, interfere with its operation, or attempt to use it in ways that violate the rights of others.</p>
+    </section>
+
+    <section>
+      <div class="head"><span class="n">04</span><h2>No warranty</h2></div>
+      <p>The app is provided as is and as available, without warranties of any kind, whether express or implied, including fitness for a particular purpose. We do not guarantee that the app will be error free, uninterrupted, or that the agenda it displays will always be accurate.</p>
+    </section>
+
+    <section>
+      <div class="head"><span class="n">05</span><h2>Limitation of liability</h2></div>
+      <p>To the fullest extent permitted by law, the developer is not liable for any indirect, incidental, or consequential damages arising from your use of, or inability to use, the app, including any missed events or reminders.</p>
+    </section>
+
+    <section>
+      <div class="head"><span class="n">06</span><h2>Your device and data</h2></div>
+      <p>The app relies on the calendar provider and notification system on your own device. You are responsible for the events, calendars, and tasks you choose to display, and for keeping your device secure.</p>
+    </section>
+
+    <section>
+      <div class="head"><span class="n">07</span><h2>Changes</h2></div>
+      <p>We may update the app and these terms from time to time. Continued use of the app after changes take effect means you accept the revised terms. The latest version will always be posted on this page.</p>
+    </section>
+
+    <section>
+      <div class="head"><span class="n">08</span><h2>Contact</h2></div>
+      <p>Questions about these terms? Reach out via <a href={CONTACT_URL} target="_blank" rel="noopener">ahnafnafee.dev</a>.</p>
+    </section>
+  </div>
+</Legal>
