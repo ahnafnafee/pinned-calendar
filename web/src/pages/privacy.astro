@@ -1,50 +1,68 @@
 ---
 import Legal from '../layouts/Legal.astro';
-import { APP_NAME, PACKAGE, ISSUES, CONTACT } from '../config.mjs';
+import { CONTACT_URL } from '../config.mjs';
 ---
-<Legal title="Privacy Policy" updated="June 23, 2026" path="/privacy/">
-  <p>
-    {APP_NAME} (<code>{PACKAGE}</code>) is an offline-first Android app. This policy explains
-    what it does — and does not — do with your data.
-  </p>
+<Legal
+  title="Privacy Policy"
+  kicker="LEGAL / PRIVACY"
+  updated="JUNE 23, 2026"
+  path="/privacy/"
+  other={{ label: 'Terms of Service', href: '/terms/' }}
+>
+  <div class="legal-short">
+    <div class="h">IN SHORT</div>
+    <p>Pinned Calendar does not collect, store, or transmit any personal data. There are no accounts, no analytics, and no servers. Everything the app uses stays on your device.</p>
+  </div>
 
-  <h2>The short version</h2>
-  <p>
-    <strong>{APP_NAME} does not collect, store, transmit, or share any personal data.</strong>
-    It has no <code>INTERNET</code> permission, so it is technically incapable of sending anything
-    off your device.
-  </p>
+  <div class="legal-body">
+    <section>
+      <div class="head"><span class="n">01</span><h2>Information we collect</h2></div>
+      <p>We do not collect any information from you. Nothing you do in the app is sent to us or to any third party, because the app has no backend and makes no network requests for your data.</p>
+      <p>To do its job, the app works with the following information locally, on your device only:</p>
+      <ul>
+        <li><strong>Calendar events.</strong> Read access to the calendars you choose, used to build this week's agenda inside a notification.</li>
+        <li><strong>Your to-dos.</strong> Tasks you create are stored in the app's local storage on your device.</li>
+        <li><strong>Your settings.</strong> Preferences such as theme, accent color, time window, and priority are saved locally.</li>
+      </ul>
+    </section>
 
-  <h2>What the app accesses, and why</h2>
-  <ul>
-    <li><strong>Calendar (READ_CALENDAR)</strong> — reads the events from the calendars already synced on your device so it can show them in the notification and in the app. This data is read on demand, displayed locally, and never leaves your phone.</li>
-    <li><strong>Notifications (POST_NOTIFICATIONS)</strong> — used only to show the pinned agenda notification.</li>
-    <li><strong>Run at startup (RECEIVE_BOOT_COMPLETED)</strong> — used only to re-create the pinned notification after a reboot.</li>
-    <li><strong>Ignore battery optimizations (optional)</strong> — if you grant it, this only helps the app refresh reliably in the background. It accesses no data.</li>
-  </ul>
+    <section>
+      <div class="head"><span class="n">02</span><h2>How information is used</h2></div>
+      <p>The information above is used for one purpose only: to display your upcoming events and to-dos as an on-device notification and inside the app. It is never used for advertising, profiling, or analytics, and it never leaves your device.</p>
+    </section>
 
-  <h2>Data you create in the app</h2>
-  <p>
-    To-dos you add are stored <strong>only on your device</strong> (local app storage). They are
-    never uploaded or shared. Uninstalling the app removes them.
-  </p>
+    <section>
+      <div class="head"><span class="n">03</span><h2>Permissions we request</h2></div>
+      <ul>
+        <li><strong>Calendar (read).</strong> So the app can show your events. It never edits or deletes your calendar.</li>
+        <li><strong>Notifications.</strong> So the app can post the pinned agenda to your notification shade.</li>
+        <li><strong>Run at startup.</strong> So the pinned notification can rebuild itself after your phone restarts.</li>
+      </ul>
+    </section>
 
-  <h2>No tracking</h2>
-  <ul>
-    <li>No accounts or sign-in.</li>
-    <li>No analytics, advertising, crash reporting, or third-party SDKs.</li>
-    <li>No data is sold or shared with anyone.</li>
-  </ul>
+    <section>
+      <div class="head"><span class="n">04</span><h2>Sharing and third parties</h2></div>
+      <p>We do not share, sell, or transmit your data, because we never receive it. The app contains no third-party analytics, advertising SDKs, trackers, or crash reporters that send your data off the device.</p>
+    </section>
 
-  <h2>Children</h2>
-  <p>The app collects no data from anyone, including children.</p>
+    <section>
+      <div class="head"><span class="n">05</span><h2>Retention and deletion</h2></div>
+      <p>Your to-dos and settings remain on your device until you delete them or uninstall the app. Clearing the app's storage or uninstalling it removes all locally stored data permanently.</p>
+    </section>
 
-  <h2>Changes</h2>
-  <p>If this policy changes, the updated version will be posted on this page with a new “Last updated” date.</p>
+    <section>
+      <div class="head"><span class="n">06</span><h2>Children's privacy</h2></div>
+      <p>The app is not directed at children under 13, and it does not knowingly collect data from anyone, regardless of age.</p>
+    </section>
 
-  <h2>Contact</h2>
-  <p>
-    Questions? Open an issue at <a href={ISSUES}>{ISSUES}</a> or email
-    <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
-  </p>
+    <section>
+      <div class="head"><span class="n">07</span><h2>Changes to this policy</h2></div>
+      <p>If this policy changes, the updated version will be posted on this page with a new date above. Material changes will be reflected in the app's listing.</p>
+    </section>
+
+    <section>
+      <div class="head"><span class="n">08</span><h2>Contact</h2></div>
+      <p>Questions about this policy? Reach out via <a href={CONTACT_URL} target="_blank" rel="noopener">ahnafnafee.dev</a>.</p>
+    </section>
+  </div>
 </Legal>

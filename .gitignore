@@ -25,3 +25,4 @@ web/.astro/
 # Design tool scratch (the editable assets under design/assets + design/uploads are kept)
 design/tmp/
 design/.thumbnail
+design/icons.zip

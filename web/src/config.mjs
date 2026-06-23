@@ -16,3 +16,4 @@ export const PLAY_URL = `https://play.google.com/store/apps/details?id=${PACKAGE
 export const PLAY_AVAILABLE = false;
 
 export const CONTACT = 'dynasty11studios@gmail.com';
+export const CONTACT_URL = 'https://www.ahnafnafee.dev';

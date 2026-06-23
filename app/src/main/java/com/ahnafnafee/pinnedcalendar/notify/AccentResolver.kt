@@ -13,6 +13,6 @@ object AccentResolver {
             val res = if (dark) android.R.color.system_accent1_200 else android.R.color.system_accent1_500
             return ContextCompat.getColor(context, res)
         }
-        return 0xFF1A73E8.toInt()
+        return 0xFFE07F2C.toInt()
     }
 }

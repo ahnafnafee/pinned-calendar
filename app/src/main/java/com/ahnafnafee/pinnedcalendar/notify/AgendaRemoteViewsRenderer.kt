@@ -15,7 +15,7 @@ import com.ahnafnafee.pinnedcalendar.domain.model.NotificationRow
 class AgendaRemoteViewsRenderer(private val context: Context) {
 
     private val taskColor = 0xFF80868B.toInt()
-    private val fallbackColor = 0xFF1A73E8.toInt()
+    private val fallbackColor = 0xFFE07F2C.toInt()
 
     // The notification shade follows the system day/night setting. The app's own theme attrs
     // (?android:textColorPrimary) resolve to the app theme, not the shade, so set text colours here.

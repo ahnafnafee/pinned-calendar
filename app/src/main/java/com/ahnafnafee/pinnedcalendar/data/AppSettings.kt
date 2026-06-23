@@ -41,10 +41,10 @@ data class AppSettings(
     // Event times read as 12-hour (9:00 AM) by default; on = 24-hour (09:00).
     val use24HourClock: Boolean = false,
     // Appearance: Material 3 Expressive + seed-based color theming
-    val themeMode: ThemeMode = ThemeMode.SYSTEM,
-    val materialYou: Boolean = true,           // wallpaper dynamic color (API 31+)
+    val themeMode: ThemeMode = ThemeMode.DARK, // brand default is dark surfaces (DESIGN.md §2)
+    val materialYou: Boolean = false,          // off by default so the brand orange shows (DESIGN.md §2)
     val amoled: Boolean = false,               // pure-black dark theme
-    val seedColorArgb: Int = 0xFF1A73E8.toInt(), // seed when Material You is off
+    val seedColorArgb: Int = 0xFFE07F2C.toInt(), // brand orange seed when Material You is off (DESIGN.md §2)
     val palette: AppPalette = AppPalette.TONAL_SPOT,
     val font: AppFont = AppFont.GOOGLE_SANS,
 )

@@ -659,5 +659,5 @@ private fun ColorDot(hex: String?) {
 }
 
 private val SEED_SWATCHES = listOf(
-    0xFF1A73E8, 0xFF00897B, 0xFF7E57C2, 0xFFD81B60, 0xFFF4511E, 0xFF43A047,
+    0xFFE07F2C, 0xFF00897B, 0xFF7E57C2, 0xFFD81B60, 0xFF1A73E8, 0xFF43A047,
 ).map { it.toInt() }

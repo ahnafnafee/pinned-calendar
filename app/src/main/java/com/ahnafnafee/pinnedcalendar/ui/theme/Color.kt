@@ -2,5 +2,6 @@ package com.ahnafnafee.pinnedcalendar.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val SeedBlue = Color(0xFF1A73E8)
-val SeedBlueDark = Color(0xFF8AB4F8)
+// Brand accent (design/DESIGN.md §1) — the default seed when Material You is off.
+val BrandOrange = Color(0xFFE07F2C)
+val BrandOrangeDark = Color(0xFFF4A94E)

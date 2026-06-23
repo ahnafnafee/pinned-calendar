@@ -61,10 +61,10 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         hideCompletedTasks = this[HIDE_DONE] ?: true,
         maxItems = this[MAX] ?: 6,
         use24HourClock = this[CLOCK_24H] ?: false,
-        themeMode = this[THEME].toEnum(ThemeMode.SYSTEM) { ThemeMode.valueOf(it) },
-        materialYou = this[MATERIAL_YOU] ?: true,
+        themeMode = this[THEME].toEnum(ThemeMode.DARK) { ThemeMode.valueOf(it) },
+        materialYou = this[MATERIAL_YOU] ?: false,
         amoled = this[AMOLED] ?: false,
-        seedColorArgb = this[SEED] ?: 0xFF1A73E8.toInt(),
+        seedColorArgb = this[SEED] ?: 0xFFE07F2C.toInt(),
         palette = this[PALETTE].toEnum(AppPalette.TONAL_SPOT) { AppPalette.valueOf(it) },
         font = this[FONT].toEnum(AppFont.GOOGLE_SANS) { AppFont.valueOf(it) },
     )
