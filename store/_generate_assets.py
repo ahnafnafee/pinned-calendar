@@ -5,7 +5,7 @@ Re-runnable. The icon and screenshots are authored in the design tool and live
 in design/assets/; this copies them into store/ with Play-ready names and builds
 the feature graphic (which the design folder doesn't include) to match the
 dark/orange screenshot theme. Produces, under store/:
-  - play_icon_512.png                    (copied from design/assets/icon-512.png)
+  - play_icon_512.png                    (copied from design/icons/play-store-icon/play-store-icon-512.png)
   - play_feature_graphic_1024x500.png    (generated, dark + orange)
   - screenshots/screen_N_<feature>_1080x1920.png  (from design/assets/screenshot-N.png)
 Requires Pillow.
@@ -17,6 +17,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 REPO = Path(__file__).resolve().parents[1]
 STORE = REPO / "store"
 DESIGN = REPO / "design" / "assets"
+PACK = REPO / "design" / "icons" / "play-store-icon"  # canonical icon pack (latest logo)
 OUT = STORE / "screenshots"
 FONTS = REPO / "app" / "src" / "main" / "res" / "font"
 
@@ -80,8 +81,8 @@ def wrap(draw, text, font, max_w):
 
 
 def make_icon():
-    shutil.copyfile(DESIGN / "icon-512.png", STORE / "play_icon_512.png")
-    print("icon  -> play_icon_512.png (from design/assets/icon-512.png)")
+    shutil.copyfile(PACK / "play-store-icon-512.png", STORE / "play_icon_512.png")
+    print("icon  -> play_icon_512.png (from design/icons/play-store-icon/play-store-icon-512.png)")
 
 
 def copy_shots():
@@ -127,7 +128,7 @@ def make_feature():
     # icon tile from the design's rounded icon, with a soft shadow
     T = 300 * ss
     tx0, ty0 = 76 * ss, (500 * ss - T) // 2
-    icon = Image.open(DESIGN / "icon-rounded-512.png").convert("RGBA").resize((T, T), Image.LANCZOS)
+    icon = Image.open(PACK / "icon-rounded-512.png").convert("RGBA").resize((T, T), Image.LANCZOS)
     shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     dsh = ImageDraw.Draw(shadow)
     dsh.rounded_rectangle([tx0, ty0 + 12 * ss, tx0 + T, ty0 + T + 12 * ss], radius=int(T * 0.235), fill=(0, 0, 0, 175))
