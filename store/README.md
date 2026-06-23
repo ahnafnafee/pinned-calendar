@@ -10,22 +10,25 @@ store/
 ├── play-listing.md                          title / short / full description (source of truth)
 ├── release-notes.md                         "What's New" per version
 ├── privacy-policy.md                        required by Play — host it, paste the URL
-├── play_icon_512.png                        512×512 app icon (24-bit, no alpha)
-├── play_feature_graphic_1024x500.png        feature graphic
-├── _generate_assets.py                      re-runnable: pads screenshots, builds icon + feature graphic
+├── play_icon_512.png                        512×512 app icon (from design/assets/icon-512.png)
+├── play_feature_graphic_1024x500.png        feature graphic (dark + orange, matches the screenshots)
+├── _generate_assets.py                      re-runnable: copies icon + screenshots from design/, builds feature graphic
 └── screenshots/
-    ├── raw/                                 drop full-res device captures here (any size)
-    └── screen_N_<feature>_<W>x<H>.png       Play-ready phone shots (generated)
+    └── screen_N_<feature>_1080x1920.png     Play-ready phone shots (from design/assets/screenshot-N.png)
 ```
+
+Image assets are authored in **`design/assets/`** (the orange pin icon + 5 captioned
+screenshots, dark/orange theme); `_generate_assets.py` copies them into `store/` with
+Play-ready names and builds the feature graphic (the one asset not in the design folder).
 
 ---
 
 ## Pre-publish checklist
 
 **Graphics — done ✅**
-- [x] App icon — `play_icon_512.png` (512×512, no alpha)
-- [x] Feature graphic — `play_feature_graphic_1024x500.png` (1024×500)
-- [x] Phone screenshots — 4 in `screenshots/` (1442×2856, ratio 1.98 ≤ 2:1, no alpha). Play needs **2–8**; 4 is fine, 5–6 is better (see shot list below).
+- [x] App icon — `play_icon_512.png` (512×512, the orange pin icon from `design/assets/`)
+- [x] Feature graphic — `play_feature_graphic_1024x500.png` (1024×500, dark + orange)
+- [x] Phone screenshots — **5** in `screenshots/` (1080×1920, exact 9:16, 24-bit). Play needs 2–8.
 
 **Text — done ✅** → `play-listing.md`, `release-notes.md`
 
@@ -125,34 +128,20 @@ key; you keep an upload key).
 
 ---
 
-## Screenshots — what you have, and what to grab
+## Screenshots
 
-**Current set (already wired up, in carousel order):**
-1. `notification-light` — the pin in the shade (the hook) ✅
-2. `todos` — the To-dos tab + week-overview card ✅
-3. `settings` — Notifications / time window / calendars ✅
-4. `notification-dark` — the pin in dark mode ✅
+Five polished, captioned screenshots (1080×1920, dark + orange theme), in carousel order:
 
-That's a complete, valid listing. To make it stronger, grab **1–2 more** so the
-carousel tells the whole story (Play allows up to 8):
+1. `screen_1_agenda` — “Never miss what’s next” — the pin in the notification shade
+2. `screen_2_week` — “Your week, pinned” — To-dos tab + week overview
+3. `screen_3_controls` — “Pin it your way” — notifications / priority / time window
+4. `screen_4_appearance` — “Make it yours” — Material You theming
+5. `screen_5_privacy` — “Private by design” — offline / no sign-in / open source
 
-| Priority | Grab this screen | Why it sells |
-|---|---|---|
-| ⭐ High | **Appearance settings** — Material You: seed color, palette style, AMOLED, font picker | Customization is a top selling point and isn't shown yet |
-| ⭐ High | **Lock-screen view** of the pinned notification | Shows the agenda is glanceable without unlocking |
-| Medium | **A second dynamic theme** (different wallpaper/accent) of the To-dos screen | Demonstrates Material You adapting to the user |
-| Medium | **Expanded notification** (if it differs from collapsed) showing more days | Reinforces the "whole week" promise |
-| Low | **Priority picker in context** (Top/Normal/Silent) or swipe-twice-to-remove | Niche; only if you want a 7th/8th |
-
-### How to capture clean shots
-- Same device/emulator for all, status bar tidy (full battery, no stray icons — the existing set uses a 9:30 / 100% bar; match it).
-- Use the app's demo/sample data (the existing shots already do).
-- Any resolution is fine — the generator pads to Play's 2:1 rule for you.
-
-### To add them
-1. Save each new capture as a PNG into `screenshots/raw/` (descriptive name, e.g. `appearance.png`).
-2. Add it to the `ORDER` list in `_generate_assets.py` at the position you want.
-3. Run `python store/_generate_assets.py` — it re-pads everything and rewrites the `screen_N_*` files.
+### To change or add screenshots
+1. Edit and re-export in the design tool to `design/assets/screenshot-N.png`.
+2. Adjust the `SHOTS` list (order + feature labels) in `_generate_assets.py` if needed.
+3. Run `python store/_generate_assets.py` — it rewrites `screenshots/screen_N_*` (and pads anything not already ≤ 2:1).
 
 ---
 
@@ -161,9 +150,9 @@ carousel tells the whole story (Play allows up to 8):
 ```bash
 python store/_generate_assets.py
 ```
-Rebuilds the icon, feature graphic, and padded/renamed screenshots from
-`screenshots/raw/` and the app's launcher-icon paths. Requires Pillow
-(`pip install pillow`).
+Copies the icon (`design/assets/icon-512.png`) and the 5 screenshots
+(`design/assets/screenshot-N.png`) into `store/`, and builds the dark/orange
+feature graphic. Requires Pillow (`pip install pillow`).
 
 ---
 
