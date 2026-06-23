@@ -16,3 +16,12 @@ keystore.properties
 *.jks
 *.keystore
 RELEASE_SIGNING.local.md
+
+# Marketing site (web/) — Node + Astro build artifacts (package-lock.json IS committed)
+web/node_modules/
+web/dist/
+web/.astro/
+
+# Design tool scratch (the editable assets under design/assets + design/uploads are kept)
+design/tmp/
+design/.thumbnail

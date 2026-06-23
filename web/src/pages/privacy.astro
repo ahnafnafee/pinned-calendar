@@ -1,0 +1,50 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { APP_NAME, PACKAGE, ISSUES, CONTACT } from '../config.mjs';
+---
+<Legal title="Privacy Policy" updated="June 23, 2026" path="/privacy/">
+  <p>
+    {APP_NAME} (<code>{PACKAGE}</code>) is an offline-first Android app. This policy explains
+    what it does — and does not — do with your data.
+  </p>
+
+  <h2>The short version</h2>
+  <p>
+    <strong>{APP_NAME} does not collect, store, transmit, or share any personal data.</strong>
+    It has no <code>INTERNET</code> permission, so it is technically incapable of sending anything
+    off your device.
+  </p>
+
+  <h2>What the app accesses, and why</h2>
+  <ul>
+    <li><strong>Calendar (READ_CALENDAR)</strong> — reads the events from the calendars already synced on your device so it can show them in the notification and in the app. This data is read on demand, displayed locally, and never leaves your phone.</li>
+    <li><strong>Notifications (POST_NOTIFICATIONS)</strong> — used only to show the pinned agenda notification.</li>
+    <li><strong>Run at startup (RECEIVE_BOOT_COMPLETED)</strong> — used only to re-create the pinned notification after a reboot.</li>
+    <li><strong>Ignore battery optimizations (optional)</strong> — if you grant it, this only helps the app refresh reliably in the background. It accesses no data.</li>
+  </ul>
+
+  <h2>Data you create in the app</h2>
+  <p>
+    To-dos you add are stored <strong>only on your device</strong> (local app storage). They are
+    never uploaded or shared. Uninstalling the app removes them.
+  </p>
+
+  <h2>No tracking</h2>
+  <ul>
+    <li>No accounts or sign-in.</li>
+    <li>No analytics, advertising, crash reporting, or third-party SDKs.</li>
+    <li>No data is sold or shared with anyone.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>The app collects no data from anyone, including children.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, the updated version will be posted on this page with a new “Last updated” date.</p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions? Open an issue at <a href={ISSUES}>{ISSUES}</a> or email
+    <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+  </p>
+</Legal>

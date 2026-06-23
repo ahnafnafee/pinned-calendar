@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; }
+</style>
+</helmet>
+
+<div style="width:max-content; min-width:100%; min-height:100vh; box-sizing:border-box; padding:56px; background:#e7e5df; font-family:'Figtree',sans-serif;">
+
+  <div style="display:flex; gap:56px; align-items:flex-start;">
+
+    <!-- ============ SCREENSHOT 1 — HERO / NOTIFICATION ============ -->
+    <div style="flex:none;">
+      <div style="font-size:22px; font-weight:600; color:#57534e; margin-bottom:16px; font-family:'Figtree',sans-serif;">01 · Hero — notification</div>
+      <div id="s1" style="width:1080px; height:1920px; position:relative; overflow:hidden; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.12); background:#0b0d10; background-image:radial-gradient(125% 78% at 50% -8%, #3a2510 0%, #1a1206 32%, #0b0d10 62%); display:flex; flex-direction:column; align-items:center; padding:118px 80px 0;">
+        <div style="text-align:center; max-width:880px;">
+          <div style="display:inline-flex; align-items:center; gap:12px; padding:12px 24px; border-radius:999px; background:rgba(244,169,78,.12); border:1px solid rgba(244,169,78,.28); margin-bottom:34px;">
+            <span style="width:11px; height:11px; border-radius:50%; background:#F4A94E; box-shadow:0 0 14px #F4A94E;"></span>
+            <span style="font-size:27px; font-weight:700; letter-spacing:.5px; color:#F4A94E; text-transform:uppercase;">Always-on agenda</span>
+          </div>
+          <h1 style="margin:0; font-size:86px; line-height:1.02; font-weight:800; letter-spacing:-2.5px; color:#F5EEE4;">Never miss<br>what's <span style="color:#F4A94E;">next</span></h1>
+          <p style="margin:26px auto 0; font-size:37px; line-height:1.34; font-weight:500; color:#9aa1a9; max-width:780px;">Your whole week lives in the notification shade — one swipe away, every time you wake your phone.</p>
+        </div>
+        <div style="margin-top:58px; width:600px; padding:15px; border-radius:62px; background:#000; border:2px solid #20262d; box-shadow:0 44px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(244,169,78,.06), 0 0 110px rgba(244,169,78,.10);">
+          <img src="uploads/notification-dark.png" alt="Pinned Calendar notification" style="display:block; width:100%; border-radius:48px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREENSHOT 2 — HOME / WEEK ============ -->
+    <div style="flex:none;">
+      <div style="font-size:22px; font-weight:600; color:#57534e; margin-bottom:16px; font-family:'Figtree',sans-serif;">02 · Home — your week</div>
+      <div id="s2" style="width:1080px; height:1920px; position:relative; overflow:hidden; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.12); background:#0b0d10; background-image:radial-gradient(125% 78% at 50% -8%, #3a2510 0%, #1a1206 32%, #0b0d10 62%); display:flex; flex-direction:column; align-items:center; padding:118px 80px 0;">
+        <div style="text-align:center; max-width:880px;">
+          <h1 style="margin:0; font-size:86px; line-height:1.02; font-weight:800; letter-spacing:-2.5px; color:#F5EEE4;">Your week,<br><span style="color:#F4A94E;">pinned</span></h1>
+          <p style="margin:26px auto 0; font-size:37px; line-height:1.34; font-weight:500; color:#9aa1a9; max-width:780px;">Events and to-dos counted and ready the moment you unlock — no app to open.</p>
+        </div>
+        <div style="margin-top:58px; width:600px; padding:15px; border-radius:62px; background:#000; border:2px solid #20262d; box-shadow:0 44px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(244,169,78,.06), 0 0 110px rgba(244,169,78,.10);">
+          <img src="uploads/1.png" alt="Pinned Calendar home" style="display:block; width:100%; border-radius:48px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREENSHOT 3 — NOTIFICATION SETTINGS ============ -->
+    <div style="flex:none;">
+      <div style="font-size:22px; font-weight:600; color:#57534e; margin-bottom:16px; font-family:'Figtree',sans-serif;">03 · Control the pin</div>
+      <div id="s3" style="width:1080px; height:1920px; position:relative; overflow:hidden; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.12); background:#0b0d10; background-image:radial-gradient(125% 78% at 50% -8%, #3a2510 0%, #1a1206 32%, #0b0d10 62%); display:flex; flex-direction:column; align-items:center; padding:118px 80px 0;">
+        <div style="text-align:center; max-width:880px;">
+          <h1 style="margin:0; font-size:86px; line-height:1.02; font-weight:800; letter-spacing:-2.5px; color:#F5EEE4;">Pin it<br><span style="color:#F4A94E;">your way</span></h1>
+          <p style="margin:26px auto 0; font-size:37px; line-height:1.34; font-weight:500; color:#9aa1a9; max-width:780px;">Set priority, choose a time window, and use gentle swipe controls — quiet by default.</p>
+        </div>
+        <div style="margin-top:58px; width:600px; padding:15px; border-radius:62px; background:#000; border:2px solid #20262d; box-shadow:0 44px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(244,169,78,.06), 0 0 110px rgba(244,169,78,.10);">
+          <img src="uploads/2.png" alt="Pinned Calendar notification settings" style="display:block; width:100%; border-radius:48px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREENSHOT 4 — APPEARANCE ============ -->
+    <div style="flex:none;">
+      <div style="font-size:22px; font-weight:600; color:#57534e; margin-bottom:16px; font-family:'Figtree',sans-serif;">04 · Make it yours</div>
+      <div id="s4" style="width:1080px; height:1920px; position:relative; overflow:hidden; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.12); background:#0b0d10; background-image:radial-gradient(125% 78% at 50% -8%, #3a2510 0%, #1a1206 32%, #0b0d10 62%); display:flex; flex-direction:column; align-items:center; padding:118px 80px 0;">
+        <div style="text-align:center; max-width:880px;">
+          <h1 style="margin:0; font-size:86px; line-height:1.02; font-weight:800; letter-spacing:-2.5px; color:#F5EEE4;">Make it<br><span style="color:#F4A94E;">yours</span></h1>
+          <p style="margin:26px auto 0; font-size:37px; line-height:1.34; font-weight:500; color:#9aa1a9; max-width:780px;">Material You theming, six accent colors, and light or dark — tuned to match your phone.</p>
+        </div>
+        <div style="margin-top:58px; width:600px; padding:15px; border-radius:62px; background:#000; border:2px solid #20262d; box-shadow:0 44px 90px rgba(0,0,0,.55), 0 0 0 1px rgba(244,169,78,.06), 0 0 110px rgba(244,169,78,.10);">
+          <img src="uploads/3.png" alt="Pinned Calendar appearance settings" style="display:block; width:100%; border-radius:48px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCREENSHOT 5 — PRIVACY / CLOSING ============ -->
+    <div style="flex:none;">
+      <div style="font-size:22px; font-weight:600; color:#57534e; margin-bottom:16px; font-family:'Figtree',sans-serif;">05 · Private by design</div>
+      <div id="s5" style="width:1080px; height:1920px; position:relative; overflow:hidden; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.12); background:#0b0d10; background-image:radial-gradient(125% 92% at 50% 18%, #3a2510 0%, #1a1206 36%, #0b0d10 66%); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 110px;">
+        <div style="margin-bottom:56px;">
+          <svg width="248" height="248" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block; filter:drop-shadow(0 30px 60px rgba(0,0,0,.5));">
+            <defs><linearGradient id="pcg5" x1="70" y1="40" x2="450" y2="490" gradientUnits="userSpaceOnUse"><stop stop-color="#F8BC63"></stop><stop offset="1" stop-color="#E07F2C"></stop></linearGradient></defs>
+            <rect width="512" height="512" rx="116" fill="url(#pcg5)"></rect>
+            <rect width="512" height="210" rx="116" fill="#FFFFFF" opacity="0.10"></rect>
+            <rect x="190" y="150" width="20" height="48" rx="10" fill="#3A2A18"></rect>
+            <rect x="302" y="150" width="20" height="48" rx="10" fill="#3A2A18"></rect>
+            <rect x="132" y="176" width="248" height="214" rx="30" fill="#3A1E05" opacity="0.20"></rect>
+            <rect x="128" y="168" width="248" height="214" rx="30" fill="#FCFBF8"></rect>
+            <rect x="128" y="216" width="248" height="3" fill="#EBD6BC"></rect>
+            <rect x="164" y="250" width="118" height="22" rx="11" fill="#E68235"></rect>
+            <rect x="164" y="296" width="176" height="18" rx="9" fill="#D8DADD"></rect>
+            <rect x="164" y="334" width="140" height="18" rx="9" fill="#D8DADD"></rect>
+            <circle cx="360" cy="152" r="44" fill="#2A2018"></circle>
+            <circle cx="360" cy="152" r="19" fill="#F8BC63"></circle>
+            <circle cx="347" cy="139" r="8" fill="#FFFFFF" opacity="0.4"></circle>
+          </svg>
+        </div>
+        <h1 style="margin:0; font-size:86px; line-height:1.02; font-weight:800; letter-spacing:-2.5px; color:#F5EEE4; text-align:center;">Private<br>by <span style="color:#F4A94E;">design</span></h1>
+        <p style="margin:26px auto 0; font-size:37px; line-height:1.34; font-weight:500; color:#9aa1a9; max-width:740px; text-align:center;">No account. No cloud. Your calendar and to-dos never leave your phone.</p>
+        <div style="margin-top:64px; display:flex; flex-direction:column; gap:30px; width:660px;">
+          <div style="display:flex; align-items:center; gap:24px; padding:30px 36px; border-radius:26px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);">
+            <span style="flex:none; width:54px; height:54px; border-radius:50%; background:rgba(244,169,78,.16); display:flex; align-items:center; justify-content:center;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#F4A94E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span style="font-size:35px; font-weight:600; color:#E6E2DB;">100% on-device — no sign-in</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:24px; padding:30px 36px; border-radius:26px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);">
+            <span style="flex:none; width:54px; height:54px; border-radius:50%; background:rgba(244,169,78,.16); display:flex; align-items:center; justify-content:center;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#F4A94E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span style="font-size:35px; font-weight:600; color:#E6E2DB;">Reads your calendar, sends nothing</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:24px; padding:30px 36px; border-radius:26px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);">
+            <span style="flex:none; width:54px; height:54px; border-radius:50%; background:rgba(244,169,78,.16); display:flex; align-items:center; justify-content:center;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#F4A94E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span style="font-size:35px; font-weight:600; color:#E6E2DB;">Free &amp; open source</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ APP ICON ============ -->
+    <div style="flex:none;">
+      <div style="font-size:22px; font-weight:600; color:#57534e; margin-bottom:16px; font-family:'Figtree',sans-serif;">App icon · 512×512</div>
+      <div id="appicon" style="width:512px; height:512px; border-radius:4px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.12);">
+        <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <defs><linearGradient id="pcgIcon" x1="70" y1="40" x2="450" y2="490" gradientUnits="userSpaceOnUse"><stop stop-color="#F8BC63"></stop><stop offset="1" stop-color="#E07F2C"></stop></linearGradient></defs>
+          <rect width="512" height="512" fill="url(#pcgIcon)"></rect>
+          <rect width="512" height="210" fill="#FFFFFF" opacity="0.10"></rect>
+          <rect x="190" y="150" width="20" height="48" rx="10" fill="#3A2A18"></rect>
+          <rect x="302" y="150" width="20" height="48" rx="10" fill="#3A2A18"></rect>
+          <rect x="132" y="176" width="248" height="214" rx="30" fill="#3A1E05" opacity="0.20"></rect>
+          <rect x="128" y="168" width="248" height="214" rx="30" fill="#FCFBF8"></rect>
+          <rect x="128" y="216" width="248" height="3" fill="#EBD6BC"></rect>
+          <rect x="164" y="250" width="118" height="22" rx="11" fill="#E68235"></rect>
+          <rect x="164" y="296" width="176" height="18" rx="9" fill="#D8DADD"></rect>
+          <rect x="164" y="334" width="140" height="18" rx="9" fill="#D8DADD"></rect>
+          <circle cx="360" cy="152" r="44" fill="#2A2018"></circle>
+          <circle cx="360" cy="152" r="19" fill="#F8BC63"></circle>
+          <circle cx="347" cy="139" r="8" fill="#FFFFFF" opacity="0.4"></circle>
+        </svg>
+      </div>
+      <div style="font-size:22px; font-weight:600; color:#57534e; margin:36px 0 16px; font-family:'Figtree',sans-serif;">Rounded preview</div>
+      <div style="width:512px; height:512px; border-radius:114px; overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,.2);">
+        <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <rect width="512" height="512" fill="url(#pcgIcon)"></rect>
+          <rect width="512" height="210" fill="#FFFFFF" opacity="0.10"></rect>
+          <rect x="190" y="150" width="20" height="48" rx="10" fill="#3A2A18"></rect>
+          <rect x="302" y="150" width="20" height="48" rx="10" fill="#3A2A18"></rect>
+          <rect x="132" y="176" width="248" height="214" rx="30" fill="#3A1E05" opacity="0.20"></rect>
+          <rect x="128" y="168" width="248" height="214" rx="30" fill="#FCFBF8"></rect>
+          <rect x="128" y="216" width="248" height="3" fill="#EBD6BC"></rect>
+          <rect x="164" y="250" width="118" height="22" rx="11" fill="#E68235"></rect>
+          <rect x="164" y="296" width="176" height="18" rx="9" fill="#D8DADD"></rect>
+          <rect x="164" y="334" width="140" height="18" rx="9" fill="#D8DADD"></rect>
+          <circle cx="360" cy="152" r="44" fill="#2A2018"></circle>
+          <circle cx="360" cy="152" r="19" fill="#F8BC63"></circle>
+          <circle cx="347" cy="139" r="8" fill="#FFFFFF" opacity="0.4"></circle>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

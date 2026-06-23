@@ -1,7 +1,16 @@
 name: Release
 
-# Manual, production-release pipeline: builds a SIGNED release APK and publishes a GitHub release
-# with a tag. Dispatch this from the branch you want to release (normally `main`).
+# Manual, production-release pipeline. Dispatch with a semver VERSION; it validates the
+# version, builds a SIGNED release bundle (.aab for Play) and APK (for sideloading), and
+# publishes a GitHub release with a v<version> tag. Dispatch from the branch you want to
+# release (normally `main`).
+#
+# The version input is the single source of truth:
+#   - rejected if not MAJOR.MINOR.PATCH
+#   - rejected if tag v<version> already exists (already released)
+#   - rejected if not strictly higher than the latest v* tag
+# versionCode is derived from the version (MAJOR*10000 + MINOR*100 + PATCH) so it always
+# increases with the version — Play rejects a duplicate or lower code, and so do we, earlier.
 #
 # Requires these repository secrets (Settings → Secrets and variables → Actions):
 #   RELEASE_KEYSTORE_BASE64  — base64 of the release keystore (.jks)
@@ -11,9 +20,9 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'Release tag (default: v<versionName> from app/build.gradle.kts)'
-        required: false
+      version:
+        description: 'Release version, semver MAJOR.MINOR.PATCH (e.g. 1.4.1). Must be higher than the latest release.'
+        required: true
         type: string
       prerelease:
         description: 'Mark the GitHub release as a pre-release'
@@ -30,11 +39,49 @@ concurrency:
 
 jobs:
   release:
-    name: Build signed APK & publish release
+    name: Build signed AAB + APK & publish release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # need full history + tags for version validation and release notes
+
+      - name: Validate version & derive versionCode
+        id: ver
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          ver="$VERSION"
+          if ! printf '%s' "$ver" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Version '$ver' must be MAJOR.MINOR.PATCH (e.g. 1.4.1)." >&2
+            exit 1
+          fi
+          if git rev-parse -q --verify "refs/tags/v$ver" >/dev/null; then
+            echo "::error::Tag v$ver already exists — version $ver is already released." >&2
+            exit 1
+          fi
+          latest="$(git tag --list 'v*' --sort=-v:refname | head -n1 | sed 's/^v//')"
+          if [ -n "$latest" ]; then
+            top="$(printf '%s\n%s\n' "$latest" "$ver" | sort -V | tail -n1)"
+            if [ "$ver" = "$latest" ] || [ "$top" != "$ver" ]; then
+              echo "::error::Version $ver is not higher than the latest release (v$latest)." >&2
+              exit 1
+            fi
+          fi
+          major="${ver%%.*}"; rest="${ver#*.}"; minor="${rest%%.*}"; patch="${rest##*.}"
+          if [ "$minor" -gt 99 ] || [ "$patch" -gt 99 ]; then
+            echo "::error::minor and patch must each be < 100 for the versionCode scheme." >&2
+            exit 1
+          fi
+          code=$((10#$major * 10000 + 10#$minor * 100 + 10#$patch))
+          {
+            echo "version_name=$ver"
+            echo "version_code=$code"
+            echo "tag=v$ver"
+          } >> "$GITHUB_OUTPUT"
+          echo "✓ Releasing v$ver (versionCode $code) — previous latest: v${latest:-none}"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -88,31 +135,30 @@ jobs:
       - name: Run tests
         run: ./gradlew :app:testDebugUnitTest --stacktrace --no-daemon
 
-      - name: Build signed release APK
-        run: ./gradlew :app:assembleRelease --stacktrace --no-daemon
+      - name: Build signed release bundle (AAB) & APK
+        run: >
+          ./gradlew :app:bundleRelease :app:assembleRelease
+          -PversionName=${{ steps.ver.outputs.version_name }}
+          -PversionCode=${{ steps.ver.outputs.version_code }}
+          --stacktrace --no-daemon
 
-      - name: Resolve version & stage APK
-        id: apk
+      - name: Stage artifacts
+        id: artifacts
         run: |
-          meta=app/build/outputs/apk/release/output-metadata.json
-          version_name=$(jq -r '.elements[0].versionName' "$meta")
-          version_code=$(jq -r '.elements[0].versionCode' "$meta")
-          tag="${{ inputs.tag }}"
-          tag="${tag:-v$version_name}"
-          apk="PinnedCalendar-$version_name.apk"
-          cp app/build/outputs/apk/release/app-release.apk "$apk"
+          set -euo pipefail
+          base="PinnedCalendar-${{ steps.ver.outputs.version_name }}"
+          cp app/build/outputs/bundle/release/app-release.aab "$base.aab"
+          cp app/build/outputs/apk/release/app-release.apk "$base.apk"
           {
-            echo "version_name=$version_name"
-            echo "version_code=$version_code"
-            echo "tag=$tag"
-            echo "apk=$apk"
+            echo "aab=$base.aab"
+            echo "apk=$base.apk"
           } >> "$GITHUB_OUTPUT"
-          echo "Resolved $apk → tag $tag (versionCode $version_code)"
+          echo "Staged $base.aab (Play upload) and $base.apk (sideload)"
 
       - name: Verify APK signature
         run: |
           build_tools=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
-          "$build_tools/apksigner" verify --print-certs "${{ steps.apk.outputs.apk }}"
+          "$build_tools/apksigner" verify --print-certs "${{ steps.artifacts.outputs.apk }}"
 
       # Save only on a fully green run so a half-built tree can never poison the cache.
       - name: Save Gradle cache
@@ -127,9 +173,11 @@ jobs:
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ steps.apk.outputs.tag }}
-          name: Pinned Calendar ${{ steps.apk.outputs.version_name }}
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: Pinned Calendar ${{ steps.ver.outputs.version_name }}
           generate_release_notes: true
           prerelease: ${{ inputs.prerelease }}
-          files: ${{ steps.apk.outputs.apk }}
+          files: |
+            ${{ steps.artifacts.outputs.aab }}
+            ${{ steps.artifacts.outputs.apk }}
           fail_on_unmatched_files: true

@@ -1,0 +1,16 @@
+{
+  "name": "pinned-calendar-web",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pinned Calendar — marketing site (Astro, static).",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "devDependencies": {
+    "astro": "^5.0.0"
+  }
+}

@@ -1,0 +1,57 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { APP_NAME, GITHUB, ISSUES, CONTACT } from '../config.mjs';
+---
+<Legal title="Terms of Use" updated="June 23, 2026" path="/terms/">
+  <p>
+    These terms cover your use of the {APP_NAME} Android app and this website. {APP_NAME} is free,
+    open-source software. By installing or using it, you agree to these terms.
+  </p>
+
+  <h2>The app is free and open source</h2>
+  <p>
+    {APP_NAME} is released under the <strong>MIT License</strong>. You may use, copy, modify, and
+    distribute it under that license. The full text and source are available on
+    <a href={GITHUB}>GitHub</a>.
+  </p>
+
+  <h2>No warranty</h2>
+  <p>
+    The app is provided <strong>“as is”, without warranty of any kind</strong>, express or implied,
+    including but not limited to the warranties of merchantability, fitness for a particular purpose,
+    and non-infringement. You use it at your own risk. To the maximum extent permitted by law, the
+    author is not liable for any claim, damages, or other liability arising from the app or its use —
+    including any missed event, reminder, or to-do. {APP_NAME} is a convenience layer over the
+    calendars on your device; it is not a substitute for your primary calendar or alarms.
+  </p>
+
+  <h2>No accounts, no purchases</h2>
+  <p>
+    There are no accounts, subscriptions, in-app purchases, or ads. The app works entirely on your
+    device and requires no payment.
+  </p>
+
+  <h2>Your data</h2>
+  <p>
+    {APP_NAME} collects nothing and sends nothing off your device. See the
+    <a href="/privacy/">Privacy Policy</a> for details.
+  </p>
+
+  <h2>Trademarks</h2>
+  <p>
+    {APP_NAME} is an independent project and is not affiliated with, endorsed by, or sponsored by
+    Google. “Google Calendar” and related marks are trademarks of Google LLC.
+  </p>
+
+  <h2>Changes</h2>
+  <p>
+    These terms may be updated from time to time. Material changes will be posted on this page with a
+    new “Last updated” date. Continued use after a change means you accept the updated terms.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions? Open an issue at <a href={ISSUES}>{ISSUES}</a> or email
+    <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+  </p>
+</Legal>
