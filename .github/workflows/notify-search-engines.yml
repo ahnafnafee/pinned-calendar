@@ -1,0 +1,45 @@
+name: Notify search engines
+
+# On every marketing-site deploy, re-ping the sitemap URLs to IndexNow (Bing/Yahoo/DuckDuckGo/Yandex)
+# and, if a service account is configured, Google's Indexing API. Runs alongside Deploy web; waits for
+# the Cloudflare Pages deploy to be live, then submits.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - '.github/workflows/notify-search-engines.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notify-search-engines
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Wait for the Cloudflare Pages deploy to be live
+        run: |
+          sleep 60
+          for i in $(seq 1 24); do
+            curl -fsSL https://pinnedcalendar.ahnafnafee.dev/sitemap.xml >/dev/null && break
+            sleep 10
+          done
+      - name: Install googleapis (best-effort; IndexNow needs no deps)
+        working-directory: web
+        run: npm install --no-save --no-package-lock googleapis@168 || true
+      - name: Submit sitemap URLs (IndexNow + Google)
+        working-directory: web
+        env:
+          SITEMAP_MODE: 'true'
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: node scripts/notify-search-engines.js

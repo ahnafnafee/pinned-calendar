@@ -1,0 +1,34 @@
+name: Search engine weekly re-ping
+
+# Weekly safety net: re-submit every sitemap URL so pages Google hasn't indexed yet get another nudge
+# (and IndexNow stays warm). The on-deploy Notify workflow covers fresh changes; this catches the tail.
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC (off-peak)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: search-weekly-reping
+  cancel-in-progress: false
+
+jobs:
+  reping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Install googleapis (best-effort)
+        working-directory: web
+        run: npm install --no-save --no-package-lock googleapis@168 || true
+      - name: Re-submit every sitemap URL (IndexNow + Google)
+        working-directory: web
+        env:
+          SITEMAP_MODE: 'true'
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: node scripts/notify-search-engines.js
