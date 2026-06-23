@@ -13,11 +13,11 @@ val keystoreProps = Properties().apply {
 }
 
 android {
-    namespace = "com.ahnafnafee.pinnedcalendar"
+    namespace = "dev.ahnafnafee.pinnedcalendar"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.ahnafnafee.pinnedcalendar"
+        applicationId = "dev.ahnafnafee.pinnedcalendar"
         minSdk = 26
         targetSdk = 36
         // Release builds receive these from the Release workflow via -PversionName /

@@ -5,7 +5,7 @@
 
 _Last updated: 2026-06-23_
 
-Pinned Calendar (`com.ahnafnafee.pinnedcalendar`) is an offline-first Android
+Pinned Calendar (`dev.ahnafnafee.pinnedcalendar`) is an offline-first Android
 app. This policy explains what it does — and does not — do with your data.
 
 ## The short version

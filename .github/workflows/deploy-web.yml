@@ -1,7 +1,7 @@
 name: Deploy web
 
 # Builds the marketing site (web/) and deploys it to Cloudflare Pages.
-# Auto-runs on push to main when web/ changes; also dispatchable manually.
+# Auto-runs on push to main (including merges) when web/ changes; also dispatchable manually.
 #
 # Requires these repository secrets (Settings → Secrets and variables → Actions):
 #   CLOUDFLARE_API_TOKEN   — token with the "Cloudflare Pages: Edit" permission
@@ -31,8 +31,18 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-          # `cache:` intentionally omitted — see ci-cache-safety rule (its bundled save runs on
-          # failure too). `npm ci` on this small static site is fast enough without it.
+          # `cache:` intentionally omitted — its bundled save runs in a post-step even on
+          # failure, which can poison the cache (see ci-cache-safety). The npm cache is
+          # restored and saved explicitly below, with the save gated on a fully green run.
+
+      - name: Restore npm cache
+        id: npm-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
 
       - name: Install
         working-directory: web
@@ -49,3 +59,12 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: web
           command: pages deploy dist --project-name=pinned-calendar --branch=main
+
+      # Save only on a fully green run so a failed or partial install can never poison the
+      # cache that the next deploy restores. Restore (above) is unconditional; save is gated.
+      - name: Save npm cache
+        if: success() && steps.npm-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ~/.npm
+          key: ${{ steps.npm-cache.outputs.cache-primary-key }}

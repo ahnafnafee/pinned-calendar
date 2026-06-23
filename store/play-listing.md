@@ -4,7 +4,7 @@ Source of truth for the Play Console store listing. Edit here, then paste into
 Play Console (Grow → Store presence → Main store listing). Keep this file in
 sync with the live listing in the same PR.
 
-Package: `com.ahnafnafee.pinnedcalendar` · Default language: English (US)
+Package: `dev.ahnafnafee.pinnedcalendar` · Default language: English (US)
 
 ---
 

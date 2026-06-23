@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive-icon background: the brand orange gradient (DESIGN.md §1, #F8BC63 -> #E07F2C).
+     Only shown at the icon's bleed/parallax edges; the foreground bitmap carries the art. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M0,0h108v108H0z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="6" android:startY="6"
+                android:endX="102" android:endY="102"
+                android:startColor="#F8BC63"
+                android:endColor="#E07F2C" />
+        </aapt:attr>
+    </path>
+</vector>

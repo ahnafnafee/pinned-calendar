@@ -9,7 +9,7 @@ export const GITHUB = 'https://github.com/ahnafnafee/pinned-calendar';
 export const ISSUES = `${GITHUB}/issues`;
 export const RELEASES = `${GITHUB}/releases/latest`;
 
-export const PACKAGE = 'com.ahnafnafee.pinnedcalendar';
+export const PACKAGE = 'dev.ahnafnafee.pinnedcalendar';
 export const PLAY_URL = `https://play.google.com/store/apps/details?id=${PACKAGE}`;
 // Flip to true once the app is live on Google Play; until then the button reads
 // "Coming soon" and points at the GitHub release instead of a dead Play link.
