@@ -22,6 +22,9 @@ web/node_modules/
 web/dist/
 web/.astro/
 
+# Wrangler (Cloudflare) local cache — written by `wrangler pages deploy`
+.wrangler/
+
 # Design tool scratch (the editable assets under design/assets + design/uploads are kept)
 design/tmp/
 design/.thumbnail

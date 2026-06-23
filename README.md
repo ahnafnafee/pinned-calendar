@@ -10,6 +10,9 @@ Your week's Google Calendar events and to-dos in a single persistent Android not
 [![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/ahnafnafee/pinned-calendar?sort=semver)](https://github.com/ahnafnafee/pinned-calendar/releases/latest)
+[![Website](https://img.shields.io/badge/Website-pinnedcalendar.ahnafnafee.dev-E07F2C?logo=cloudflare&logoColor=white)](https://pinnedcalendar.ahnafnafee.dev)
+
+[**pinnedcalendar.ahnafnafee.dev**](https://pinnedcalendar.ahnafnafee.dev) · Coming soon to Google Play
 
 </div>
 
@@ -79,7 +82,9 @@ No accounts, ads, trackers, or cloud.
 
 ## Download
 
-Download the latest signed APK from the [Releases page](https://github.com/ahnafnafee/pinned-calendar/releases/latest) and install it on your device. You may need to allow installs from unknown sources. No Play Store account is required.
+**Coming soon to Google Play.** Until then, grab the latest signed APK from the [Releases page](https://github.com/ahnafnafee/pinned-calendar/releases/latest) and install it on your device (you may need to allow installs from unknown sources).
+
+Learn more at the website: **[pinnedcalendar.ahnafnafee.dev](https://pinnedcalendar.ahnafnafee.dev)**.
 
 ## Building from source
 
