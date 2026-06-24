@@ -1,4 +1,17 @@
+# robots.txt — https://pinnedcalendar.ahnafnafee.dev/robots.txt
 User-agent: *
+Allow: /
+
+# Explicitly welcome answer-engine crawlers (GEO). Remove any you don't want.
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Google-Extended
 Allow: /
 
 Sitemap: https://pinnedcalendar.ahnafnafee.dev/sitemap.xml

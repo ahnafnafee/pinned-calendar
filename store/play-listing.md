@@ -80,7 +80,7 @@ No. There's no foreground service; it refreshes in the background with WorkManag
 | Field | Value |
 |---|---|
 | App category | Productivity |
-| Tags | calendar, productivity, to-do list, organizer |
+| Tags | **Pick up to 5 from Google's predefined list** (Store settings → App category → Tags — not free text): Calendar · To-Do Lists · Reminders · Day Planner · Productivity Tools (choose the closest matches the Console offers) |
 | Store listing contact email | dynasty11studios@gmail.com *(edit if you prefer another)* |
 | Website (optional) | https://github.com/ahnafnafee/pinned-calendar |
 | Privacy policy URL | https://pinnedcalendar.ahnafnafee.dev/privacy/ *(once the marketing site is deployed; the GitHub copy at `store/privacy-policy.md` works as a pre-launch fallback)* |
