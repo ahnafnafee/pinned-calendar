@@ -1,6 +1,7 @@
 package dev.ahnafnafee.pinnedcalendar
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.os.Build
@@ -71,6 +72,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import dev.ahnafnafee.pinnedcalendar.data.AgendaRepository
 import dev.ahnafnafee.pinnedcalendar.data.AppFont
 import dev.ahnafnafee.pinnedcalendar.data.AppPalette
@@ -100,6 +102,8 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private const val PRIVACY_POLICY_URL = "https://pinnedcalendar.ahnafnafee.dev/privacy/"
 
 class MainActivity : ComponentActivity() {
 
@@ -233,6 +237,13 @@ class MainActivity : ComponentActivity() {
                                 onRequestBatteryExemption = {
                                     runCatching { activity.startActivity(BatteryOptimization.requestIntent(activity)) }
                                 },
+                                onOpenPrivacyPolicy = {
+                                    runCatching {
+                                        activity.startActivity(
+                                            Intent(Intent.ACTION_VIEW, PRIVACY_POLICY_URL.toUri()),
+                                        )
+                                    }
+                                },
                             )
                         }
 
@@ -312,6 +323,7 @@ private fun SettingsTab(
     edit: (suspend SettingsRepository.() -> Unit) -> Unit,
     onOpenNotificationSettings: () -> Unit,
     onRequestBatteryExemption: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit,
 ) {
     SettingsCard("Notifications") {
         CardItem(
@@ -501,6 +513,15 @@ private fun SettingsTab(
                     Button(onClick = onRequestBatteryExemption) { Text("Allow") }
                 }
             },
+        )
+    }
+
+    SettingsCard("About") {
+        ListItem(
+            colors = transparentListItem(),
+            modifier = Modifier.clickable(onClick = onOpenPrivacyPolicy),
+            headlineContent = { Text("Privacy policy") },
+            supportingContent = { Text("How Pinned Calendar handles your data — opens the website") },
         )
     }
 }

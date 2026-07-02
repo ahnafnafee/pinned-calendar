@@ -18,8 +18,8 @@ Requires Node 22.
 ## Edit content
 
 Swappable values live in **`src/config.mjs`** (app name, tagline, links, package id, contact).
-Notably: flip `PLAY_AVAILABLE` to `true` once the app is live on Google Play — the download
-buttons switch from “Download the APK” to “Get it on Google Play.”
+Notably: `PLAY_AVAILABLE` controls where the “Get the app” buttons point — `true` sends them
+to Google Play (the default), `false` falls back to the GitHub release.
 
 ```
 src/
