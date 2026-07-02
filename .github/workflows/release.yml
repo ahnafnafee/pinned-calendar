@@ -211,7 +211,10 @@ jobs:
       # cut even if Play rejects the upload — you can then retry Play without rebuilding.
       - name: Upload AAB to Google Play (internal track)
         if: ${{ inputs.publish_to_play }}
-        uses: r0adkll/upload-google-play@v1
+        # Third-party action that receives the Play service-account key — pinned to a full
+        # commit SHA (not the moving @v1 tag) so a tag repoint can't swap in code that reads
+        # the secret. Bump deliberately when upgrading; SHA is v1.1.5.
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: dev.ahnafnafee.pinnedcalendar
