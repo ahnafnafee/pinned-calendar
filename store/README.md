@@ -55,7 +55,7 @@ Play-ready names and builds the feature graphic (the one asset not in the design
 | Store settings → App category | Productivity |
 | Store settings → Contact details | email / website from `play-listing.md` |
 | Policy → App content → Privacy policy | `https://pinnedcalendar.ahnafnafee.dev/privacy/` |
-| Release → Production (or Testing) → release notes | `release-notes.md` (latest entry) |
+| Release → … → release notes | Auto-attached from `distribution/whatsnew/<version>/` by the Release workflow (see `release-notes.md`) |
 
 ### Privacy policy URL (required)
 Primary: the marketing site's hosted page — `https://pinnedcalendar.ahnafnafee.dev/privacy/`
@@ -110,7 +110,9 @@ Play wants an **Android App Bundle**, not an APK.
 (valid semver, not an existing tag, and strictly higher than the latest release),
 derives a monotonic `versionCode` (`MAJOR*10000 + MINOR*100 + PATCH`), builds the
 signed **`.aab`** (Play) and **`.apk`** (sideload), and publishes a `v<version>`
-GitHub release with both attached. Download the `.aab` and upload it to Play.
+GitHub release with both attached. Check **publish_to_play** at dispatch to also upload the
+`.aab` to Play's internal track (with release notes) automatically; otherwise download the
+`.aab` and upload it by hand.
 
 Requires these repo secrets (Settings → Secrets and variables → Actions):
 `RELEASE_KEYSTORE_BASE64`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`,
@@ -163,4 +165,4 @@ open-source utility. Add them later if you ever need to:
 - **Localized listings** (player2 ships 8 languages) — add `play-listing.<lang>.md` when you localize.
 - **Tablet / other device screenshots** — optional for phone apps; add a `screenshots/tablet/` folder if you want the tablet slots filled.
 - **ASO strategy / custom store pages / EAS config** — not relevant here (this is a native Gradle app, not Expo).
-- **Direct push to Play** (Gradle Play Publisher / fastlane `supply` uploading the `.aab` + this metadata straight to a Play track) — not wired up. The Release workflow stops at building and attaching the signed `.aab`, which you upload to Play by hand. Going fully hands-off needs a Play Developer API service-account secret — and note the *first* release must be uploaded manually anyway, to create the app on Play.
+- **Full metadata sync to Play** (fastlane `supply` pushing listing text, screenshots, and graphics straight to Play) — not wired up. Direct `.aab` upload with release notes **is** wired (opt-in `publish_to_play` in the Release workflow, via a Play service-account secret); only the store-listing/graphics sync stays manual. Note the *first* release must be uploaded manually anyway, to create the app on Play.
