@@ -19,6 +19,18 @@ class AgendaNotifier(
         val items = AgendaRepository(context, clock).agenda(s.windowMode, s.excludedCalendarIds)
         val bucketer = DayBucketer(clock, use24Hour = s.use24HourClock)
         val content = NotificationContentBuilder(bucketer).build(items, settings.displaySettings(s))
-        NotificationPoster(context).apply(s.pinEnabled, s.notificationPriority, content)
+        NotificationPoster(context).apply(
+            pinEnabled = s.pinEnabled,
+            priority = s.notificationPriority,
+            content = content,
+            collapsedItems = s.collapsedItems,
+            showHeader = s.showNotificationHeader,
+            showTodayHeader = s.showTodayNotificationHeader,
+            rowPaddingDp = s.notificationRowPaddingDp,
+            rowTextSizeSp = s.notificationRowTextSizeSp,
+            rowHeightDp = s.notificationRowHeightDp,
+            timeColumnWidthDp = s.notificationTimeColumnWidthDp,
+            useContentPadding = s.notificationContentPadding,
+        )
     }
 }

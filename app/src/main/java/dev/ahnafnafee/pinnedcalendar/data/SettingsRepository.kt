@@ -32,6 +32,20 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     suspend fun setGroupByDay(value: Boolean) = update { it[GROUP] = value }
     suspend fun setHideCompleted(value: Boolean) = update { it[HIDE_DONE] = value }
     suspend fun setMaxItems(value: Int) = update { it[MAX] = value }
+    suspend fun setCollapsedItems(value: Int) = update { it[COLLAPSED_ITEMS] = value.coerceIn(1, 6) }
+    suspend fun setShowNotificationHeader(value: Boolean) = update { it[SHOW_NOTIFICATION_HEADER] = value }
+    suspend fun setShowTodayNotificationHeader(value: Boolean) =
+        update { it[SHOW_TODAY_NOTIFICATION_HEADER] = value }
+    suspend fun setNotificationRowPadding(value: Int) =
+        update { it[NOTIFICATION_ROW_PADDING] = value.coerceIn(0, 12) }
+    suspend fun setNotificationRowTextSize(value: Int) =
+        update { it[NOTIFICATION_ROW_TEXT_SIZE] = value.coerceIn(11, 18) }
+    suspend fun setNotificationRowHeight(value: Int) =
+        update { it[NOTIFICATION_ROW_HEIGHT] = value.coerceIn(12, 32) }
+    suspend fun setNotificationTimeColumnWidth(value: Int) =
+        update { it[NOTIFICATION_TIME_COLUMN_WIDTH] = value.coerceIn(32, 64) }
+    suspend fun setNotificationContentPadding(value: Boolean) =
+        update { it[NOTIFICATION_CONTENT_PADDING] = value }
     suspend fun setUse24HourClock(value: Boolean) = update { it[CLOCK_24H] = value }
     suspend fun setThemeMode(mode: ThemeMode) = update { it[THEME] = mode.name }
     suspend fun setMaterialYou(value: Boolean) = update { it[MATERIAL_YOU] = value }
@@ -60,6 +74,14 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         groupByDay = this[GROUP] ?: true,
         hideCompletedTasks = this[HIDE_DONE] ?: true,
         maxItems = this[MAX] ?: 6,
+        collapsedItems = (this[COLLAPSED_ITEMS] ?: 1).coerceIn(1, 6),
+        showNotificationHeader = this[SHOW_NOTIFICATION_HEADER] ?: true,
+        showTodayNotificationHeader = this[SHOW_TODAY_NOTIFICATION_HEADER] ?: true,
+        notificationRowPaddingDp = (this[NOTIFICATION_ROW_PADDING] ?: 5).coerceIn(0, 12),
+        notificationRowTextSizeSp = (this[NOTIFICATION_ROW_TEXT_SIZE] ?: 14).coerceIn(11, 18),
+        notificationRowHeightDp = (this[NOTIFICATION_ROW_HEIGHT] ?: 22).coerceIn(12, 32),
+        notificationTimeColumnWidthDp = (this[NOTIFICATION_TIME_COLUMN_WIDTH] ?: 64).coerceIn(32, 64),
+        notificationContentPadding = this[NOTIFICATION_CONTENT_PADDING] ?: true,
         use24HourClock = this[CLOCK_24H] ?: false,
         themeMode = this[THEME].toEnum(ThemeMode.DARK) { ThemeMode.valueOf(it) },
         materialYou = this[MATERIAL_YOU] ?: false,
@@ -82,6 +104,14 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         val GROUP = booleanPreferencesKey("group_by_day")
         val HIDE_DONE = booleanPreferencesKey("hide_completed")
         val MAX = intPreferencesKey("max_items")
+        val COLLAPSED_ITEMS = intPreferencesKey("collapsed_items")
+        val SHOW_NOTIFICATION_HEADER = booleanPreferencesKey("show_notification_header")
+        val SHOW_TODAY_NOTIFICATION_HEADER = booleanPreferencesKey("show_today_notification_header")
+        val NOTIFICATION_ROW_PADDING = intPreferencesKey("notification_row_padding")
+        val NOTIFICATION_ROW_TEXT_SIZE = intPreferencesKey("notification_row_text_size")
+        val NOTIFICATION_ROW_HEIGHT = intPreferencesKey("notification_row_height")
+        val NOTIFICATION_TIME_COLUMN_WIDTH = intPreferencesKey("notification_time_column_width")
+        val NOTIFICATION_CONTENT_PADDING = booleanPreferencesKey("notification_content_padding")
         val CLOCK_24H = booleanPreferencesKey("clock_24h")
         val THEME = stringPreferencesKey("theme_mode")
         val MATERIAL_YOU = booleanPreferencesKey("material_you")

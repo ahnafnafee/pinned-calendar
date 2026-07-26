@@ -427,6 +427,91 @@ private fun SettingsTab(
             valueRange = 3f..12f,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
+        Text(
+            "Rows in collapsed notification: ${s.collapsedItems}",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
+        )
+        WavySlider(
+            value = s.collapsedItems.toFloat(),
+            onValueChange = { v -> edit { setCollapsedItems(v.roundToInt()) } },
+            valueRange = 1f..6f,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+        CardItem(
+            title = "Show “This week” heading",
+            subtitle = "Display the heading above the expanded agenda",
+            trailing = {
+                Switch(
+                    checked = s.showNotificationHeader,
+                    onCheckedChange = { v -> edit { setShowNotificationHeader(v) } },
+                )
+            },
+        )
+        CardItem(
+            title = "Show Today section label",
+            subtitle = "Display Today above today's events in compact and expanded views",
+            trailing = {
+                Switch(
+                    checked = s.showTodayNotificationHeader,
+                    onCheckedChange = { v -> edit { setShowTodayNotificationHeader(v) } },
+                )
+            },
+        )
+        Text(
+            "Notification row padding: ${s.notificationRowPaddingDp} dp",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
+        )
+        WavySlider(
+            value = s.notificationRowPaddingDp.toFloat(),
+            onValueChange = { v -> edit { setNotificationRowPadding(v.roundToInt()) } },
+            valueRange = 0f..12f,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+        Text(
+            "Notification text size: ${s.notificationRowTextSizeSp} sp",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
+        )
+        WavySlider(
+            value = s.notificationRowTextSizeSp.toFloat(),
+            onValueChange = { v -> edit { setNotificationRowTextSize(v.roundToInt()) } },
+            valueRange = 11f..18f,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+        Text(
+            "Notification row height: ${s.notificationRowHeightDp} dp",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
+        )
+        WavySlider(
+            value = s.notificationRowHeightDp.toFloat(),
+            onValueChange = { v -> edit { setNotificationRowHeight(v.roundToInt()) } },
+            valueRange = 12f..32f,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+        Text(
+            "Notification time column width: ${s.notificationTimeColumnWidthDp} dp",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
+        )
+        WavySlider(
+            value = s.notificationTimeColumnWidthDp.toFloat(),
+            onValueChange = { v -> edit { setNotificationTimeColumnWidth(v.roundToInt()) } },
+            valueRange = 32f..64f,
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+        CardItem(
+            title = "Outer notification padding",
+            subtitle = "Add vertical space above and below the notification content",
+            trailing = {
+                Switch(
+                    checked = s.notificationContentPadding,
+                    onCheckedChange = { v -> edit { setNotificationContentPadding(v) } },
+                )
+            },
+        )
     }
 
     SettingsCard("Appearance") {

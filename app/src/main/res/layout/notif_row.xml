@@ -11,7 +11,8 @@
     <ImageView
         android:id="@+id/row_bar"
         android:layout_width="4dp"
-        android:layout_height="22dp"
+        android:layout_height="wrap_content"
+        android:minHeight="22dp"
         android:layout_marginEnd="10dp"
         android:contentDescription="@null"
         android:background="#039BE5" />

@@ -57,6 +57,26 @@ class AgendaNotificationBuilderTest {
         assertEquals(channelId, n.channelId)
     }
 
+    @Test fun omits_expanded_layout_when_all_rows_fit_in_compact_view() {
+        ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
+        val n = AgendaNotificationBuilder(ctx).build(
+            sampleContent(),
+            NotificationPriority.NORMAL,
+            collapsedItems = 2,
+        )
+        assertNull(n.bigContentView)
+    }
+
+    @Test fun includes_expanded_layout_when_compact_view_hides_rows() {
+        ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
+        val n = AgendaNotificationBuilder(ctx).build(
+            sampleContent(),
+            NotificationPriority.NORMAL,
+            collapsedItems = 1,
+        )
+        assertNotNull(n.bigContentView)
+    }
+
     @Suppress("DEPRECATION") // legacy Notification.priority is the field this lever populates
     @Test fun every_build_stamps_a_fresh_ranking_timestamp_with_mapped_priority() {
         ChannelManager.ensureChannel(ctx, NotificationPriority.TOP)
