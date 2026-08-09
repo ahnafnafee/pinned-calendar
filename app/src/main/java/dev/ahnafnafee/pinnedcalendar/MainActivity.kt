@@ -449,12 +449,12 @@ private fun SettingsTab(
             },
         )
         CardItem(
-            title = "Show Today section label",
-            subtitle = "Display Today above today's events in compact and expanded views",
+            title = "Show Today label",
+            subtitle = "Display Today in multi-row compact and expanded notifications",
             trailing = {
                 Switch(
-                    checked = s.showTodayNotificationHeader,
-                    onCheckedChange = { v -> edit { setShowTodayNotificationHeader(v) } },
+                    checked = s.showTodayHeader,
+                    onCheckedChange = { v -> edit { setShowTodayHeader(v) } },
                 )
             },
         )

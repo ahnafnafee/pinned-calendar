@@ -53,7 +53,6 @@ object ChannelManager {
                 setShowBadge(false)
                 setSound(null, null)
                 enableVibration(false)
-                enableLights(false)
             }
             mgr.createNotificationChannel(channel)
         }

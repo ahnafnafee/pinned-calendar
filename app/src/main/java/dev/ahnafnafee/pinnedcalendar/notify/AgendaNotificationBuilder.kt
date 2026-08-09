@@ -25,6 +25,7 @@ class AgendaNotificationBuilder(private val context: Context) {
         timeColumnWidthDp: Int = 64,
         useContentPadding: Boolean = true,
     ): Notification {
+        require(!content.isEmpty) { "Empty notification content must be cancelled, not rendered" }
         // Tapping the pin's header or icon opens this app; rows keep their own deep links.
         val contentIntent = AppLaunch.pendingIntent(context)
         val deleteIntent = PendingIntent.getBroadcast(
@@ -35,8 +36,7 @@ class AgendaNotificationBuilder(private val context: Context) {
 
         val compactCount = collapsedItems.coerceIn(1, 6)
         val visibleRows = content.sections.sumOf { it.rows.size }
-        val needsExpandedView =
-            !content.isEmpty && (content.moreCount > 0 || visibleRows > compactCount)
+        val needsExpandedView = content.moreCount > 0 || visibleRows > compactCount
 
         val builder = NotificationCompat.Builder(context, ChannelManager.channelId(priority))
             .setSmallIcon(R.drawable.ic_calendar)

@@ -18,10 +18,10 @@ class RefreshAgendaWorkerTest {
     private val ctx = RuntimeEnvironment.getApplication()
     private val mgr = ctx.getSystemService(NotificationManager::class.java)
 
-    @Test fun worker_posts_notification_and_succeeds() = runTest {
+    @Test fun worker_hides_notification_for_an_empty_agenda_and_succeeds() = runTest {
         val worker = TestListenableWorkerBuilder<RefreshAgendaWorker>(ctx).build()
         val result = worker.doWork()
         assertTrue(result is ListenableWorker.Result.Success)
-        assertEquals(1, shadowOf(mgr).activeNotifications.size)
+        assertEquals(0, shadowOf(mgr).activeNotifications.size)
     }
 }

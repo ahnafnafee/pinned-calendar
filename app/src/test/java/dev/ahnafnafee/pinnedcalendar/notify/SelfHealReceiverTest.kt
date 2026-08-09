@@ -33,13 +33,13 @@ class SelfHealReceiverTest {
         }
     }
 
-    @Test fun reposts_notification_on_receive_when_enabled() = runBlocking {
+    @Test fun does_not_post_when_self_healing_an_empty_agenda() = runBlocking {
         settings.setPinEnabled(true)
         settings.setDoubleSwipeDismiss(false)
         settings.setLastDismissAt(0L)
 
-        SelfHealReceiver().onReceive(ctx, Intent()) // a lone dismissal self-heals
-        assertEquals(1, shadowOf(mgr).activeNotifications.size)
+        SelfHealReceiver().onReceive(ctx, Intent())
+        assertEquals(0, shadowOf(mgr).activeNotifications.size)
     }
 
     @Test fun double_swipe_within_window_removes_the_pin() = runBlocking {
@@ -48,8 +48,8 @@ class SelfHealReceiverTest {
         settings.setLastDismissAt(0L)
 
         val receiver = SelfHealReceiver()
-        receiver.onReceive(ctx, Intent()) // first swipe: re-posts
-        assertEquals(1, shadowOf(mgr).activeNotifications.size)
+        receiver.onReceive(ctx, Intent()) // first swipe: records the dismissal
+        assertEquals(0, shadowOf(mgr).activeNotifications.size)
         receiver.onReceive(ctx, Intent()) // second quick swipe: removes the pin for good
         assertEquals(0, shadowOf(mgr).activeNotifications.size)
         assertFalse(settings.isPinEnabled())

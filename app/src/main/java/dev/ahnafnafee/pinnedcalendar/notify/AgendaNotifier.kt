@@ -25,7 +25,7 @@ class AgendaNotifier(
             content = content,
             collapsedItems = s.collapsedItems,
             showHeader = s.showNotificationHeader,
-            showTodayHeader = s.showTodayNotificationHeader,
+            showTodayHeader = s.showTodayHeader,
             rowPaddingDp = s.notificationRowPaddingDp,
             rowTextSizeSp = s.notificationRowTextSizeSp,
             rowHeightDp = s.notificationRowHeightDp,

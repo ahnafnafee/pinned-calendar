@@ -6,8 +6,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
-import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import dev.ahnafnafee.pinnedcalendar.R
@@ -38,7 +36,8 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
         timeColumnWidthDp: Int,
         useContentPadding: Boolean,
     ): RemoteViews =
-        collapsedRows(
+        if (maxRows <= 1) collapsedSingleLine(content, rowTextSizeSp, useContentPadding)
+        else collapsedRows(
             content,
             maxRows,
             showTodayHeader,
@@ -48,6 +47,25 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
             timeColumnWidthDp,
             useContentPadding,
         )
+
+    private fun collapsedSingleLine(
+        content: NotificationContent,
+        rowTextSizeSp: Int,
+        useContentPadding: Boolean,
+    ): RemoteViews {
+        val rv = RemoteViews(context.packageName, R.layout.notif_collapsed)
+        rv.setTextViewText(R.id.collapsed_line, content.collapsedLine)
+        rv.setTextColor(R.id.collapsed_line, primaryText)
+        rv.setInt(R.id.collapsed_dot, "setBackgroundColor", parseColor(content.collapsedColorHex))
+        rv.setTextViewText(
+            R.id.collapsed_more,
+            if (content.headerCount > 1) "+${content.headerCount - 1}" else "",
+        )
+        rv.setTextColor(R.id.collapsed_more, accent)
+        rv.setFloat(R.id.collapsed_line, "setTextSize", rowTextSizeSp.coerceIn(11, 18).toFloat())
+        applyContentPadding(rv, useContentPadding, compact = true)
+        return rv
+    }
 
     private fun collapsedRows(
         content: NotificationContent,
@@ -61,46 +79,34 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
     ): RemoteViews {
         val rv = RemoteViews(context.packageName, R.layout.notif_collapsed_multi)
         rv.removeAllViews(R.id.collapsed_container)
-        if (content.isEmpty) {
-            val row = RemoteViews(context.packageName, R.layout.notif_row)
-            row.setViewVisibility(R.id.row_bar, View.INVISIBLE)
-            row.setTextViewText(R.id.row_time, "")
-            row.setTextViewText(R.id.row_title, "Nothing scheduled this week")
-            row.setTextColor(R.id.row_title, primaryText)
-            applyRowAppearance(row, rowPaddingDp, rowTextSizeSp, rowHeightDp, timeColumnWidthDp)
-            rv.addView(R.id.collapsed_container, row)
-            rv.setTextViewText(R.id.collapsed_more, "")
-        } else {
-            var remainingRows = maxRows.coerceIn(1, 6)
-            var shownRows = 0
-            var clickReq = 100
-            for (section in content.sections) {
-                if (remainingRows == 0) break
-                val rows = section.rows.take(remainingRows)
-                if (rows.isEmpty()) continue
+        var shownRows = 0
+        var clickReq = 100
+        var remainingRows = maxRows.coerceIn(1, 6)
+        for (section in content.sections) {
+            if (remainingRows == 0) break
+            val rows = section.rows.take(remainingRows)
+            if (rows.isEmpty()) continue
 
-                if (section.header.isNotEmpty() && (!section.isToday || showTodayHeader)) {
-                    val header = RemoteViews(context.packageName, R.layout.notif_day_header_compact)
-                    header.setTextViewText(R.id.day_header, section.header)
-                    header.setTextColor(R.id.day_header, secondaryText)
-                    rv.addView(R.id.collapsed_container, header)
-                }
-                rows.forEach { row ->
-                    rv.addView(
-                        R.id.collapsed_container,
-                        agendaRow(row, clickReq++, rowPaddingDp, rowTextSizeSp, rowHeightDp, timeColumnWidthDp),
-                    )
-                }
-                shownRows += rows.size
-                remainingRows -= rows.size
+            if (section.header.isNotEmpty() && (!section.isToday || showTodayHeader)) {
+                val header = RemoteViews(context.packageName, R.layout.notif_day_header_compact)
+                header.setTextViewText(R.id.day_header, section.header)
+                header.setTextColor(R.id.day_header, secondaryText)
+                rv.addView(R.id.collapsed_container, header)
             }
-            val hiddenCount = (content.headerCount - shownRows).coerceAtLeast(0)
-            rv.setTextViewText(
-                R.id.collapsed_more,
-                if (hiddenCount > 0) "+$hiddenCount" else "",
-            )
-            rv.setTextColor(R.id.collapsed_more, accent)
+            rows.forEach { row ->
+                rv.addView(
+                    R.id.collapsed_container,
+                    agendaRow(row, clickReq++, rowPaddingDp, rowTextSizeSp, rowHeightDp, timeColumnWidthDp),
+                )
+            }
+            shownRows += rows.size
+            remainingRows -= rows.size
         }
+        // Count rows omitted from this RemoteViews. System UI may display a different number
+        // of the included rows depending on Android version and device implementation.
+        val hiddenCount = (content.headerCount - shownRows).coerceAtLeast(0)
+        rv.setTextViewText(R.id.collapsed_more, if (hiddenCount > 0) "+$hiddenCount" else "")
+        rv.setTextColor(R.id.collapsed_more, accent)
         applyContentPadding(rv, useContentPadding, compact = true)
         return rv
     }
@@ -122,20 +128,6 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
             R.id.expanded_title,
             if (showHeader) View.VISIBLE else View.GONE,
         )
-
-        if (content.isEmpty) {
-            rv.setTextViewText(R.id.expanded_title, "This week")
-            rv.setTextColor(R.id.expanded_title, accent)
-            val row = RemoteViews(context.packageName, R.layout.notif_row)
-            row.setViewVisibility(R.id.row_bar, View.INVISIBLE)
-            row.setTextViewText(R.id.row_time, "")
-            row.setTextViewText(R.id.row_title, "Nothing scheduled 🎉")
-            row.setTextColor(R.id.row_title, primaryText)
-            applyRowAppearance(row, rowPaddingDp, rowTextSizeSp, rowHeightDp, timeColumnWidthDp)
-            rv.addView(R.id.expanded_container, row)
-            rv.setViewVisibility(R.id.expanded_more, View.GONE)
-            return rv
-        }
 
         rv.setTextViewText(R.id.expanded_title, "This week · ${content.headerCount}")
         rv.setTextColor(R.id.expanded_title, accent)
@@ -203,13 +195,15 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
         val titleSize = rowTextSizeSp.coerceIn(11, 18).toFloat()
         row.setFloat(R.id.row_title, "setTextSize", titleSize)
         row.setFloat(R.id.row_time, "setTextSize", (titleSize - 1.5f).coerceAtLeast(10f))
-        row.setInt(R.id.row_root, "setMinimumHeight", dp(rowHeightDp.coerceIn(12, 32)))
+        // The setting describes the content area; vertical padding is added around it. The color
+        // bar uses match_parent, so it follows the resulting row height instead of imposing 22dp.
+        row.setInt(
+            R.id.row_root,
+            "setMinimumHeight",
+            dp(rowHeightDp.coerceIn(12, 32) + rowPaddingDp.coerceIn(0, 12) * 2),
+        )
         val timeWidth = timeColumnWidthDp.coerceIn(32, 64)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            row.setViewLayoutWidth(R.id.row_time, timeWidth.toFloat(), TypedValue.COMPLEX_UNIT_DIP)
-        } else {
-            row.setInt(R.id.row_time, "setWidth", dp(timeWidth))
-        }
+        row.setInt(R.id.row_time, "setWidth", dp(timeWidth))
     }
 
     private fun applyContentPadding(row: RemoteViews, useContentPadding: Boolean, compact: Boolean) {

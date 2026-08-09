@@ -34,8 +34,8 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     suspend fun setMaxItems(value: Int) = update { it[MAX] = value }
     suspend fun setCollapsedItems(value: Int) = update { it[COLLAPSED_ITEMS] = value.coerceIn(1, 6) }
     suspend fun setShowNotificationHeader(value: Boolean) = update { it[SHOW_NOTIFICATION_HEADER] = value }
-    suspend fun setShowTodayNotificationHeader(value: Boolean) =
-        update { it[SHOW_TODAY_NOTIFICATION_HEADER] = value }
+    suspend fun setShowTodayHeader(value: Boolean) =
+        update { it[SHOW_TODAY_HEADER] = value }
     suspend fun setNotificationRowPadding(value: Int) =
         update { it[NOTIFICATION_ROW_PADDING] = value.coerceIn(0, 12) }
     suspend fun setNotificationRowTextSize(value: Int) =
@@ -76,7 +76,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         maxItems = this[MAX] ?: 6,
         collapsedItems = (this[COLLAPSED_ITEMS] ?: 1).coerceIn(1, 6),
         showNotificationHeader = this[SHOW_NOTIFICATION_HEADER] ?: true,
-        showTodayNotificationHeader = this[SHOW_TODAY_NOTIFICATION_HEADER] ?: true,
+        showTodayHeader = this[SHOW_TODAY_HEADER] ?: true,
         notificationRowPaddingDp = (this[NOTIFICATION_ROW_PADDING] ?: 5).coerceIn(0, 12),
         notificationRowTextSizeSp = (this[NOTIFICATION_ROW_TEXT_SIZE] ?: 14).coerceIn(11, 18),
         notificationRowHeightDp = (this[NOTIFICATION_ROW_HEIGHT] ?: 22).coerceIn(12, 32),
@@ -106,7 +106,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         val MAX = intPreferencesKey("max_items")
         val COLLAPSED_ITEMS = intPreferencesKey("collapsed_items")
         val SHOW_NOTIFICATION_HEADER = booleanPreferencesKey("show_notification_header")
-        val SHOW_TODAY_NOTIFICATION_HEADER = booleanPreferencesKey("show_today_notification_header")
+        val SHOW_TODAY_HEADER = booleanPreferencesKey("show_today_notification_header")
         val NOTIFICATION_ROW_PADDING = intPreferencesKey("notification_row_padding")
         val NOTIFICATION_ROW_TEXT_SIZE = intPreferencesKey("notification_row_text_size")
         val NOTIFICATION_ROW_HEIGHT = intPreferencesKey("notification_row_height")
