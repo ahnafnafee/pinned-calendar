@@ -10,7 +10,7 @@ class NotificationPoster(private val context: Context) {
 
     private val builder = AgendaNotificationBuilder(context)
 
-    /** Posts when [pinEnabled] and content exists; otherwise cancels. Returns true when showing. */
+    /** Posts when [pinEnabled]; cancels when disabled. Returns true if a notification is now showing. */
     fun apply(
         pinEnabled: Boolean,
         priority: NotificationPriority,
@@ -25,7 +25,7 @@ class NotificationPoster(private val context: Context) {
         useContentPadding: Boolean = true,
     ): Boolean {
         val mgr = context.getSystemService<NotificationManager>() ?: return false
-        return if (pinEnabled && !content.isEmpty) {
+        return if (pinEnabled) {
             ChannelManager.ensureChannel(context, priority)
             mgr.notify(
                 ChannelManager.NOTIFICATION_ID,

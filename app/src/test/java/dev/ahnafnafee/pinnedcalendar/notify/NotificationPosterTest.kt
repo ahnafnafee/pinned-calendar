@@ -36,11 +36,13 @@ class NotificationPosterTest {
         assertEquals(1, shadowOf(mgr).activeNotifications.size)
     }
 
-    @Test fun cancels_when_content_is_empty() {
+    // The pin persists through an empty week as a "Nothing scheduled" state; only disabling
+    // the pin removes it.
+    @Test fun keeps_showing_the_empty_state_when_content_is_empty() {
         poster.apply(pinEnabled = true, priority = NotificationPriority.TOP, content = content)
         val showing = poster.apply(pinEnabled = true, priority = NotificationPriority.TOP, content = emptyContent)
-        assertEquals(false, showing)
-        assertEquals(0, shadowOf(mgr).activeNotifications.size)
+        assertEquals(true, showing)
+        assertEquals(1, shadowOf(mgr).activeNotifications.size)
     }
 
     @Test fun cancels_when_disabled() {

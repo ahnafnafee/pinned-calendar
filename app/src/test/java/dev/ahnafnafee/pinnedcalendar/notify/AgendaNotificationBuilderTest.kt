@@ -49,6 +49,15 @@ class AgendaNotificationBuilderTest {
         assertNotNull("expected a content intent that opens the app", n.contentIntent)
     }
 
+    @Test fun empty_content_builds_a_collapsed_only_notification() {
+        val channelId = ChannelManager.channelId(NotificationPriority.NORMAL)
+        ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
+        val empty = NotificationContent(0, "", null, emptyList(), 0, isEmpty = true)
+        val n = AgendaNotificationBuilder(ctx).build(empty, NotificationPriority.NORMAL)
+        assertEquals(channelId, n.channelId)
+        assertNull("an empty agenda has nothing to expand into", n.bigContentView)
+    }
+
     @Test fun omits_expanded_layout_when_all_rows_fit_in_compact_view() {
         ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
         val n = AgendaNotificationBuilder(ctx).build(

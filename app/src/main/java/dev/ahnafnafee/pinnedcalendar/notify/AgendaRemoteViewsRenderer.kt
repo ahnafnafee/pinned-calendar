@@ -36,7 +36,9 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
         timeColumnWidthDp: Int,
         useContentPadding: Boolean,
     ): RemoteViews =
-        if (maxRows <= 1) collapsedSingleLine(content, rowTextSizeSp, useContentPadding)
+        // An empty agenda always renders the single-line layout: its "Nothing scheduled" message
+        // has no rows to stack, so the multi-row container would only add an indented row shell.
+        if (maxRows <= 1 || content.isEmpty) collapsedSingleLine(content, rowTextSizeSp, useContentPadding)
         else collapsedRows(
             content,
             maxRows,
@@ -54,14 +56,22 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
         useContentPadding: Boolean,
     ): RemoteViews {
         val rv = RemoteViews(context.packageName, R.layout.notif_collapsed)
-        rv.setTextViewText(R.id.collapsed_line, content.collapsedLine)
-        rv.setTextColor(R.id.collapsed_line, primaryText)
-        rv.setInt(R.id.collapsed_dot, "setBackgroundColor", parseColor(content.collapsedColorHex))
-        rv.setTextViewText(
-            R.id.collapsed_more,
-            if (content.headerCount > 1) "+${content.headerCount - 1}" else "",
-        )
-        rv.setTextColor(R.id.collapsed_more, accent)
+        if (content.isEmpty) {
+            rv.setTextViewText(R.id.collapsed_line, "Nothing scheduled this week")
+            rv.setTextColor(R.id.collapsed_line, primaryText)
+            rv.setViewVisibility(R.id.collapsed_dot, View.INVISIBLE)
+            rv.setTextViewText(R.id.collapsed_more, "")
+        } else {
+            rv.setViewVisibility(R.id.collapsed_dot, View.VISIBLE)
+            rv.setTextViewText(R.id.collapsed_line, content.collapsedLine)
+            rv.setTextColor(R.id.collapsed_line, primaryText)
+            rv.setInt(R.id.collapsed_dot, "setBackgroundColor", parseColor(content.collapsedColorHex))
+            rv.setTextViewText(
+                R.id.collapsed_more,
+                if (content.headerCount > 1) "+${content.headerCount - 1}" else "",
+            )
+            rv.setTextColor(R.id.collapsed_more, accent)
+        }
         rv.setFloat(R.id.collapsed_line, "setTextSize", rowTextSizeSp.coerceIn(11, 18).toFloat())
         applyContentPadding(rv, useContentPadding, compact = true)
         return rv
