@@ -3,12 +3,14 @@ package dev.ahnafnafee.pinnedcalendar
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.database.ContentObserver
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.CalendarContract
+import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -67,16 +69,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import dev.ahnafnafee.pinnedcalendar.data.AgendaRepository
 import dev.ahnafnafee.pinnedcalendar.data.AppFont
 import dev.ahnafnafee.pinnedcalendar.data.AppPalette
 import dev.ahnafnafee.pinnedcalendar.data.AppSettings
+import dev.ahnafnafee.pinnedcalendar.data.DisplaySettings
 import dev.ahnafnafee.pinnedcalendar.data.NotificationPriority
 import dev.ahnafnafee.pinnedcalendar.data.SettingsRepository
 import dev.ahnafnafee.pinnedcalendar.data.ThemeMode
@@ -86,8 +91,12 @@ import dev.ahnafnafee.pinnedcalendar.data.calendar.CalendarsRepository
 import dev.ahnafnafee.pinnedcalendar.data.settingsDataStore
 import dev.ahnafnafee.pinnedcalendar.data.todo.LocalTodo
 import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
+import dev.ahnafnafee.pinnedcalendar.domain.DayBucketer
+import dev.ahnafnafee.pinnedcalendar.domain.NotificationContentBuilder
+import dev.ahnafnafee.pinnedcalendar.domain.SampleAgenda
 import dev.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
 import dev.ahnafnafee.pinnedcalendar.domain.model.ItemKind
+import dev.ahnafnafee.pinnedcalendar.notify.AgendaRemoteViewsRenderer
 import dev.ahnafnafee.pinnedcalendar.notify.NotificationSettingsIntent
 import dev.ahnafnafee.pinnedcalendar.system.BatteryOptimization
 import dev.ahnafnafee.pinnedcalendar.ui.theme.AppShape
@@ -96,6 +105,7 @@ import dev.ahnafnafee.pinnedcalendar.ui.theme.MorphableShape
 import dev.ahnafnafee.pinnedcalendar.ui.theme.PinnedCalendarTheme
 import dev.ahnafnafee.pinnedcalendar.work.AgendaScheduler
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
+import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.math.roundToInt
@@ -368,6 +378,10 @@ private fun SettingsTab(
         }
     }
 
+    SettingsCard("Notification layout") {
+        NotificationLayoutContent(s, edit)
+    }
+
     SettingsCard("Time window") {
         ChipRow {
             WindowMode.entries.forEach { mode ->
@@ -426,91 +440,6 @@ private fun SettingsTab(
             onValueChange = { v -> edit { setMaxItems(v.roundToInt()) } },
             valueRange = 3f..12f,
             modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        Text(
-            "Rows in collapsed notification: ${s.collapsedItems}",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
-        )
-        WavySlider(
-            value = s.collapsedItems.toFloat(),
-            onValueChange = { v -> edit { setCollapsedItems(v.roundToInt()) } },
-            valueRange = 1f..6f,
-            modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        CardItem(
-            title = "Show “This week” heading",
-            subtitle = "Display the heading above the expanded agenda",
-            trailing = {
-                Switch(
-                    checked = s.showNotificationHeader,
-                    onCheckedChange = { v -> edit { setShowNotificationHeader(v) } },
-                )
-            },
-        )
-        CardItem(
-            title = "Show Today label",
-            subtitle = "Display Today in multi-row compact and expanded notifications",
-            trailing = {
-                Switch(
-                    checked = s.showTodayHeader,
-                    onCheckedChange = { v -> edit { setShowTodayHeader(v) } },
-                )
-            },
-        )
-        Text(
-            "Notification row padding: ${s.notificationRowPaddingDp} dp",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
-        )
-        WavySlider(
-            value = s.notificationRowPaddingDp.toFloat(),
-            onValueChange = { v -> edit { setNotificationRowPadding(v.roundToInt()) } },
-            valueRange = 0f..12f,
-            modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        Text(
-            "Notification text size: ${s.notificationRowTextSizeSp} sp",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
-        )
-        WavySlider(
-            value = s.notificationRowTextSizeSp.toFloat(),
-            onValueChange = { v -> edit { setNotificationRowTextSize(v.roundToInt()) } },
-            valueRange = 11f..18f,
-            modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        Text(
-            "Notification row height: ${s.notificationRowHeightDp} dp",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
-        )
-        WavySlider(
-            value = s.notificationRowHeightDp.toFloat(),
-            onValueChange = { v -> edit { setNotificationRowHeight(v.roundToInt()) } },
-            valueRange = 12f..32f,
-            modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        Text(
-            "Notification time column width: ${s.notificationTimeColumnWidthDp} dp",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 20.dp, top = 6.dp),
-        )
-        WavySlider(
-            value = s.notificationTimeColumnWidthDp.toFloat(),
-            onValueChange = { v -> edit { setNotificationTimeColumnWidth(v.roundToInt()) } },
-            valueRange = 32f..64f,
-            modifier = Modifier.padding(horizontal = 20.dp),
-        )
-        CardItem(
-            title = "Outer notification padding",
-            subtitle = "Add vertical space above and below the notification content",
-            trailing = {
-                Switch(
-                    checked = s.notificationContentPadding,
-                    onCheckedChange = { v -> edit { setNotificationContentPadding(v) } },
-                )
-            },
         )
     }
 
@@ -767,3 +696,173 @@ private fun ColorDot(hex: String?) {
 private val SEED_SWATCHES = listOf(
     0xFFE07F2C, 0xFF00897B, 0xFF7E57C2, 0xFFD81B60, 0xFF1A73E8, 0xFF43A047,
 ).map { it.toInt() }
+
+/** A coherent padding/text/height triple for the notification rows. */
+private enum class DensityPreset(
+    val label: String,
+    val paddingDp: Int,
+    val textSp: Int,
+    val heightDp: Int,
+) {
+    COMPACT("Compact", 2, 12, 16),
+    COZY("Cozy", 5, 14, 22),
+    COMFORTABLE("Comfortable", 8, 16, 28),
+    ;
+
+    fun matches(s: AppSettings): Boolean =
+        s.notificationRowPaddingDp == paddingDp &&
+            s.notificationRowTextSizeSp == textSp &&
+            s.notificationRowHeightDp == heightDp
+}
+
+@Composable
+private fun ColumnScope.NotificationLayoutContent(
+    s: AppSettings,
+    edit: (suspend SettingsRepository.() -> Unit) -> Unit,
+) {
+    NotificationPreview(s)
+
+    CardCaption("Density")
+    // The active preset is derived from the stored triple, so the chips never disagree with
+    // what the notification actually renders. Custom is a UI state, not a persisted value.
+    val activePreset = DensityPreset.entries.firstOrNull { it.matches(s) }
+    var customChosen by rememberSaveable { mutableStateOf(false) }
+    val customActive = customChosen || activePreset == null
+    ChipRow {
+        DensityPreset.entries.forEach { preset ->
+            PillChip(
+                selected = !customActive && activePreset == preset,
+                onClick = {
+                    customChosen = false
+                    edit {
+                        setNotificationRowPadding(preset.paddingDp)
+                        setNotificationRowTextSize(preset.textSp)
+                        setNotificationRowHeight(preset.heightDp)
+                    }
+                },
+                label = preset.label,
+            )
+        }
+        PillChip(customActive, { customChosen = true }, "Custom")
+    }
+    if (customActive) {
+        SliderRow("Row spacing", s.notificationRowPaddingDp, 0f..12f) { edit { setNotificationRowPadding(it) } }
+        SliderRow("Text size", s.notificationRowTextSizeSp, 11f..18f) { edit { setNotificationRowTextSize(it) } }
+        SliderRow("Row height", s.notificationRowHeightDp, 12f..32f) { edit { setNotificationRowHeight(it) } }
+        SliderRow("Time column width", s.notificationTimeColumnWidthDp, 32f..64f) {
+            edit { setNotificationTimeColumnWidth(it) }
+        }
+    }
+
+    SliderRow("Rows before expanding", s.collapsedItems, 1f..6f) { edit { setCollapsedItems(it) } }
+    CardItem(
+        title = "Show “This week” heading",
+        subtitle = "Display the heading above the expanded agenda",
+        trailing = {
+            Switch(
+                checked = s.showNotificationHeader,
+                onCheckedChange = { v -> edit { setShowNotificationHeader(v) } },
+            )
+        },
+    )
+    CardItem(
+        title = "Show Today label",
+        subtitle = "Display Today in multi-row compact and expanded notifications",
+        trailing = {
+            Switch(
+                checked = s.showTodayHeader,
+                onCheckedChange = { v -> edit { setShowTodayHeader(v) } },
+            )
+        },
+    )
+    CardItem(
+        title = "Outer notification padding",
+        subtitle = "Add vertical space above and below the notification content",
+        trailing = {
+            Switch(
+                checked = s.notificationContentPadding,
+                onCheckedChange = { v -> edit { setNotificationContentPadding(v) } },
+            )
+        },
+    )
+}
+
+@Composable
+private fun SliderRow(label: String, value: Int, range: ClosedFloatingPointRange<Float>, onChange: (Int) -> Unit) {
+    Text(
+        "$label: $value",
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.padding(start = 20.dp, top = 6.dp),
+    )
+    WavySlider(
+        value = value.toFloat(),
+        onValueChange = { v -> onChange(v.roundToInt()) },
+        valueRange = range,
+        modifier = Modifier.padding(horizontal = 20.dp),
+    )
+}
+
+@Composable
+private fun NotificationPreview(s: AppSettings) {
+    val context = LocalContext.current
+    var showExpanded by rememberSaveable { mutableStateOf(false) }
+
+    // Sample content runs through the real pipeline (bucketer + content builder), so the preview
+    // obeys the same grouping, capping, and clock settings the posted notification does.
+    val content = remember(s.use24HourClock, s.groupByDay, s.hideCompletedTasks, s.maxItems) {
+        val clock = Clock.systemDefaultZone()
+        NotificationContentBuilder(DayBucketer(clock, use24Hour = s.use24HourClock)).build(
+            SampleAgenda.items(clock),
+            DisplaySettings(s.maxItems, s.hideCompletedTasks, s.groupByDay),
+        )
+    }
+
+    // The renderer keys its text colors off the SYSTEM night mode (the shade's theme), not the
+    // app theme, so the preview backdrop must follow the same signal or the text goes illegible.
+    val systemDark =
+        (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+    val shadeBackground = if (systemDark) Color(0xFF1F2124) else Color(0xFFE9EBEE)
+
+    ChipRow {
+        PillChip(!showExpanded, { showExpanded = false }, "Collapsed")
+        PillChip(showExpanded, { showExpanded = true }, "Expanded")
+    }
+    AndroidView(
+        factory = { ctx -> FrameLayout(ctx) },
+        update = { host ->
+            val renderer = AgendaRemoteViewsRenderer(host.context)
+            val rv = if (showExpanded) {
+                renderer.expanded(
+                    content,
+                    s.showNotificationHeader,
+                    s.showTodayHeader,
+                    s.notificationRowPaddingDp,
+                    s.notificationRowTextSizeSp,
+                    s.notificationRowHeightDp,
+                    s.notificationTimeColumnWidthDp,
+                    s.notificationContentPadding,
+                )
+            } else {
+                renderer.collapsed(
+                    content,
+                    s.collapsedItems,
+                    s.showTodayHeader,
+                    s.notificationRowPaddingDp,
+                    s.notificationRowTextSizeSp,
+                    s.notificationRowHeightDp,
+                    s.notificationTimeColumnWidthDp,
+                    s.notificationContentPadding,
+                )
+            }
+            host.removeAllViews()
+            host.addView(rv.apply(host.context, host))
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .clip(AppShape.card)
+            .background(shadeBackground)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+    )
+}
