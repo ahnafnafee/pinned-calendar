@@ -51,6 +51,19 @@ class TodoGroupsTest {
     }
 
     @Test
+    fun `completed items keep their stored order`() {
+        val groups = TodoGroups.of(
+            listOf(
+                todo("doneNewer", dueAt(today.plusDays(2)), done = true),
+                todo("doneOlder", dueAt(today.minusDays(2)), done = true),
+            ),
+            today,
+            zone,
+        )
+        assertEquals(listOf("doneNewer", "doneOlder"), groups.single().second.map { it.id })
+    }
+
+    @Test
     fun `open items sort by due date then priority within a section`() {
         val groups = TodoGroups.of(
             listOf(

@@ -106,6 +106,7 @@ import dev.ahnafnafee.pinnedcalendar.domain.DayBucketer
 import dev.ahnafnafee.pinnedcalendar.domain.NotificationContentBuilder
 import dev.ahnafnafee.pinnedcalendar.domain.SampleAgenda
 import dev.ahnafnafee.pinnedcalendar.domain.TodoGroups
+import dev.ahnafnafee.pinnedcalendar.domain.TodoSchedule
 import dev.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
 import dev.ahnafnafee.pinnedcalendar.domain.model.ItemKind
 import dev.ahnafnafee.pinnedcalendar.notify.AgendaRemoteViewsRenderer
@@ -433,10 +434,14 @@ private fun TodoEditorSheet(
     onDismiss: () -> Unit,
     isNew: Boolean = false,
 ) {
-    var title by remember(todo.id) { mutableStateOf(todo.title) }
-    var notes by remember(todo.id) { mutableStateOf(todo.notes) }
-    var priority by remember(todo.id) { mutableStateOf(todo.priority) }
-    var dueMillis by remember(todo.id) { mutableStateOf(todo.dueMillis) }
+    // Saveable so in-progress edits survive activity recreation (rotation, dark-mode flip);
+    // enum and nullable values ride along as their primitive forms.
+    var title by rememberSaveable(todo.id) { mutableStateOf(todo.title) }
+    var notes by rememberSaveable(todo.id) { mutableStateOf(todo.notes) }
+    var priorityValue by rememberSaveable(todo.id) { mutableStateOf(todo.priority.value) }
+    var dueMillisOrZero by rememberSaveable(todo.id) { mutableStateOf(todo.dueMillis ?: 0L) }
+    val priority = TodoPriority.from(priorityValue)
+    val dueMillis: Long? = dueMillisOrZero.takeIf { it != 0L }
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
 
@@ -461,7 +466,7 @@ private fun TodoEditorSheet(
                     "Tomorrow" to today.plusDays(1),
                     "Next week" to today.plusWeeks(1),
                 ).forEach { (label, date) ->
-                    PillChip(dueDate == date, { dueMillis = scheduledAt(dueMillis, date, zone) }, label)
+                    PillChip(dueDate == date, { dueMillisOrZero = TodoSchedule.at(dueMillis, date, zone) }, label)
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -469,8 +474,9 @@ private fun TodoEditorSheet(
                     Text(dueLabel(dueMillis) ?: "Pick a date")
                 }
                 if (dueMillis != null) {
-                    TextButton(onClick = { showTimePicker = true }) { Text(timeLabel(dueMillis!!, zone)) }
-                    TextButton(onClick = { dueMillis = null }) { Text("Clear") }
+                    val is24Hour = android.text.format.DateFormat.is24HourFormat(LocalContext.current)
+                    TextButton(onClick = { showTimePicker = true }) { Text(timeLabel(dueMillis, zone, is24Hour)) }
+                    TextButton(onClick = { dueMillisOrZero = 0L }) { Text("Clear") }
                 }
             }
 
@@ -479,7 +485,7 @@ private fun TodoEditorSheet(
                 TodoPriority.entries.forEach { p ->
                     FilterChip(
                         selected = priority == p,
-                        onClick = { priority = p },
+                        onClick = { priorityValue = p.value },
                         label = { Text(p.label) },
                         shape = AppShape.chip,
                         border = null,
@@ -543,7 +549,7 @@ private fun TodoEditorSheet(
                 TextButton(onClick = {
                     pickerState.selectedDateMillis?.let { utc ->
                         val date = Instant.ofEpochMilli(utc).atZone(ZoneOffset.UTC).toLocalDate()
-                        dueMillis = scheduledAt(dueMillis, date, zone)
+                        dueMillisOrZero = TodoSchedule.at(dueMillis, date, zone)
                     }
                     showDatePicker = false
                 }) { Text("OK") }
@@ -556,7 +562,7 @@ private fun TodoEditorSheet(
 
     if (showTimePicker && dueMillis != null) {
         val zone = ZoneId.systemDefault()
-        val current = Instant.ofEpochMilli(dueMillis!!).atZone(zone)
+        val current = Instant.ofEpochMilli(dueMillis).atZone(zone)
         val timeState = rememberTimePickerState(
             initialHour = current.hour,
             initialMinute = current.minute,
@@ -566,7 +572,7 @@ private fun TodoEditorSheet(
             onDismissRequest = { showTimePicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    dueMillis = current.toLocalDate()
+                    dueMillisOrZero = current.toLocalDate()
                         .atTime(LocalTime.of(timeState.hour, timeState.minute))
                         .atZone(zone).toInstant().toEpochMilli()
                     showTimePicker = false
@@ -578,15 +584,9 @@ private fun TodoEditorSheet(
     }
 }
 
-/** Moves a due instant to [date], keeping its time of day (9:00 when previously undated). */
-private fun scheduledAt(current: Long?, date: LocalDate, zone: ZoneId): Long {
-    val time = current?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalTime() } ?: LocalTime.of(9, 0)
-    return date.atTime(time).atZone(zone).toInstant().toEpochMilli()
-}
-
-private fun timeLabel(dueMillis: Long, zone: ZoneId): String =
+private fun timeLabel(dueMillis: Long, zone: ZoneId, is24Hour: Boolean): String =
     Instant.ofEpochMilli(dueMillis).atZone(zone).toLocalTime()
-        .format(DateTimeFormatter.ofPattern("h:mm a"))
+        .format(DateTimeFormatter.ofPattern(if (is24Hour) "H:mm" else "h:mm a"))
 
 @Composable
 private fun SettingsTab(
@@ -633,6 +633,16 @@ private fun SettingsTab(
                 Switch(
                     checked = s.doubleSwipeDismiss,
                     onCheckedChange = { v -> edit { setDoubleSwipeDismiss(v) } },
+                )
+            },
+        )
+        CardItem(
+            title = "To-do reminders",
+            subtitle = "A normal, swipeable notification when a scheduled to-do comes due. The pin is unaffected",
+            trailing = {
+                Switch(
+                    checked = s.todoReminders,
+                    onCheckedChange = { v -> edit { setTodoReminders(v) } },
                 )
             },
         )
@@ -987,28 +997,26 @@ private fun ColumnScope.NotificationLayoutContent(
 
     CardCaption("Density")
     // The active preset is derived from the stored triple, so the chips never disagree with
-    // what the notification actually renders. Custom is a UI state, not a persisted value.
+    // what the notification actually renders. Custom is a UI state, not a persisted value:
+    // a hand-tuned triple lands on Custom once on entry, and after that only the chips move
+    // it, so the sliders never unmount mid-drag when a drag passes through a preset's values.
     val activePreset = DensityPreset.entries.firstOrNull { it.matches(s) }
     var customChosen by rememberSaveable { mutableStateOf(false) }
-    val customActive = customChosen || activePreset == null
+    LaunchedEffect(Unit) { if (activePreset == null) customChosen = true }
     ChipRow {
         DensityPreset.entries.forEach { preset ->
             PillChip(
-                selected = !customActive && activePreset == preset,
+                selected = !customChosen && activePreset == preset,
                 onClick = {
                     customChosen = false
-                    edit {
-                        setNotificationRowPadding(preset.paddingDp)
-                        setNotificationRowTextSize(preset.textSp)
-                        setNotificationRowHeight(preset.heightDp)
-                    }
+                    edit { setNotificationDensity(preset.paddingDp, preset.textSp, preset.heightDp) }
                 },
                 label = preset.label,
             )
         }
-        PillChip(customActive, { customChosen = true }, "Custom")
+        PillChip(customChosen, { customChosen = true }, "Custom")
     }
-    if (customActive) {
+    if (customChosen) {
         SliderRow("Row spacing", s.notificationRowPaddingDp, 0f..12f) { edit { setNotificationRowPadding(it) } }
         SliderRow("Text size", s.notificationRowTextSizeSp, 11f..18f) { edit { setNotificationRowTextSize(it) } }
         SliderRow("Row height", s.notificationRowHeightDp, 12f..32f) { edit { setNotificationRowHeight(it) } }

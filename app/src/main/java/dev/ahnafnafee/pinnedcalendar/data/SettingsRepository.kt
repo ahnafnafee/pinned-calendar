@@ -38,6 +38,12 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         update { it[SHOW_TODAY_HEADER] = value }
     suspend fun setNotificationRowPadding(value: Int) =
         update { it[NOTIFICATION_ROW_PADDING] = value.coerceIn(0, 12) }
+    /** Writes the density triple in one transaction so observers never see a partial preset. */
+    suspend fun setNotificationDensity(paddingDp: Int, textSizeSp: Int, heightDp: Int) = update {
+        it[NOTIFICATION_ROW_PADDING] = paddingDp.coerceIn(0, 12)
+        it[NOTIFICATION_ROW_TEXT_SIZE] = textSizeSp.coerceIn(11, 18)
+        it[NOTIFICATION_ROW_HEIGHT] = heightDp.coerceIn(12, 32)
+    }
     suspend fun setNotificationRowTextSize(value: Int) =
         update { it[NOTIFICATION_ROW_TEXT_SIZE] = value.coerceIn(11, 18) }
     suspend fun setNotificationRowHeight(value: Int) =
@@ -46,6 +52,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         update { it[NOTIFICATION_TIME_COLUMN_WIDTH] = value.coerceIn(32, 64) }
     suspend fun setNotificationContentPadding(value: Boolean) =
         update { it[NOTIFICATION_CONTENT_PADDING] = value }
+    suspend fun setTodoReminders(value: Boolean) = update { it[TODO_REMINDERS] = value }
     suspend fun setUse24HourClock(value: Boolean) = update { it[CLOCK_24H] = value }
     suspend fun setThemeMode(mode: ThemeMode) = update { it[THEME] = mode.name }
     suspend fun setMaterialYou(value: Boolean) = update { it[MATERIAL_YOU] = value }
@@ -82,6 +89,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         notificationRowHeightDp = (this[NOTIFICATION_ROW_HEIGHT] ?: 22).coerceIn(12, 32),
         notificationTimeColumnWidthDp = (this[NOTIFICATION_TIME_COLUMN_WIDTH] ?: 64).coerceIn(32, 64),
         notificationContentPadding = this[NOTIFICATION_CONTENT_PADDING] ?: true,
+        todoReminders = this[TODO_REMINDERS] ?: false,
         use24HourClock = this[CLOCK_24H] ?: false,
         themeMode = this[THEME].toEnum(ThemeMode.DARK) { ThemeMode.valueOf(it) },
         materialYou = this[MATERIAL_YOU] ?: false,
@@ -112,6 +120,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         val NOTIFICATION_ROW_HEIGHT = intPreferencesKey("notification_row_height")
         val NOTIFICATION_TIME_COLUMN_WIDTH = intPreferencesKey("notification_time_column_width")
         val NOTIFICATION_CONTENT_PADDING = booleanPreferencesKey("notification_content_padding")
+        val TODO_REMINDERS = booleanPreferencesKey("todo_reminders")
         val CLOCK_24H = booleanPreferencesKey("clock_24h")
         val THEME = stringPreferencesKey("theme_mode")
         val MATERIAL_YOU = booleanPreferencesKey("material_you")

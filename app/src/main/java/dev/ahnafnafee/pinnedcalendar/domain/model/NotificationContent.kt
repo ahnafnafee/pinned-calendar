@@ -3,7 +3,7 @@ package dev.ahnafnafee.pinnedcalendar.domain.model
 data class NotificationRow(
     val time: String,           // "9:00", "All day", or ""
     val title: String,
-    val colorHex: String?,      // event calendar color; null => task
+    val colorHex: String?,      // calendar color for events, priority flag color for tasks; null = neutral
     val isTask: Boolean,
     val completed: Boolean,
     val deepLink: String? = null, // e.g. content://com.android.calendar/events/<id>
