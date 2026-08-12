@@ -17,10 +17,23 @@ class TodoRepository(private val dataStore: DataStore<Preferences>) {
 
     suspend fun snapshot(): List<LocalTodo> = todos.first()
 
-    suspend fun add(title: String, dueMillis: Long?) {
+    suspend fun add(
+        title: String,
+        dueMillis: Long?,
+        notes: String = "",
+        priority: TodoPriority = TodoPriority.NONE,
+    ) {
         val clean = title.trim()
         if (clean.isEmpty()) return
-        mutate { it + LocalTodo(id = nextId(it), title = clean, dueMillis = dueMillis) }
+        mutate {
+            it + LocalTodo(
+                id = nextId(it),
+                title = clean,
+                dueMillis = dueMillis,
+                notes = notes.trim(),
+                priority = priority,
+            )
+        }
     }
 
     suspend fun toggle(id: String) =

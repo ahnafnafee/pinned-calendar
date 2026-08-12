@@ -49,6 +49,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -252,6 +253,9 @@ class MainActivity : ComponentActivity() {
                                 onUpdate = { t ->
                                     scope.launch { todos.update(t.id, t.title, t.dueMillis, t.notes, t.priority); refresh() }
                                 },
+                                onAddRich = { t ->
+                                    scope.launch { todos.add(t.title, t.dueMillis, t.notes, t.priority); refresh() }
+                                },
                             )
                         } else {
                             SettingsTab(
@@ -291,9 +295,11 @@ private fun TodosTab(
     onToggle: (String) -> Unit,
     onDelete: (String) -> Unit,
     onUpdate: (LocalTodo) -> Unit,
+    onAddRich: (LocalTodo) -> Unit,
 ) {
     var newTitle by rememberSaveable { mutableStateOf("") }
     var editingId by rememberSaveable { mutableStateOf<String?>(null) }
+    var drafting by rememberSaveable { mutableStateOf(false) }
 
     WeekOverviewCard(agendaItems)
 
@@ -308,16 +314,31 @@ private fun TodosTab(
                 label = { Text("New to-do (due today)") },
                 singleLine = true,
                 shape = AppShape.field,
+                trailingIcon = {
+                    // Expands the quick add into the full editor: schedule, priority, notes.
+                    IconButton(onClick = { drafting = true }) {
+                        Text(
+                            "⋯",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                },
                 modifier = Modifier.weight(1f),
             )
             Spacer(Modifier.width(8.dp))
-            Button(onClick = {
-                val title = newTitle
-                if (title.isNotBlank()) {
-                    newTitle = ""
-                    onAdd(title)
-                }
-            }) { Text("Add") }
+            // The outlined field reserves headroom for its floating label; nudge the button down
+            // so it centers on the field's box rather than the composable's full height.
+            Button(
+                modifier = Modifier.padding(top = 8.dp),
+                onClick = {
+                    val title = newTitle
+                    if (title.isNotBlank()) {
+                        newTitle = ""
+                        onAdd(title)
+                    }
+                },
+            ) { Text("Add") }
         }
         if (todoList.isEmpty()) {
             CardCaption("No to-dos yet.")
@@ -374,6 +395,16 @@ private fun TodosTab(
             onDismiss = { editingId = null },
         )
     }
+
+    if (drafting) {
+        TodoEditorSheet(
+            todo = LocalTodo(id = "draft", title = newTitle, dueMillis = System.currentTimeMillis()),
+            isNew = true,
+            onSave = { onAddRich(it); newTitle = ""; drafting = false },
+            onDelete = { drafting = false },
+            onDismiss = { drafting = false },
+        )
+    }
 }
 
 private fun dueLabel(dueMillis: Long?): String? {
@@ -400,6 +431,7 @@ private fun TodoEditorSheet(
     onSave: (LocalTodo) -> Unit,
     onDelete: () -> Unit,
     onDismiss: () -> Unit,
+    isNew: Boolean = false,
 ) {
     var title by remember(todo.id) { mutableStateOf(todo.title) }
     var notes by remember(todo.id) { mutableStateOf(todo.notes) }
@@ -476,8 +508,12 @@ private fun TodoEditorSheet(
                 Modifier.fillMaxWidth().padding(vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(onClick = onDelete) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                if (isNew) {
+                    TextButton(onClick = onDismiss) { Text("Cancel") }
+                } else {
+                    TextButton(onClick = onDelete) {
+                        Text("Delete", color = MaterialTheme.colorScheme.error)
+                    }
                 }
                 Spacer(Modifier.weight(1f))
                 Button(
@@ -485,7 +521,7 @@ private fun TodoEditorSheet(
                     onClick = {
                         onSave(todo.copy(title = title, dueMillis = dueMillis, notes = notes, priority = priority))
                     },
-                ) { Text("Save") }
+                ) { Text(if (isNew) "Add" else "Save") }
             }
             Spacer(Modifier.height(20.dp))
         }

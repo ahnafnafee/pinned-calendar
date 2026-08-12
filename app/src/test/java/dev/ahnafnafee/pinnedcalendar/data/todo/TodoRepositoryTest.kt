@@ -82,6 +82,15 @@ class TodoRepositoryTest {
         assertEquals("", t.notes)
     }
 
+    @Test fun rich_add_persists_notes_and_priority() = runTest {
+        val r = newRepo()
+        r.add("Prep demo", 5L, notes = "Slides in drive", priority = TodoPriority.MEDIUM)
+        val t = r.snapshot()[0]
+        assertEquals("Prep demo", t.title)
+        assertEquals("Slides in drive", t.notes)
+        assertEquals(TodoPriority.MEDIUM, t.priority)
+    }
+
     @Test fun decodes_entries_written_before_notes_and_priority_existed() = runTest {
         val ctx = RuntimeEnvironment.getApplication()
         val file = File.createTempFile("todos_legacy", ".preferences_pb", ctx.cacheDir)
