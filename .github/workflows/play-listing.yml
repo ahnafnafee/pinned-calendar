@@ -1,0 +1,69 @@
+name: Play listing
+
+# Manual Play Console maintenance over the Android Publisher API, using the same
+# service-account secret as the Release workflow. Screenshot sync replaces the en-US
+# phone screenshots with store/screenshots/; promotion moves an already-uploaded
+# versionCode from the internal track to production at full rollout.
+on:
+  workflow_dispatch:
+    inputs:
+      sync_screenshots:
+        description: 'Replace the en-US phone screenshots with store/screenshots/'
+        required: false
+        type: boolean
+        default: false
+      promote_version_code:
+        description: 'versionCode to promote from internal to production (blank = no promotion)'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: play-listing
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Update Play listing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Guard inputs
+        env:
+          SYNC: ${{ inputs.sync_screenshots }}
+          CODE: ${{ inputs.promote_version_code }}
+          SA_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ "$SYNC" != "true" ] && [ -z "$CODE" ]; then
+            echo "::error::Nothing to do: check sync_screenshots and/or set promote_version_code." >&2
+            exit 1
+          fi
+          if [ -z "$SA_JSON" ]; then
+            echo "::error::PLAY_SERVICE_ACCOUNT_JSON secret is missing." >&2
+            exit 1
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install Android Publisher client
+        run: pip install --quiet google-api-python-client google-auth
+
+      - name: Run listing update
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          SYNC: ${{ inputs.sync_screenshots }}
+          CODE: ${{ inputs.promote_version_code }}
+        run: |
+          set -euo pipefail
+          args=()
+          [ "$SYNC" = "true" ] && args+=(--screenshots)
+          [ -n "$CODE" ] && args+=(--promote "$CODE")
+          python store/_publish_listing.py "${args[@]}"
