@@ -2,7 +2,11 @@ package dev.ahnafnafee.pinnedcalendar.notify
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.content.getSystemService
+import dev.ahnafnafee.pinnedcalendar.R
 import dev.ahnafnafee.pinnedcalendar.data.NotificationPriority
 import dev.ahnafnafee.pinnedcalendar.domain.model.DaySection
 import dev.ahnafnafee.pinnedcalendar.domain.model.NotificationContent
@@ -56,6 +60,24 @@ class AgendaNotificationBuilderTest {
         val n = AgendaNotificationBuilder(ctx).build(empty, NotificationPriority.NORMAL)
         assertEquals(channelId, n.channelId)
         assertNull("an empty agenda has nothing to expand into", n.bigContentView)
+        val single = n.contentView.apply(ctx, FrameLayout(ctx))
+        assertEquals(
+            "Nothing scheduled this week",
+            single.findViewById<TextView>(R.id.collapsed_line).text.toString(),
+        )
+        assertEquals(View.INVISIBLE, single.findViewById<View>(R.id.collapsed_dot).visibility)
+        assertEquals("", single.findViewById<TextView>(R.id.collapsed_more).text.toString())
+
+        // The multi-row layout renders its own empty-state row instead of an empty container.
+        val multi = AgendaNotificationBuilder(ctx).build(empty, NotificationPriority.NORMAL, collapsedItems = 3)
+        assertNull(multi.bigContentView)
+        val rows = multi.contentView.apply(ctx, FrameLayout(ctx))
+        assertEquals(
+            "Nothing scheduled this week",
+            rows.findViewById<TextView>(R.id.row_title).text.toString(),
+        )
+        assertEquals(View.GONE, rows.findViewById<View>(R.id.row_time).visibility)
+        assertEquals(View.GONE, rows.findViewById<View>(R.id.row_bar).visibility)
     }
 
     @Test fun omits_expanded_layout_when_all_rows_fit_in_compact_view() {

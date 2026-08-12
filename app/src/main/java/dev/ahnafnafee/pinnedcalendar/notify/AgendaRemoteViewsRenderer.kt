@@ -36,9 +36,7 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
         timeColumnWidthDp: Int,
         useContentPadding: Boolean,
     ): RemoteViews =
-        // An empty agenda always renders the single-line layout: its "Nothing scheduled" message
-        // has no rows to stack, so the multi-row container would only add an indented row shell.
-        if (maxRows <= 1 || content.isEmpty) collapsedSingleLine(content, rowTextSizeSp, useContentPadding)
+        if (maxRows <= 1) collapsedSingleLine(content, rowTextSizeSp, useContentPadding)
         else collapsedRows(
             content,
             maxRows,
@@ -89,6 +87,20 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
     ): RemoteViews {
         val rv = RemoteViews(context.packageName, R.layout.notif_collapsed_multi)
         rv.removeAllViews(R.id.collapsed_container)
+        if (content.isEmpty) {
+            // The row shell keeps the message aligned with agenda rows; the bar and time column
+            // are gone (not invisible) so the text is not indented by an empty column.
+            val row = RemoteViews(context.packageName, R.layout.notif_row)
+            row.setViewVisibility(R.id.row_bar, View.GONE)
+            row.setViewVisibility(R.id.row_time, View.GONE)
+            row.setTextViewText(R.id.row_title, "Nothing scheduled this week")
+            row.setTextColor(R.id.row_title, primaryText)
+            row.setFloat(R.id.row_title, "setTextSize", rowTextSizeSp.coerceIn(11, 18).toFloat())
+            rv.addView(R.id.collapsed_container, row)
+            rv.setTextViewText(R.id.collapsed_more, "")
+            applyContentPadding(rv, useContentPadding, compact = true)
+            return rv
+        }
         var shownRows = 0
         var clickReq = 100
         var remainingRows = maxRows.coerceIn(1, 6)

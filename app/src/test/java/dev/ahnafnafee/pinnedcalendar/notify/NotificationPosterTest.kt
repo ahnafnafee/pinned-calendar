@@ -1,6 +1,9 @@
 package dev.ahnafnafee.pinnedcalendar.notify
 
 import android.app.NotificationManager
+import android.widget.FrameLayout
+import android.widget.TextView
+import dev.ahnafnafee.pinnedcalendar.R
 import dev.ahnafnafee.pinnedcalendar.data.NotificationPriority
 import dev.ahnafnafee.pinnedcalendar.domain.model.DaySection
 import dev.ahnafnafee.pinnedcalendar.domain.model.NotificationContent
@@ -42,7 +45,14 @@ class NotificationPosterTest {
         poster.apply(pinEnabled = true, priority = NotificationPriority.TOP, content = content)
         val showing = poster.apply(pinEnabled = true, priority = NotificationPriority.TOP, content = emptyContent)
         assertEquals(true, showing)
-        assertEquals(1, shadowOf(mgr).activeNotifications.size)
+        val active = shadowOf(mgr).activeNotifications
+        assertEquals(1, active.size)
+        // The active pin is the empty state, not a stale leftover from the earlier real post.
+        val view = active[0].notification.contentView.apply(ctx, FrameLayout(ctx))
+        assertEquals(
+            "Nothing scheduled this week",
+            view.findViewById<TextView>(R.id.collapsed_line).text.toString(),
+        )
     }
 
     @Test fun cancels_when_disabled() {
