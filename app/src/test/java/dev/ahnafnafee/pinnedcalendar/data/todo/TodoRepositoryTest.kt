@@ -1,6 +1,8 @@
 package dev.ahnafnafee.pinnedcalendar.data.todo
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -52,5 +54,50 @@ class TodoRepositoryTest {
         val r = newRepo()
         r.add("Someday", null)
         assertNull(r.snapshot()[0].dueMillis)
+    }
+
+    @Test fun update_edits_all_fields_and_roundtrips() = runTest {
+        val r = newRepo()
+        r.add("Draft", 100L)
+        val id = r.snapshot()[0].id
+
+        r.update(id, "Final title", 200L, "Bring the charger", TodoPriority.HIGH)
+        val t = r.snapshot()[0]
+        assertEquals("Final title", t.title)
+        assertEquals(200L, t.dueMillis)
+        assertEquals("Bring the charger", t.notes)
+        assertEquals(TodoPriority.HIGH, t.priority)
+
+        // A blank title is rejected; the existing values stay.
+        r.update(id, "   ", null, "", TodoPriority.NONE)
+        assertEquals("Final title", r.snapshot()[0].title)
+        assertEquals(TodoPriority.HIGH, r.snapshot()[0].priority)
+    }
+
+    @Test fun new_todos_default_to_no_priority_and_empty_notes() = runTest {
+        val r = newRepo()
+        r.add("Plain", 1L)
+        val t = r.snapshot()[0]
+        assertEquals(TodoPriority.NONE, t.priority)
+        assertEquals("", t.notes)
+    }
+
+    @Test fun decodes_entries_written_before_notes_and_priority_existed() = runTest {
+        val ctx = RuntimeEnvironment.getApplication()
+        val file = File.createTempFile("todos_legacy", ".preferences_pb", ctx.cacheDir)
+        file.delete()
+        val store = PreferenceDataStoreFactory.create(produceFile = { file })
+        // The exact shape the previous schema persisted: no "notes", no "prio".
+        store.edit { prefs ->
+            prefs[stringPreferencesKey("todos_json")] =
+                """[{"id":"1","title":"Old task","due":123,"done":true}]"""
+        }
+
+        val t = TodoRepository(store).snapshot()[0]
+        assertEquals("Old task", t.title)
+        assertEquals(123L, t.dueMillis)
+        assertTrue(t.completed)
+        assertEquals("", t.notes)
+        assertEquals(TodoPriority.NONE, t.priority)
     }
 }

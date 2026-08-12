@@ -188,7 +188,12 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
         timeColumnWidthDp: Int,
     ): RemoteViews {
         val rv = RemoteViews(context.packageName, R.layout.notif_row)
-        val barColor = if (row.isTask) taskColor else parseColor(row.colorHex)
+        // An explicit color wins even for tasks (priority flags); colorless tasks stay neutral.
+        val barColor = when {
+            row.colorHex != null -> parseColor(row.colorHex)
+            row.isTask -> taskColor
+            else -> fallbackColor
+        }
         rv.setInt(R.id.row_bar, "setBackgroundColor", barColor)
         rv.setTextViewText(R.id.row_time, row.time)
         rv.setTextColor(R.id.row_time, secondaryText)

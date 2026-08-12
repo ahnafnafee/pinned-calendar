@@ -38,16 +38,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
@@ -55,6 +60,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -90,6 +99,7 @@ import dev.ahnafnafee.pinnedcalendar.data.calendar.CalendarInfo
 import dev.ahnafnafee.pinnedcalendar.data.calendar.CalendarsRepository
 import dev.ahnafnafee.pinnedcalendar.data.settingsDataStore
 import dev.ahnafnafee.pinnedcalendar.data.todo.LocalTodo
+import dev.ahnafnafee.pinnedcalendar.data.todo.TodoPriority
 import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
 import dev.ahnafnafee.pinnedcalendar.domain.DayBucketer
 import dev.ahnafnafee.pinnedcalendar.domain.NotificationContentBuilder
@@ -106,8 +116,12 @@ import dev.ahnafnafee.pinnedcalendar.ui.theme.PinnedCalendarTheme
 import dev.ahnafnafee.pinnedcalendar.work.AgendaScheduler
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -234,6 +248,9 @@ class MainActivity : ComponentActivity() {
                                 onAdd = { title -> scope.launch { todos.add(title, System.currentTimeMillis()); refresh() } },
                                 onToggle = { id -> scope.launch { todos.toggle(id); refresh() } },
                                 onDelete = { id -> scope.launch { todos.delete(id); refresh() } },
+                                onUpdate = { t ->
+                                    scope.launch { todos.update(t.id, t.title, t.dueMillis, t.notes, t.priority); refresh() }
+                                },
                             )
                         } else {
                             SettingsTab(
@@ -272,8 +289,10 @@ private fun TodosTab(
     onAdd: (String) -> Unit,
     onToggle: (String) -> Unit,
     onDelete: (String) -> Unit,
+    onUpdate: (LocalTodo) -> Unit,
 ) {
     var newTitle by rememberSaveable { mutableStateOf("") }
+    var editingId by rememberSaveable { mutableStateOf<String?>(null) }
 
     WeekOverviewCard(agendaItems)
 
@@ -302,9 +321,15 @@ private fun TodosTab(
         if (todoList.isEmpty()) {
             CardCaption("No to-dos yet.")
         }
-        todoList.forEach { todo ->
+        val sorted = todoList.sortedWith(
+            compareBy<LocalTodo> { it.completed }
+                .thenBy(nullsLast()) { it.dueMillis }
+                .thenByDescending { it.priority.value },
+        )
+        sorted.forEach { todo ->
             ListItem(
                 colors = transparentListItem(),
+                modifier = Modifier.clickable { editingId = todo.id },
                 leadingContent = {
                     Checkbox(
                         checked = todo.completed,
@@ -312,10 +337,27 @@ private fun TodosTab(
                     )
                 },
                 headlineContent = {
-                    Text(
-                        todo.title,
-                        textDecoration = if (todo.completed) TextDecoration.LineThrough else null,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        todo.priority.colorHex?.let { hex ->
+                            ColorDot(hex)
+                            Spacer(Modifier.width(8.dp))
+                        }
+                        Text(
+                            todo.title,
+                            textDecoration = if (todo.completed) TextDecoration.LineThrough else null,
+                        )
+                    }
+                },
+                supportingContent = {
+                    val due = dueLabel(todo.dueMillis)
+                    val hasNotes = todo.notes.isNotBlank()
+                    if (due != null || hasNotes) {
+                        Text(
+                            listOfNotNull(due, if (hasNotes) "Notes" else null).joinToString(" · "),
+                            color = if (isOverdue(todo)) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 },
                 trailingContent = {
                     TextButton(onClick = { onDelete(todo.id) }) { Text("Delete") }
@@ -323,7 +365,193 @@ private fun TodosTab(
             )
         }
     }
+
+    val editing = todoList.firstOrNull { it.id == editingId }
+    if (editing != null) {
+        TodoEditorSheet(
+            todo = editing,
+            onSave = { onUpdate(it); editingId = null },
+            onDelete = { onDelete(editing.id); editingId = null },
+            onDismiss = { editingId = null },
+        )
+    }
 }
+
+private fun dueLabel(dueMillis: Long?): String? {
+    val due = dueMillis ?: return null
+    val date = Instant.ofEpochMilli(due).atZone(ZoneId.systemDefault()).toLocalDate()
+    val today = LocalDate.now()
+    return when (date) {
+        today -> "Due today"
+        today.plusDays(1) -> "Due tomorrow"
+        else -> "Due ${date.format(DateTimeFormatter.ofPattern("EEE, MMM d"))}"
+    }
+}
+
+private fun isOverdue(todo: LocalTodo): Boolean {
+    val due = todo.dueMillis ?: return false
+    return !todo.completed &&
+        Instant.ofEpochMilli(due).atZone(ZoneId.systemDefault()).toLocalDate() < LocalDate.now()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TodoEditorSheet(
+    todo: LocalTodo,
+    onSave: (LocalTodo) -> Unit,
+    onDelete: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var title by remember(todo.id) { mutableStateOf(todo.title) }
+    var notes by remember(todo.id) { mutableStateOf(todo.notes) }
+    var priority by remember(todo.id) { mutableStateOf(todo.priority) }
+    var dueMillis by remember(todo.id) { mutableStateOf(todo.dueMillis) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState()) {
+        Column(Modifier.padding(horizontal = 20.dp)) {
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Title") },
+                singleLine = true,
+                shape = AppShape.field,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            CardCaption("Schedule")
+            val zone = ZoneId.systemDefault()
+            val today = LocalDate.now()
+            val dueDate = dueMillis?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalDate() }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    "Today" to today,
+                    "Tomorrow" to today.plusDays(1),
+                    "Next week" to today.plusWeeks(1),
+                ).forEach { (label, date) ->
+                    PillChip(dueDate == date, { dueMillis = scheduledAt(dueMillis, date, zone) }, label)
+                }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(onClick = { showDatePicker = true }) {
+                    Text(dueLabel(dueMillis) ?: "Pick a date")
+                }
+                if (dueMillis != null) {
+                    TextButton(onClick = { showTimePicker = true }) { Text(timeLabel(dueMillis!!, zone)) }
+                    TextButton(onClick = { dueMillis = null }) { Text("Clear") }
+                }
+            }
+
+            CardCaption("Priority")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TodoPriority.entries.forEach { p ->
+                    FilterChip(
+                        selected = priority == p,
+                        onClick = { priority = p },
+                        label = { Text(p.label) },
+                        shape = AppShape.chip,
+                        border = null,
+                        leadingIcon = p.colorHex?.let { hex -> { ColorDot(hex) } },
+                        colors = FilterChipDefaults.filterChipColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+            OutlinedTextField(
+                value = notes,
+                onValueChange = { notes = it },
+                label = { Text("Notes") },
+                minLines = 2,
+                shape = AppShape.field,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Row(
+                Modifier.fillMaxWidth().padding(vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextButton(onClick = onDelete) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+                Spacer(Modifier.weight(1f))
+                Button(
+                    enabled = title.isNotBlank(),
+                    onClick = {
+                        onSave(todo.copy(title = title, dueMillis = dueMillis, notes = notes, priority = priority))
+                    },
+                ) { Text("Save") }
+            }
+            Spacer(Modifier.height(20.dp))
+        }
+    }
+
+    if (showDatePicker) {
+        // The picker hands back UTC midnight for the chosen day; scheduledAt keeps the previous
+        // time of day so a date change never silently moves the item within a day.
+        val zone = ZoneId.systemDefault()
+        val pickerState = rememberDatePickerState(
+            initialSelectedDateMillis = dueMillis?.let {
+                Instant.ofEpochMilli(it).atZone(zone).toLocalDate()
+                    .atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+            },
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    pickerState.selectedDateMillis?.let { utc ->
+                        val date = Instant.ofEpochMilli(utc).atZone(ZoneOffset.UTC).toLocalDate()
+                        dueMillis = scheduledAt(dueMillis, date, zone)
+                    }
+                    showDatePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = { TextButton(onClick = { showDatePicker = false }) { Text("Cancel") } },
+        ) {
+            DatePicker(state = pickerState)
+        }
+    }
+
+    if (showTimePicker && dueMillis != null) {
+        val zone = ZoneId.systemDefault()
+        val current = Instant.ofEpochMilli(dueMillis!!).atZone(zone)
+        val timeState = rememberTimePickerState(
+            initialHour = current.hour,
+            initialMinute = current.minute,
+            is24Hour = android.text.format.DateFormat.is24HourFormat(LocalContext.current),
+        )
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    dueMillis = current.toLocalDate()
+                        .atTime(LocalTime.of(timeState.hour, timeState.minute))
+                        .atZone(zone).toInstant().toEpochMilli()
+                    showTimePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = { TextButton(onClick = { showTimePicker = false }) { Text("Cancel") } },
+            text = { TimePicker(state = timeState) },
+        )
+    }
+}
+
+/** Moves a due instant to [date], keeping its time of day (9:00 when previously undated). */
+private fun scheduledAt(current: Long?, date: LocalDate, zone: ZoneId): Long {
+    val time = current?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalTime() } ?: LocalTime.of(9, 0)
+    return date.atTime(time).atZone(zone).toInstant().toEpochMilli()
+}
+
+private fun timeLabel(dueMillis: Long, zone: ZoneId): String =
+    Instant.ofEpochMilli(dueMillis).atZone(zone).toLocalTime()
+        .format(DateTimeFormatter.ofPattern("h:mm a"))
 
 @Composable
 private fun SettingsTab(
