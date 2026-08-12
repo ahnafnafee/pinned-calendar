@@ -104,6 +104,7 @@ import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
 import dev.ahnafnafee.pinnedcalendar.domain.DayBucketer
 import dev.ahnafnafee.pinnedcalendar.domain.NotificationContentBuilder
 import dev.ahnafnafee.pinnedcalendar.domain.SampleAgenda
+import dev.ahnafnafee.pinnedcalendar.domain.TodoGroups
 import dev.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
 import dev.ahnafnafee.pinnedcalendar.domain.model.ItemKind
 import dev.ahnafnafee.pinnedcalendar.notify.AgendaRemoteViewsRenderer
@@ -321,48 +322,46 @@ private fun TodosTab(
         if (todoList.isEmpty()) {
             CardCaption("No to-dos yet.")
         }
-        val sorted = todoList.sortedWith(
-            compareBy<LocalTodo> { it.completed }
-                .thenBy(nullsLast()) { it.dueMillis }
-                .thenByDescending { it.priority.value },
-        )
-        sorted.forEach { todo ->
-            ListItem(
-                colors = transparentListItem(),
-                modifier = Modifier.clickable { editingId = todo.id },
-                leadingContent = {
-                    Checkbox(
-                        checked = todo.completed,
-                        onCheckedChange = { onToggle(todo.id) },
-                    )
-                },
-                headlineContent = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        todo.priority.colorHex?.let { hex ->
-                            ColorDot(hex)
-                            Spacer(Modifier.width(8.dp))
+        TodoGroups.of(todoList, LocalDate.now(), ZoneId.systemDefault()).forEach { (groupLabel, groupItems) ->
+            CardCaption(groupLabel)
+            groupItems.forEach { todo ->
+                ListItem(
+                    colors = transparentListItem(),
+                    modifier = Modifier.clickable { editingId = todo.id },
+                    leadingContent = {
+                        Checkbox(
+                            checked = todo.completed,
+                            onCheckedChange = { onToggle(todo.id) },
+                        )
+                    },
+                    headlineContent = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            todo.priority.colorHex?.let { hex ->
+                                ColorDot(hex)
+                                Spacer(Modifier.width(8.dp))
+                            }
+                            Text(
+                                todo.title,
+                                textDecoration = if (todo.completed) TextDecoration.LineThrough else null,
+                            )
                         }
-                        Text(
-                            todo.title,
-                            textDecoration = if (todo.completed) TextDecoration.LineThrough else null,
-                        )
-                    }
-                },
-                supportingContent = {
-                    val due = dueLabel(todo.dueMillis)
-                    val hasNotes = todo.notes.isNotBlank()
-                    if (due != null || hasNotes) {
-                        Text(
-                            listOfNotNull(due, if (hasNotes) "Notes" else null).joinToString(" · "),
-                            color = if (isOverdue(todo)) MaterialTheme.colorScheme.error
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                },
-                trailingContent = {
-                    TextButton(onClick = { onDelete(todo.id) }) { Text("Delete") }
-                },
-            )
+                    },
+                    supportingContent = {
+                        val due = dueLabel(todo.dueMillis)
+                        val hasNotes = todo.notes.isNotBlank()
+                        if (due != null || hasNotes) {
+                            Text(
+                                listOfNotNull(due, if (hasNotes) "Notes" else null).joinToString(" · "),
+                                color = if (isOverdue(todo)) MaterialTheme.colorScheme.error
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    trailingContent = {
+                        TextButton(onClick = { onDelete(todo.id) }) { Text("Delete") }
+                    },
+                )
+            }
         }
     }
 
