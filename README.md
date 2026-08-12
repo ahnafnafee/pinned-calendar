@@ -123,7 +123,7 @@ To-dos — the week at a glance:
 
 Settings — everything else, Material You styled:
 
-- Notifications — pin on/off, priority (Top · Normal · Silent), and optional swipe-twice-to-remove. Top keeps the pin above your everyday notifications.
+- Notifications — pin on/off, priority (Top · Normal · Silent), optional swipe-twice-to-remove, and opt-in to-do reminders: a normal, swipeable notification when a scheduled to-do comes due, leaving the pin untouched.
 - Notification layout — a live preview of the pin, density presets (Compact · Cozy · Comfortable · Custom), rows shown before expanding, and the heading toggles.
 - Time window — 3 days · this week · 7 days · 14 days.
 - Calendars — toggle each synced calendar on or off.

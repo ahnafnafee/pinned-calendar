@@ -53,6 +53,8 @@ data class AppSettings(
     val notificationTimeColumnWidthDp: Int = 64,
     // Add outer top and bottom padding around notification content.
     val notificationContentPadding: Boolean = true,
+    // Opt-in: a normal, dismissible notification when a scheduled to-do comes due.
+    val todoReminders: Boolean = false,
     // Event times read as 12-hour (9:00 AM) by default; on = 24-hour (09:00).
     val use24HourClock: Boolean = false,
     // Appearance: Material 3 Expressive + seed-based color theming

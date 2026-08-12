@@ -31,6 +31,27 @@ class SettingsRepositoryTest {
         assertEquals(false, repo.isPinEnabled())
     }
 
+    @Test fun todo_reminders_are_opt_in_and_persist() = runTest {
+        val repo = newRepo()
+        assertEquals(false, repo.snapshot().todoReminders)
+        repo.setTodoReminders(true)
+        assertTrue(repo.snapshot().todoReminders)
+    }
+
+    @Test fun density_preset_write_is_one_transaction_with_all_three_values() = runTest {
+        val repo = newRepo()
+        repo.setNotificationDensity(2, 12, 16)
+        val s = repo.snapshot()
+        assertEquals(2, s.notificationRowPaddingDp)
+        assertEquals(12, s.notificationRowTextSizeSp)
+        assertEquals(16, s.notificationRowHeightDp)
+        repo.setNotificationDensity(-5, 99, 99)
+        val clamped = repo.snapshot()
+        assertEquals(0, clamped.notificationRowPaddingDp)
+        assertEquals(18, clamped.notificationRowTextSizeSp)
+        assertEquals(32, clamped.notificationRowHeightDp)
+    }
+
     @Test fun double_swipe_defaults_off_and_persists() = runTest {
         val repo = newRepo()
         assertEquals(false, repo.snapshot().doubleSwipeDismiss)
