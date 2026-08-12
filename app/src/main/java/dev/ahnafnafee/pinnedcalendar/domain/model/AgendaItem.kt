@@ -10,7 +10,7 @@ data class AgendaItem(
     val title: String,
     val start: Instant?,            // null = undated task (excluded from the week view)
     val allDay: Boolean = false,
-    val colorHex: String? = null,   // calendar color for events; null for tasks
+    val colorHex: String? = null,   // calendar color for events, priority flag color for tasks; null = neutral
     val completed: Boolean = false,
     val deepLink: String? = null,
 )

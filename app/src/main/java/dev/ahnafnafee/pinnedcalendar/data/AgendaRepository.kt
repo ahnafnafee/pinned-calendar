@@ -55,7 +55,8 @@ class AgendaRepository(
                 title = t.title,
                 start = start,
                 allDay = false,
-                colorHex = null,
+                // A prioritized task carries its flag color into the pin; unflagged stays neutral.
+                colorHex = t.priority.colorHex,
                 completed = t.completed,
             )
         }

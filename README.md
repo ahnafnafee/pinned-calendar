@@ -119,13 +119,15 @@ To-dos — the week at a glance:
 
 - Week overview card — how many items are pinned, day by day.
 - Add, complete, and delete local to-dos that merge into the pinned agenda.
+- Tap a to-do to edit it: rename, schedule (today · tomorrow · next week · any date and time), set a priority flag that colors its bar in the pin, and attach notes.
 
 Settings — everything else, Material You styled:
 
-- Notifications — pin on/off, priority (Top · Normal · Silent), and optional swipe-twice-to-remove. Top keeps the pin above your everyday notifications.
+- Notifications — pin on/off, priority (Top · Normal · Silent), optional swipe-twice-to-remove, and opt-in to-do reminders: a normal, swipeable notification when a scheduled to-do comes due, leaving the pin untouched.
+- Notification layout — a live preview of the pin, density presets (Compact · Cozy · Comfortable · Custom), rows shown before expanding, and the heading toggles.
 - Time window — 3 days · this week · 7 days · 14 days.
 - Calendars — toggle each synced calendar on or off.
-- Display — group by day, hide completed to-dos, and a max-items cap.
+- Display — group by day, hide completed to-dos, 24-hour time, and a max-items cap.
 - Appearance — theme, Material You, AMOLED, accent seed, palette style, and font.
 - Reliability — battery-optimization exemption.
 
@@ -133,7 +135,7 @@ Settings — everything else, Material You styled:
 
 - [ ] Full colour-picker for custom seed colours
 - [ ] Home-screen widget companion
-- [ ] Per-to-do due-date picker
+- [x] Per-to-do due-date picker
 - [ ] Google Tasks integration (opt-in)
 - [ ] Recurring-task support
 - [ ] Wear OS tile

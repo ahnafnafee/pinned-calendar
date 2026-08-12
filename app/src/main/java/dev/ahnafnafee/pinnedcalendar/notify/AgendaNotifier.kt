@@ -4,6 +4,7 @@ import android.content.Context
 import dev.ahnafnafee.pinnedcalendar.data.AgendaRepository
 import dev.ahnafnafee.pinnedcalendar.data.SettingsRepository
 import dev.ahnafnafee.pinnedcalendar.data.settingsDataStore
+import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
 import dev.ahnafnafee.pinnedcalendar.domain.DayBucketer
 import dev.ahnafnafee.pinnedcalendar.domain.NotificationContentBuilder
 import java.time.Clock
@@ -19,6 +20,27 @@ class AgendaNotifier(
         val items = AgendaRepository(context, clock).agenda(s.windowMode, s.excludedCalendarIds)
         val bucketer = DayBucketer(clock, use24Hour = s.use24HourClock)
         val content = NotificationContentBuilder(bucketer).build(items, settings.displaySettings(s))
-        NotificationPoster(context).apply(s.pinEnabled, s.notificationPriority, content)
+        NotificationPoster(context).apply(
+            pinEnabled = s.pinEnabled,
+            priority = s.notificationPriority,
+            content = content,
+            collapsedItems = s.collapsedItems,
+            showHeader = s.showNotificationHeader,
+            showTodayHeader = s.showTodayHeader,
+            rowPaddingDp = s.notificationRowPaddingDp,
+            rowTextSizeSp = s.notificationRowTextSizeSp,
+            rowHeightDp = s.notificationRowHeightDp,
+            timeColumnWidthDp = s.notificationTimeColumnWidthDp,
+            useContentPadding = s.notificationContentPadding,
+        )
+
+        // Every refresh re-arms (or cancels) the single due-time reminder alarm, so boots,
+        // edits, and completions all keep it pointed at the next upcoming to-do.
+        TodoReminderScheduler.sync(
+            context,
+            enabled = s.todoReminders,
+            todos = TodoRepository(context.applicationContext.settingsDataStore).snapshot(),
+            nowMillis = clock.millis(),
+        )
     }
 }

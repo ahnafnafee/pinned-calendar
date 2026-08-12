@@ -5,26 +5,15 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:paddingTop="2dp"
-    android:paddingBottom="2dp">
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp">
 
-    <ImageView
-        android:id="@+id/collapsed_dot"
-        android:layout_width="4dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="10dp"
-        android:contentDescription="@null"
-        android:background="#039BE5" />
-
-    <TextView
-        android:id="@+id/collapsed_line"
+    <LinearLayout
+        android:id="@+id/collapsed_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:textSize="14sp"
-        android:textColor="?android:attr/textColorPrimary" />
+        android:orientation="vertical" />
 
     <TextView
         android:id="@+id/collapsed_more"

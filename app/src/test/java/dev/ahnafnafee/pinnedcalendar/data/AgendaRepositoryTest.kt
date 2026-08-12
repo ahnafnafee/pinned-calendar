@@ -1,6 +1,7 @@
 package dev.ahnafnafee.pinnedcalendar.data
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import dev.ahnafnafee.pinnedcalendar.data.todo.TodoPriority
 import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
 import dev.ahnafnafee.pinnedcalendar.domain.model.ItemKind
 import dev.ahnafnafee.pinnedcalendar.data.WindowMode
@@ -71,5 +72,20 @@ class AgendaRepositoryTest {
         val repo = AgendaRepository(ctx, clock, zone, todos)
 
         assertEquals(0, repo.agenda(WindowMode.SEVEN_DAYS, emptySet()).size)
+    }
+
+    @Test fun prioritized_todo_carries_its_flag_color_into_the_agenda() = runTest {
+        val ctx = RuntimeEnvironment.getApplication()
+        val todos = freshTodoRepo()
+        val due = Instant.parse("2026-06-02T21:00:00Z").toEpochMilli()
+        todos.add("Ship release", due)
+        todos.add("Water plants", due)
+        val high = todos.snapshot().first { it.title == "Ship release" }
+        todos.update(high.id, high.title, high.dueMillis, "", TodoPriority.HIGH)
+        val repo = AgendaRepository(ctx, clock, zone, todos)
+
+        val items = repo.agenda(WindowMode.SEVEN_DAYS, emptySet())
+        assertEquals(TodoPriority.HIGH.colorHex, items.first { it.title == "Ship release" }.colorHex)
+        assertEquals(null, items.first { it.title == "Water plants" }.colorHex)
     }
 }

@@ -17,14 +17,42 @@ class TodoRepository(private val dataStore: DataStore<Preferences>) {
 
     suspend fun snapshot(): List<LocalTodo> = todos.first()
 
-    suspend fun add(title: String, dueMillis: Long?) {
+    suspend fun add(
+        title: String,
+        dueMillis: Long?,
+        notes: String = "",
+        priority: TodoPriority = TodoPriority.NONE,
+    ) {
         val clean = title.trim()
         if (clean.isEmpty()) return
-        mutate { it + LocalTodo(id = nextId(it), title = clean, dueMillis = dueMillis) }
+        mutate {
+            it + LocalTodo(
+                id = nextId(it),
+                title = clean,
+                dueMillis = dueMillis,
+                notes = notes.trim(),
+                priority = priority,
+            )
+        }
     }
 
     suspend fun toggle(id: String) =
         mutate { list -> list.map { if (it.id == id) it.copy(completed = !it.completed) else it } }
+
+    /** Full edit of one to-do; a blank title leaves the item unchanged. */
+    suspend fun update(id: String, title: String, dueMillis: Long?, notes: String, priority: TodoPriority) {
+        val clean = title.trim()
+        if (clean.isEmpty()) return
+        mutate { list ->
+            list.map {
+                if (it.id == id) {
+                    it.copy(title = clean, dueMillis = dueMillis, notes = notes.trim(), priority = priority)
+                } else {
+                    it
+                }
+            }
+        }
+    }
 
     suspend fun delete(id: String) =
         mutate { list -> list.filterNot { it.id == id } }
@@ -44,7 +72,9 @@ class TodoRepository(private val dataStore: DataStore<Preferences>) {
                     .put("id", t.id)
                     .put("title", t.title)
                     .put("due", t.dueMillis ?: JSONObject.NULL)
-                    .put("done", t.completed),
+                    .put("done", t.completed)
+                    .put("notes", t.notes)
+                    .put("prio", t.priority.value),
             )
         }
         return arr.toString()
@@ -60,6 +90,9 @@ class TodoRepository(private val dataStore: DataStore<Preferences>) {
                 title = o.getString("title"),
                 dueMillis = if (o.isNull("due")) null else o.getLong("due"),
                 completed = o.optBoolean("done", false),
+                // Optional fields default so entries written by earlier versions decode cleanly.
+                notes = o.optString("notes", ""),
+                priority = TodoPriority.from(o.optInt("prio", 0)),
             )
         }
     }

@@ -2,7 +2,13 @@ package dev.ahnafnafee.pinnedcalendar.notify
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.graphics.drawable.ColorDrawable
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.getSystemService
+import dev.ahnafnafee.pinnedcalendar.R
 import dev.ahnafnafee.pinnedcalendar.data.NotificationPriority
 import dev.ahnafnafee.pinnedcalendar.domain.model.DaySection
 import dev.ahnafnafee.pinnedcalendar.domain.model.NotificationContent
@@ -49,12 +55,73 @@ class AgendaNotificationBuilderTest {
         assertNotNull("expected a content intent that opens the app", n.contentIntent)
     }
 
-    @Test fun empty_content_still_builds() {
+    @Test fun empty_content_builds_a_collapsed_only_notification() {
         val channelId = ChannelManager.channelId(NotificationPriority.NORMAL)
         ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
         val empty = NotificationContent(0, "", null, emptyList(), 0, isEmpty = true)
         val n = AgendaNotificationBuilder(ctx).build(empty, NotificationPriority.NORMAL)
         assertEquals(channelId, n.channelId)
+        assertNull("an empty agenda has nothing to expand into", n.bigContentView)
+        val single = n.contentView.apply(ctx, FrameLayout(ctx))
+        assertEquals(
+            "Nothing scheduled this week",
+            single.findViewById<TextView>(R.id.collapsed_line).text.toString(),
+        )
+        assertEquals(View.INVISIBLE, single.findViewById<View>(R.id.collapsed_dot).visibility)
+        assertEquals("", single.findViewById<TextView>(R.id.collapsed_more).text.toString())
+
+        // The multi-row layout renders its own empty-state row instead of an empty container.
+        val multi = AgendaNotificationBuilder(ctx).build(empty, NotificationPriority.NORMAL, collapsedItems = 3)
+        assertNull(multi.bigContentView)
+        val rows = multi.contentView.apply(ctx, FrameLayout(ctx))
+        assertEquals(
+            "Nothing scheduled this week",
+            rows.findViewById<TextView>(R.id.row_title).text.toString(),
+        )
+        assertEquals(View.GONE, rows.findViewById<View>(R.id.row_time).visibility)
+        assertEquals(View.GONE, rows.findViewById<View>(R.id.row_bar).visibility)
+    }
+
+    @Test fun a_prioritized_task_bar_uses_its_flag_color_and_a_plain_task_stays_neutral() {
+        ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
+        fun contentOf(vararg rows: NotificationRow) = NotificationContent(
+            headerCount = rows.size,
+            collapsedLine = "x",
+            collapsedColorHex = null,
+            sections = listOf(DaySection("", false, rows.toList())),
+            moreCount = 0,
+            isEmpty = false,
+        )
+        fun firstBarColor(content: NotificationContent): Int {
+            val n = AgendaNotificationBuilder(ctx).build(content, NotificationPriority.NORMAL, collapsedItems = 2)
+            val view = n.contentView.apply(ctx, FrameLayout(ctx))
+            return (view.findViewById<ImageView>(R.id.row_bar).background as ColorDrawable).color
+        }
+
+        val flagged = NotificationRow("9:00", "Flagged", "#EA4335", isTask = true, completed = false)
+        val plain = NotificationRow("10:00", "Plain", null, isTask = true, completed = false)
+        assertEquals(0xFFEA4335.toInt(), firstBarColor(contentOf(flagged, plain)))
+        assertEquals(0xFF80868B.toInt(), firstBarColor(contentOf(plain, flagged)))
+    }
+
+    @Test fun omits_expanded_layout_when_all_rows_fit_in_compact_view() {
+        ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
+        val n = AgendaNotificationBuilder(ctx).build(
+            sampleContent(),
+            NotificationPriority.NORMAL,
+            collapsedItems = 2,
+        )
+        assertNull(n.bigContentView)
+    }
+
+    @Test fun includes_expanded_layout_when_compact_view_hides_rows() {
+        ChannelManager.ensureChannel(ctx, NotificationPriority.NORMAL)
+        val n = AgendaNotificationBuilder(ctx).build(
+            sampleContent(),
+            NotificationPriority.NORMAL,
+            collapsedItems = 1,
+        )
+        assertNotNull(n.bigContentView)
     }
 
     @Suppress("DEPRECATION") // legacy Notification.priority is the field this lever populates

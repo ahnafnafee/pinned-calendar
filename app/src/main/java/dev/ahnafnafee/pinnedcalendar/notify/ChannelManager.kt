@@ -9,6 +9,7 @@ import dev.ahnafnafee.pinnedcalendar.data.NotificationPriority
 
 object ChannelManager {
     const val NOTIFICATION_ID = 1001
+    const val REMINDER_CHANNEL_ID = "todo_reminders"
 
     // A channel's importance can't be raised from code once it exists, so each priority level owns
     // its own channel id with a fixed importance. Switching levels posts on a different channel and
@@ -55,6 +56,23 @@ object ChannelManager {
                 enableVibration(false)
             }
             mgr.createNotificationChannel(channel)
+        }
+    }
+
+    /**
+     * The reminder channel is a separate, ordinary alerting channel: default importance, system
+     * sound, dismissible notifications. It is never part of the pin-channel retirement above.
+     */
+    fun ensureReminderChannel(context: Context) {
+        val mgr = context.getSystemService<NotificationManager>() ?: return
+        if (mgr.getNotificationChannel(REMINDER_CHANNEL_ID) == null) {
+            mgr.createNotificationChannel(
+                NotificationChannel(
+                    REMINDER_CHANNEL_ID,
+                    context.getString(R.string.reminder_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT,
+                ).apply { description = context.getString(R.string.reminder_channel_desc) },
+            )
         }
     }
 }

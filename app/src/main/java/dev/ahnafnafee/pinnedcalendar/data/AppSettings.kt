@@ -38,6 +38,23 @@ data class AppSettings(
     val groupByDay: Boolean = true,
     val hideCompletedTasks: Boolean = true,
     val maxItems: Int = 6,
+    // Number of agenda rows rendered in the compact notification before it is expanded.
+    val collapsedItems: Int = 1,
+    val showNotificationHeader: Boolean = true,
+    // Show Today's section label unless explicitly hidden.
+    val showTodayHeader: Boolean = true,
+    // Vertical padding on each side of an agenda row.
+    val notificationRowPaddingDp: Int = 5,
+    // Agenda row title size.
+    val notificationRowTextSizeSp: Int = 14,
+    // Minimum row content height, excluding vertical padding.
+    val notificationRowHeightDp: Int = 22,
+    // Time column width.
+    val notificationTimeColumnWidthDp: Int = 64,
+    // Add outer top and bottom padding around notification content.
+    val notificationContentPadding: Boolean = true,
+    // Opt-in: a normal, dismissible notification when a scheduled to-do comes due.
+    val todoReminders: Boolean = false,
     // Event times read as 12-hour (9:00 AM) by default; on = 24-hour (09:00).
     val use24HourClock: Boolean = false,
     // Appearance: Material 3 Expressive + seed-based color theming
