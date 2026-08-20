@@ -72,7 +72,7 @@ An ongoing notification keeps this week's events and to-dos at the top of the sh
 
 ### `2` Rich to-dos
 
-Add quick tasks in the app and they merge into the same agenda, carrying forward day to day until completed or deleted. Tap a to-do to edit it: rename, schedule with quick chips (today, tomorrow, next week) or any date and time, set a priority flag whose color rides into the pin, and attach notes. The list groups into Overdue, Today, Upcoming, and Completed. An opt-in setting sends a normal, swipeable reminder notification when a scheduled to-do comes due, leaving the pin untouched.
+Add quick tasks in the app and they merge into the same agenda, carrying forward day to day until completed or deleted. Tap a to-do to edit it: rename, schedule with quick chips (today, tomorrow, next week) or any date and time, set a priority flag whose color rides into the pin, and attach notes. The list groups into Overdue, Today, Upcoming, and Completed. An opt-in setting sends an alerting, swipeable reminder notification when a scheduled to-do comes due, leaving the pin untouched. Android can show it as a heads-up alert when system notification settings allow.
 
 ### `3` The pin, your way
 
@@ -125,7 +125,7 @@ The app is split into two tabs.
 
 **Settings**, everything else, Material You styled:
 
-- Notifications: pin on/off, priority (Top · Normal · Silent), optional swipe-twice-to-remove, and opt-in to-do reminders as normal, swipeable notifications.
+- Notifications: pin on/off, priority (Top · Normal · Silent), optional swipe-twice-to-remove, and opt-in to-do reminders as alerting, swipeable notifications that are heads-up eligible when system settings allow.
 - Notification layout: a live preview of the pin, density presets (Compact · Cozy · Comfortable · Custom), rows shown before expanding, and the heading toggles.
 - Time window: 3 days · this week · 7 days · 14 days.
 - Calendars: toggle each synced calendar on or off.

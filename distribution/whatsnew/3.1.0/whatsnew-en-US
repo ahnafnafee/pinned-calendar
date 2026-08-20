@@ -1,0 +1,4 @@
+• To-do reminders now use an alerting channel so they can appear as pop-ups when Android notification settings allow
+• Android 10+ can offer "Keep app data" during uninstall for optional same-device restoration after reinstall
+• Cloud backup and device-to-device backup remain disabled; tasks and settings stay local
+• Updated privacy and data-retention disclosures
