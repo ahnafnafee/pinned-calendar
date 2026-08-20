@@ -9,7 +9,7 @@ import dev.ahnafnafee.pinnedcalendar.data.NotificationPriority
 
 object ChannelManager {
     const val NOTIFICATION_ID = 1001
-    const val REMINDER_CHANNEL_ID = "todo_reminders"
+    const val REMINDER_CHANNEL_ID = "todo_reminders_v2"
 
     // A channel's importance can't be raised from code once it exists, so each priority level owns
     // its own channel id with a fixed importance. Switching levels posts on a different channel and
@@ -22,6 +22,7 @@ object ChannelManager {
 
     // Channel ids shipped by earlier versions, superseded by the per-level channels above.
     private val LEGACY_CHANNEL_IDS = listOf("pinned_agenda", "pinned_agenda_v2")
+    private val LEGACY_REMINDER_CHANNEL_IDS = listOf("todo_reminders")
 
     fun channelId(priority: NotificationPriority): String = CHANNELS.getValue(priority)
 
@@ -60,17 +61,21 @@ object ChannelManager {
     }
 
     /**
-     * The reminder channel is a separate, ordinary alerting channel: default importance, system
-     * sound, dismissible notifications. It is never part of the pin-channel retirement above.
+     * The reminder channel is a separate, urgent alerting channel: high importance, system sound,
+     * dismissible notifications. Versioning its id migrates existing installs because Android does
+     * not allow an app to raise a channel's importance after the channel has been created.
      */
     fun ensureReminderChannel(context: Context) {
         val mgr = context.getSystemService<NotificationManager>() ?: return
+        LEGACY_REMINDER_CHANNEL_IDS.forEach { id ->
+            if (mgr.getNotificationChannel(id) != null) mgr.deleteNotificationChannel(id)
+        }
         if (mgr.getNotificationChannel(REMINDER_CHANNEL_ID) == null) {
             mgr.createNotificationChannel(
                 NotificationChannel(
                     REMINDER_CHANNEL_ID,
                     context.getString(R.string.reminder_channel_name),
-                    NotificationManager.IMPORTANCE_DEFAULT,
+                    NotificationManager.IMPORTANCE_HIGH,
                 ).apply { description = context.getString(R.string.reminder_channel_desc) },
             )
         }

@@ -97,8 +97,20 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           echo "✓ Releasing v$ver (versionCode $code) — previous latest: v${latest:-none}"
 
-      # Fail fast — before the minutes-long build — if the box is checked but a prerequisite
-      # (the service-account secret or this version's release notes) is missing.
+      # Fail fast before the minutes-long build when release credentials are incomplete.
+      - name: Preflight signing prerequisites
+        env:
+          KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$STORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "::error::Missing one or more signing secrets (RELEASE_KEYSTORE_BASE64 / RELEASE_STORE_PASSWORD / RELEASE_KEY_ALIAS / RELEASE_KEY_PASSWORD)." >&2
+            exit 1
+          fi
+
+      # Play-only prerequisites stay gated so GitHub-only releases do not require Play access.
       - name: Preflight Play publish prerequisites
         if: ${{ inputs.publish_to_play }}
         env:
@@ -114,7 +126,12 @@ jobs:
             echo "::error::publish_to_play is checked but Play release notes are missing at $notes. Create it (plain text, max 500 chars) so this version ships a 'What's new'." >&2
             exit 1
           fi
-          echo "✓ Play secret present and release notes found at $notes — the .aab will go to the internal track."
+          notes_chars="$(wc -m < "$notes" | tr -d '[:space:]')"
+          if [ "$notes_chars" -gt 500 ]; then
+            echo "::error::Play release notes at $notes are $notes_chars characters; Google Play allows at most 500." >&2
+            exit 1
+          fi
+          echo "✓ Play secret present and $notes_chars-character release notes found at $notes — the .aab will go to the internal track."
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -192,6 +209,13 @@ jobs:
         run: |
           build_tools=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           "$build_tools/apksigner" verify --print-certs "${{ steps.artifacts.outputs.apk }}"
+
+      # Play requires 16 KB page-size compatibility for apps that package native libraries.
+      # This catches APK packaging regressions before the bundle reaches Play validation.
+      - name: Verify 16 KB APK alignment
+        run: |
+          build_tools=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          "$build_tools/zipalign" -c -P 16 -v 4 "${{ steps.artifacts.outputs.apk }}"
 
       # Save only on a fully green run so a half-built tree can never poison the cache.
       - name: Save Gradle cache

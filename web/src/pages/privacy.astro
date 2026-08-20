@@ -5,13 +5,13 @@ import { CONTACT_URL } from '../config.mjs';
 <Legal
   title="Privacy Policy"
   kicker="LEGAL / PRIVACY"
-  updated="JUNE 23, 2026"
+  updated="AUGUST 20, 2026"
   path="/privacy/"
   other={{ label: 'Terms of Service', href: '/terms/' }}
 >
   <div class="legal-short">
     <div class="h">IN SHORT</div>
-    <p>Pinned Calendar does not collect, store, or transmit any personal data. There are no accounts, no analytics, and no servers. Everything the app uses stays on your device.</p>
+    <p>Pinned Calendar does not collect, receive, transmit, sell, or share your personal data. There are no accounts, analytics, or servers. The app stores the to-dos and preferences it needs locally on your device, has no Internet permission, and disables Android cloud backup and device-to-device backup transfer.</p>
   </div>
 
   <div class="legal-body">
@@ -20,9 +20,10 @@ import { CONTACT_URL } from '../config.mjs';
       <p>We do not collect any information from you. Nothing you do in the app is sent to us or to any third party, because the app has no backend and makes no network requests for your data.</p>
       <p>To do its job, the app works with the following information locally, on your device only:</p>
       <ul>
-        <li><strong>Calendar events.</strong> Read access to the calendars you choose, used to build this week's agenda inside a notification.</li>
+        <li><strong>Calendar events.</strong> Read access to the calendars you choose, used to build this week's agenda inside a notification. Event contents are read on demand and are not copied into the app's to-do and settings storage.</li>
         <li><strong>Your to-dos.</strong> Tasks you create are stored in the app's local storage on your device.</li>
-        <li><strong>Your settings.</strong> Preferences such as theme, accent color, time window, and priority are saved locally.</li>
+        <li><strong>Your settings.</strong> Preferences such as theme, accent color, time window, notification behavior, and calendar-filter choices are saved locally. This includes the identifiers of calendars you choose to hide.</li>
+        <li><strong>Operational data.</strong> The app may retain internal data needed to schedule and refresh its local work.</li>
       </ul>
     </section>
 
@@ -47,7 +48,9 @@ import { CONTACT_URL } from '../config.mjs';
 
     <section>
       <div class="head"><span class="n">05</span><h2>Retention and deletion</h2></div>
-      <p>Your to-dos and settings remain on your device until you delete them or uninstall the app. Clearing the app's storage or uninstalling it removes all locally stored data permanently.</p>
+      <p>On Android 10 and later, a compatible uninstall screen may offer a system <strong>Keep app data</strong> option. If you select it, Android can retain the app's private local data on that device and make it available after you reinstall the same app. This is an optional same-device convenience, not a guaranteed backup. It is unavailable on Android 8 and 9 and may not be offered by every device or uninstall method.</p>
+      <p>The app does not use Android cloud backup, and it excludes its data from Android device-to-device backup transfer. Retained data cannot recover information from a lost, reset, or damaged device.</p>
+      <p>You can permanently delete locally stored data by clearing the app's storage in Android settings. Uninstalling also deletes it unless you explicitly select <strong>Keep app data</strong> when offered. To remove data previously kept after uninstall, reinstall the same app, clear its storage, and uninstall it without keeping the data.</p>
     </section>
 
     <section>

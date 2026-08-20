@@ -53,6 +53,7 @@ class TodoReminderReceiver : BroadcastReceiver() {
             .setContentTitle(todo.title)
             .setContentText(todo.notes.ifBlank { "Due now" })
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(AppLaunch.pendingIntent(context))
             .build()

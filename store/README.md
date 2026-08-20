@@ -72,7 +72,7 @@ The app has **no INTERNET permission**, so this is the easy path:
 
 - Does your app collect or share any of the required user data types? → **No**
 - Is all user data encrypted in transit? → N/A (no data leaves the device)
-- Do you provide a way to request data deletion? → N/A (nothing collected; uninstall removes local to-dos)
+- Do you provide a way to request data deletion? → N/A (the developer collects nothing; users can clear local app storage, and uninstall deletes it unless they explicitly select the Android 10+ **Keep app data** option)
 - Result: **"No data collected, no data shared."**
 
 If Play asks about permissions, justify them as in `privacy-policy.md`: calendar
@@ -114,9 +114,28 @@ GitHub release with both attached. Check **publish_to_play** at dispatch to also
 `.aab` to Play's internal track (with release notes) automatically; otherwise download the
 `.aab` and upload it by hand.
 
-Requires these repo secrets (Settings → Secrets and variables → Actions):
-`RELEASE_KEYSTORE_BASE64`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`,
-`RELEASE_KEY_PASSWORD`. See `.github/workflows/release.yml`.
+Every release requires these repository secrets (Settings → Secrets and
+variables → Actions): `RELEASE_KEYSTORE_BASE64`, `RELEASE_STORE_PASSWORD`,
+`RELEASE_KEY_ALIAS`, and `RELEASE_KEY_PASSWORD`.
+
+Automated Play upload additionally requires:
+
+- An existing Play Console app with package name `dev.ahnafnafee.pinnedcalendar`.
+  The first bundle must be uploaded manually so Play associates the package and
+  signing identity with the app.
+- The Google Play Android Developer API enabled for a Google Cloud project.
+- A service account invited to Play Console with app-scoped **Release apps to
+  testing tracks** permission. Grant only the permissions this workflow needs.
+- The complete service-account JSON stored in the GitHub Actions secret
+  `PLAY_SERVICE_ACCOUNT_JSON`; never commit the JSON key.
+- A non-empty, plain-text, maximum-500-character
+  `distribution/whatsnew/<version>/whatsnew-en-US` file.
+- A bundle targeting the currently required Android API level with 16 KB-aligned
+  native libraries. The release workflow checks APK packaging alignment; Play
+  performs the final bundle validation.
+
+See [Google's Android Publisher setup guide](https://developers.google.com/android-publisher/getting_started)
+and `.github/workflows/release.yml` for the exact automated checks.
 
 **Manual fallback.** With `keystore.properties` at the repo root (gitignored —
 see `app/build.gradle.kts`):

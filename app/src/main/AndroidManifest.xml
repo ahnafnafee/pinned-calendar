@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -8,13 +9,18 @@
     <!-- Due-time to-do reminders; the scheduler falls back to an inexact alarm when denied. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
+    <!-- Keep tasks on-device; Android 10+ can retain them when the user opts in at uninstall. -->
     <application
         android:name=".App"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/no_backup_rules"
+        android:fullBackupContent="false"
+        android:hasFragileUserData="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
-        android:theme="@style/Theme.PinnedCalendar">
+        android:theme="@style/Theme.PinnedCalendar"
+        tools:targetApi="29">
 
         <activity
             android:name=".MainActivity"
