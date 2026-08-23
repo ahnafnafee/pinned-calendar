@@ -1,0 +1,5 @@
+• Recurring to-dos now support daily, weekly, monthly, and yearly schedules
+• Build custom rules with flexible intervals and multiple weekdays
+• End a series on a date or after a chosen number of occurrences
+• Completing a recurring to-do moves it to the next upcoming date, preserving local time across month ends, leap years, and daylight-saving changes
+• Scheduled reminders follow the next occurrence automatically

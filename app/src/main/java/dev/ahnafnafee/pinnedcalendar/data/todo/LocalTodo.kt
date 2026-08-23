@@ -7,6 +7,10 @@ data class LocalTodo(
     val completed: Boolean = false,
     val notes: String = "",
     val priority: TodoPriority = TodoPriority.NONE,
+    val recurrence: TodoRecurrence? = null,
+    // The first occurrence, retained so Jan 31 monthly and Feb 29 yearly schedules do not drift.
+    val recurrenceAnchorMillis: Long? = null,
+    val recurrenceOccurrence: Int = 1,
 )
 
 /**

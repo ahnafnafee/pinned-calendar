@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -79,6 +80,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -100,7 +102,9 @@ import dev.ahnafnafee.pinnedcalendar.data.calendar.CalendarInfo
 import dev.ahnafnafee.pinnedcalendar.data.calendar.CalendarsRepository
 import dev.ahnafnafee.pinnedcalendar.data.settingsDataStore
 import dev.ahnafnafee.pinnedcalendar.data.todo.LocalTodo
+import dev.ahnafnafee.pinnedcalendar.data.todo.RecurrenceFrequency
 import dev.ahnafnafee.pinnedcalendar.data.todo.TodoPriority
+import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRecurrence
 import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
 import dev.ahnafnafee.pinnedcalendar.domain.DayBucketer
 import dev.ahnafnafee.pinnedcalendar.domain.NotificationContentBuilder
@@ -119,12 +123,15 @@ import dev.ahnafnafee.pinnedcalendar.ui.theme.PinnedCalendarTheme
 import dev.ahnafnafee.pinnedcalendar.work.AgendaScheduler
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import java.time.Clock
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -252,10 +259,16 @@ class MainActivity : ComponentActivity() {
                                 onToggle = { id -> scope.launch { todos.toggle(id); refresh() } },
                                 onDelete = { id -> scope.launch { todos.delete(id); refresh() } },
                                 onUpdate = { t ->
-                                    scope.launch { todos.update(t.id, t.title, t.dueMillis, t.notes, t.priority); refresh() }
+                                    scope.launch {
+                                        todos.update(t.id, t.title, t.dueMillis, t.notes, t.priority, t.recurrence)
+                                        refresh()
+                                    }
                                 },
                                 onAddRich = { t ->
-                                    scope.launch { todos.add(t.title, t.dueMillis, t.notes, t.priority); refresh() }
+                                    scope.launch {
+                                        todos.add(t.title, t.dueMillis, t.notes, t.priority, t.recurrence)
+                                        refresh()
+                                    }
                                 },
                             )
                         } else {
@@ -370,10 +383,13 @@ private fun TodosTab(
                     },
                     supportingContent = {
                         val due = dueLabel(todo.dueMillis)
+                        val repeat = todo.recurrence?.let {
+                            recurrenceSummary(it, todo.dueMillis, ZoneId.systemDefault())
+                        }
                         val hasNotes = todo.notes.isNotBlank()
-                        if (due != null || hasNotes) {
+                        if (due != null || repeat != null || hasNotes) {
                             Text(
-                                listOfNotNull(due, if (hasNotes) "Notes" else null).joinToString(" · "),
+                                listOfNotNull(due, repeat, if (hasNotes) "Notes" else null).joinToString(" · "),
                                 color = if (isOverdue(todo)) MaterialTheme.colorScheme.error
                                 else MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -425,7 +441,7 @@ private fun isOverdue(todo: LocalTodo): Boolean {
         Instant.ofEpochMilli(due).atZone(ZoneId.systemDefault()).toLocalDate() < LocalDate.now()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun TodoEditorSheet(
     todo: LocalTodo,
@@ -439,14 +455,24 @@ private fun TodoEditorSheet(
     var title by rememberSaveable(todo.id) { mutableStateOf(todo.title) }
     var notes by rememberSaveable(todo.id) { mutableStateOf(todo.notes) }
     var priorityValue by rememberSaveable(todo.id) { mutableStateOf(todo.priority.value) }
+    var recurrenceValue by rememberSaveable(todo.id) {
+        mutableStateOf(todo.recurrence?.toStateValue().orEmpty())
+    }
     var dueMillisOrZero by rememberSaveable(todo.id) { mutableStateOf(todo.dueMillis ?: 0L) }
     val priority = TodoPriority.from(priorityValue)
+    val recurrence = TodoRecurrence.fromStateValue(recurrenceValue)
     val dueMillis: Long? = dueMillisOrZero.takeIf { it != 0L }
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    var showRecurrenceEditor by rememberSaveable(todo.id) { mutableStateOf(false) }
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState()) {
-        Column(Modifier.padding(horizontal = 20.dp)) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
+        ) {
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
@@ -476,8 +502,52 @@ private fun TodoEditorSheet(
                 if (dueMillis != null) {
                     val is24Hour = android.text.format.DateFormat.is24HourFormat(LocalContext.current)
                     TextButton(onClick = { showTimePicker = true }) { Text(timeLabel(dueMillis, zone, is24Hour)) }
-                    TextButton(onClick = { dueMillisOrZero = 0L }) { Text("Clear") }
+                    TextButton(onClick = {
+                        dueMillisOrZero = 0L
+                        recurrenceValue = ""
+                    }) { Text("Clear") }
                 }
+            }
+
+            CardCaption("Repeat")
+            FlowRow(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                PillChip(
+                    selected = recurrence == null,
+                    onClick = { recurrenceValue = "" },
+                    label = "Never",
+                )
+                RecurrenceFrequency.entries.forEach { frequency ->
+                    val preset = TodoRecurrence.preset(frequency)
+                    PillChip(
+                        selected = recurrence == preset,
+                        onClick = {
+                            if (dueMillis == null) {
+                                dueMillisOrZero = TodoSchedule.at(null, today, zone)
+                            }
+                            recurrenceValue = preset.toStateValue()
+                        },
+                        label = frequency.presetLabel,
+                    )
+                }
+                PillChip(
+                    selected = recurrence != null && !recurrence.isSimplePreset,
+                    onClick = {
+                        if (dueMillis == null) dueMillisOrZero = TodoSchedule.at(null, today, zone)
+                        showRecurrenceEditor = true
+                    },
+                    label = "Custom…",
+                )
+            }
+            recurrence?.let {
+                Text(
+                    recurrenceSummary(it, dueMillis, zone),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 2.dp, bottom = 4.dp),
+                )
             }
 
             CardCaption("Priority")
@@ -525,7 +595,15 @@ private fun TodoEditorSheet(
                 Button(
                     enabled = title.isNotBlank(),
                     onClick = {
-                        onSave(todo.copy(title = title, dueMillis = dueMillis, notes = notes, priority = priority))
+                        onSave(
+                            todo.copy(
+                                title = title,
+                                dueMillis = dueMillis,
+                                notes = notes,
+                                priority = priority,
+                                recurrence = recurrence,
+                            ),
+                        )
                     },
                 ) { Text(if (isNew) "Add" else "Save") }
             }
@@ -582,11 +660,272 @@ private fun TodoEditorSheet(
             text = { TimePicker(state = timeState) },
         )
     }
+
+    if (showRecurrenceEditor) {
+        val zone = ZoneId.systemDefault()
+        val anchorDate = dueMillis?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalDate() }
+            ?: LocalDate.now()
+        RecurrenceEditorDialog(
+            initial = recurrence ?: TodoRecurrence.preset(RecurrenceFrequency.WEEKLY),
+            anchorDate = anchorDate,
+            onSave = {
+                recurrenceValue = it.toStateValue()
+                showRecurrenceEditor = false
+            },
+            onDismiss = { showRecurrenceEditor = false },
+        )
+    }
 }
 
 private fun timeLabel(dueMillis: Long, zone: ZoneId, is24Hour: Boolean): String =
     Instant.ofEpochMilli(dueMillis).atZone(zone).toLocalTime()
         .format(DateTimeFormatter.ofPattern(if (is24Hour) "H:mm" else "h:mm a"))
+
+private enum class RecurrenceEndChoice { NEVER, ON_DATE, AFTER_COUNT }
+
+private fun recurrenceSummary(rule: TodoRecurrence, dueMillis: Long?, zone: ZoneId): String {
+    val dueDate = dueMillis?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalDate() }
+        ?: LocalDate.now()
+    val normalized = rule.normalized(dueDate)
+    val base = if (normalized.isSimplePreset) {
+        normalized.frequency.presetLabel
+    } else {
+        val unit = if (normalized.interval == 1) {
+            normalized.frequency.singularLabel
+        } else {
+            normalized.frequency.pluralLabel
+        }
+        buildString {
+            append(if (normalized.interval == 1) "Every $unit" else "Every ${normalized.interval} $unit")
+            if (normalized.frequency == RecurrenceFrequency.WEEKLY) {
+                val days = normalized.weekdays.ifEmpty { setOf(dueDate.dayOfWeek) }
+                    .sortedBy { it.value }
+                    .joinToString(", ") { it.getDisplayName(TextStyle.SHORT, Locale.ENGLISH) }
+                append(" on $days")
+            }
+        }
+    }
+    val ending = when {
+        normalized.endDate != null ->
+            "until ${normalized.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH))}"
+        normalized.maxOccurrences != null -> {
+            val noun = if (normalized.maxOccurrences == 1) "occurrence" else "occurrences"
+            "for ${normalized.maxOccurrences} $noun"
+        }
+        else -> null
+    }
+    return listOfNotNull(base, ending).joinToString(" · ")
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+private fun RecurrenceEditorDialog(
+    initial: TodoRecurrence,
+    anchorDate: LocalDate,
+    onSave: (TodoRecurrence) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val stateKey = "${initial.toStateValue()}|${anchorDate.toEpochDay()}"
+    var frequencyValue by rememberSaveable(stateKey) { mutableStateOf(initial.frequency.persistedValue) }
+    var interval by rememberSaveable(stateKey) { mutableIntStateOf(initial.interval) }
+    val initialDays = initial.weekdays.ifEmpty { setOf(anchorDate.dayOfWeek) }
+    var weekdayMask by rememberSaveable(stateKey) {
+        mutableIntStateOf(TodoRecurrence.weekdayMask(initialDays))
+    }
+    val initialEndChoice = when {
+        initial.endDate != null -> RecurrenceEndChoice.ON_DATE
+        initial.maxOccurrences != null -> RecurrenceEndChoice.AFTER_COUNT
+        else -> RecurrenceEndChoice.NEVER
+    }
+    var endChoiceValue by rememberSaveable(stateKey) { mutableStateOf(initialEndChoice.name) }
+    var endDateEpochDay by rememberSaveable(stateKey) {
+        mutableStateOf(initial.endDate?.toEpochDay())
+    }
+    var occurrenceCount by rememberSaveable(stateKey) {
+        mutableIntStateOf(initial.maxOccurrences ?: 10)
+    }
+    var showEndDatePicker by rememberSaveable(stateKey) { mutableStateOf(false) }
+    val frequency = RecurrenceFrequency.fromPersisted(frequencyValue) ?: RecurrenceFrequency.WEEKLY
+    val endChoice = runCatching { RecurrenceEndChoice.valueOf(endChoiceValue) }
+        .getOrDefault(RecurrenceEndChoice.NEVER)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Custom recurrence") },
+        confirmButton = {
+            TextButton(onClick = {
+                val endDate = if (endChoice == RecurrenceEndChoice.ON_DATE) {
+                    LocalDate.ofEpochDay(endDateEpochDay ?: anchorDate.plusMonths(1).toEpochDay())
+                } else {
+                    null
+                }
+                val selectedWeekdays = TodoRecurrence.weekdaysFromMask(weekdayMask)
+                val weekdays = if (
+                    frequency == RecurrenceFrequency.WEEKLY &&
+                    initial.frequency == RecurrenceFrequency.WEEKLY &&
+                    initial.weekdays.isEmpty() &&
+                    selectedWeekdays == setOf(anchorDate.dayOfWeek)
+                ) {
+                    emptySet()
+                } else {
+                    selectedWeekdays
+                }
+                onSave(
+                    TodoRecurrence(
+                        frequency = frequency,
+                        interval = interval,
+                        weekdays = if (frequency == RecurrenceFrequency.WEEKLY) weekdays else emptySet(),
+                        endDate = endDate,
+                        maxOccurrences = occurrenceCount.takeIf {
+                            endChoice == RecurrenceEndChoice.AFTER_COUNT
+                        },
+                    ).normalized(anchorDate),
+                )
+            }) { Text("Done") }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        text = {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 520.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                DialogSectionLabel("Frequency")
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    RecurrenceFrequency.entries.forEach { option ->
+                        PillChip(
+                            selected = frequency == option,
+                            onClick = { frequencyValue = option.persistedValue },
+                            label = option.presetLabel,
+                        )
+                    }
+                }
+
+                DialogSectionLabel("Repeat every")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        enabled = interval > 1,
+                        onClick = { interval-- },
+                    ) { Text("−", style = MaterialTheme.typography.titleLarge) }
+                    val unit = if (interval == 1) frequency.singularLabel else frequency.pluralLabel
+                    Text(
+                        "$interval $unit",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                    )
+                    IconButton(
+                        enabled = interval < TodoRecurrence.MAX_INTERVAL,
+                        onClick = { interval++ },
+                    ) { Text("+", style = MaterialTheme.typography.titleLarge) }
+                }
+
+                if (frequency == RecurrenceFrequency.WEEKLY) {
+                    DialogSectionLabel("Repeat on")
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        DayOfWeek.entries.forEach { day ->
+                            val bit = 1 shl (day.value - 1)
+                            val selected = weekdayMask and bit != 0
+                            PillChip(
+                                selected = selected,
+                                onClick = {
+                                    val updated = weekdayMask xor bit
+                                    if (updated != 0) weekdayMask = updated
+                                },
+                                label = day.getDisplayName(TextStyle.SHORT, Locale.ENGLISH).take(2),
+                            )
+                        }
+                    }
+                }
+
+                DialogSectionLabel("Ends")
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        RecurrenceEndChoice.NEVER to "Never",
+                        RecurrenceEndChoice.ON_DATE to "On date",
+                        RecurrenceEndChoice.AFTER_COUNT to "After",
+                    ).forEach { (choice, label) ->
+                        PillChip(
+                            selected = endChoice == choice,
+                            onClick = { endChoiceValue = choice.name },
+                            label = label,
+                        )
+                    }
+                }
+                when (endChoice) {
+                    RecurrenceEndChoice.NEVER -> Unit
+                    RecurrenceEndChoice.ON_DATE -> {
+                        val endDate = LocalDate.ofEpochDay(
+                            endDateEpochDay ?: anchorDate.plusMonths(1).toEpochDay(),
+                        )
+                        TextButton(onClick = { showEndDatePicker = true }) {
+                            Text(endDate.format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.ENGLISH)))
+                        }
+                    }
+                    RecurrenceEndChoice.AFTER_COUNT -> {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(
+                                enabled = occurrenceCount > 1,
+                                onClick = { occurrenceCount-- },
+                            ) { Text("−", style = MaterialTheme.typography.titleLarge) }
+                            Text(
+                                "$occurrenceCount occurrences",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(horizontal = 8.dp),
+                            )
+                            IconButton(
+                                enabled = occurrenceCount < TodoRecurrence.MAX_OCCURRENCES,
+                                onClick = { occurrenceCount++ },
+                            ) { Text("+", style = MaterialTheme.typography.titleLarge) }
+                        }
+                    }
+                }
+
+                Text(
+                    "Completing the current occurrence advances this to-do to the next scheduled date. " +
+                        "Missed dates are skipped.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+            }
+        },
+    )
+
+    if (showEndDatePicker) {
+        val initialDate = LocalDate.ofEpochDay(
+            endDateEpochDay ?: anchorDate.plusMonths(1).toEpochDay(),
+        )
+        val pickerState = rememberDatePickerState(
+            initialSelectedDateMillis = initialDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(),
+        )
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    pickerState.selectedDateMillis?.let { utc ->
+                        val selected = Instant.ofEpochMilli(utc).atZone(ZoneOffset.UTC).toLocalDate()
+                        endDateEpochDay = maxOf(selected.toEpochDay(), anchorDate.toEpochDay())
+                    }
+                    showEndDatePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
+            },
+        ) { DatePicker(state = pickerState) }
+    }
+}
+
+@Composable
+private fun DialogSectionLabel(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
+    )
+}
 
 @Composable
 private fun SettingsTab(
@@ -1075,7 +1414,7 @@ private fun SliderRow(label: String, value: Int, range: ClosedFloatingPointRange
 
 @Composable
 private fun NotificationPreview(s: AppSettings) {
-    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     var showExpanded by rememberSaveable { mutableStateOf(false) }
 
     // Sample content runs through the real pipeline (bucketer + content builder), so the preview
@@ -1091,7 +1430,7 @@ private fun NotificationPreview(s: AppSettings) {
     // The renderer keys its text colors off the SYSTEM night mode (the shade's theme), not the
     // app theme, so the preview backdrop must follow the same signal or the text goes illegible.
     val systemDark =
-        (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+        (configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
             Configuration.UI_MODE_NIGHT_YES
     val shadeBackground = if (systemDark) Color(0xFF1F2124) else Color(0xFFE9EBEE)
 

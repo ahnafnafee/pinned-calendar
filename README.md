@@ -72,7 +72,7 @@ An ongoing notification keeps this week's events and to-dos at the top of the sh
 
 ### `2` Rich to-dos
 
-Add quick tasks in the app and they merge into the same agenda, carrying forward day to day until completed or deleted. Tap a to-do to edit it: rename, schedule with quick chips (today, tomorrow, next week) or any date and time, set a priority flag whose color rides into the pin, and attach notes. The list groups into Overdue, Today, Upcoming, and Completed. An opt-in setting sends an alerting, swipeable reminder notification when a scheduled to-do comes due, leaving the pin untouched. Android can show it as a heads-up alert when system notification settings allow.
+Add quick tasks in the app and they merge into the same agenda, carrying forward day to day until completed or deleted. Tap a to-do to edit it: rename, schedule with quick chips (today, tomorrow, next week) or any date and time, set a priority flag whose color rides into the pin, and attach notes. Recurrence includes daily, weekly, monthly, and yearly presets plus custom intervals, selectable weekdays, and endings by date or occurrence count. Completing a recurring to-do advances it to the first upcoming occurrence, skipping missed dates while preserving month-end, leap-year, and local-time intent. The list groups into Overdue, Today, Upcoming, and Completed. An opt-in setting sends an alerting, swipeable reminder notification whenever a scheduled occurrence comes due, leaving the pin untouched. Android can show it as a heads-up alert when system notification settings allow.
 
 ### `3` The pin, your way
 
@@ -121,7 +121,7 @@ The app is split into two tabs.
 
 - Week overview card: how many items are pinned, day by day.
 - Add, complete, and delete local to-dos that merge into the pinned agenda.
-- Tap a to-do to edit it: rename, schedule (today · tomorrow · next week · any date and time), set a priority flag that colors its bar in the pin, and attach notes.
+- Tap a to-do to edit it: rename, schedule (today · tomorrow · next week · any date and time), choose preset or custom recurrence rules, set a priority flag that colors its bar in the pin, and attach notes.
 
 **Settings**, everything else, Material You styled:
 
@@ -223,7 +223,7 @@ Or open the project in Android Studio and run it.
 - [x] Per-to-do due-date picker
 - [x] To-do priorities, notes, and due-time reminders
 - [ ] Google Tasks integration (opt-in)
-- [ ] Recurring-task support
+- [x] Recurring-task support
 - [ ] Wear OS tile
 
 Have an idea? [Open an issue][issues-link].
