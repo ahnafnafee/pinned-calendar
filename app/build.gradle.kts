@@ -23,8 +23,8 @@ android {
         // Release builds receive these from the Release workflow via -PversionName /
         // -PversionCode (the code is derived from the semver version). Local builds use
         // the defaults below.
-        versionCode = (project.findProperty("versionCode") as String?)?.toInt() ?: 30100
-        versionName = (project.findProperty("versionName") as String?) ?: "3.1.0"
+        versionCode = (project.findProperty("versionCode") as String?)?.toInt() ?: 30200
+        versionName = (project.findProperty("versionName") as String?) ?: "3.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

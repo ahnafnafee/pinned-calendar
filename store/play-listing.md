@@ -20,7 +20,7 @@ Pinned Calendar: To-Do Agenda
 Your week's calendar & to-dos in one always-on agenda pin. No sign-in, offline.
 ```
 
-## Full description (max 4000 — currently ~1.9k)
+## Full description (max 4000 — currently ~3.2k)
 
 Emoji section headers are allowed in the Play description (not in the title).
 Paste as plain text — Play does not render Markdown.
@@ -37,7 +37,7 @@ The agenda lives in your notification shade and stays put. Swipe it away by acci
 Reads your device calendars through Android's Calendar Provider, color-coded per calendar. Pick which calendars appear and how far ahead to look: the next 3 days, this week, 7 days, or 14 days.
 
 ✅ Built-in to-dos
-Add quick tasks right in the app and they merge into the same agenda. Unfinished tasks carry forward day to day until you complete or delete them.
+Add quick tasks right in the app and they merge into the same agenda. Add a due date and time, notes, or a priority flag. Repeat tasks with quick daily, weekly, monthly, and yearly presets—or customize the interval, weekdays, end date, or occurrence count. Unfinished tasks carry forward day to day, while completing a recurring task advances it to its next upcoming date. Optional alerting reminders let you know when scheduled tasks come due.
 
 👀 At a glance
 A day-grouped agenda — Today, Tomorrow, and weekday sections — with events and tasks as their own rows. Tap an event to open it in Google Calendar; tap anywhere else to jump into the app.

@@ -10,4 +10,4 @@ Rules:
 - Add the file for a version **before** dispatching its Play release — the workflow
   preflight fails fast if it's missing.
 
-Latest: [`distribution/whatsnew/3.1.0/whatsnew-en-US`](../distribution/whatsnew/3.1.0/whatsnew-en-US).
+Latest: [`distribution/whatsnew/3.2.0/whatsnew-en-US`](../distribution/whatsnew/3.2.0/whatsnew-en-US).

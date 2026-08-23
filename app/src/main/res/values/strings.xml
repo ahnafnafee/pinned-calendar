@@ -4,5 +4,5 @@
     <string name="channel_name">Pinned agenda</string>
     <string name="channel_desc">The always-visible weekly agenda pin</string>
     <string name="reminder_channel_name">To-do reminders</string>
-    <string name="reminder_channel_desc">One-time alerts when a scheduled to-do comes due</string>
+    <string name="reminder_channel_desc">Alerts when a scheduled to-do comes due</string>
 </resources>

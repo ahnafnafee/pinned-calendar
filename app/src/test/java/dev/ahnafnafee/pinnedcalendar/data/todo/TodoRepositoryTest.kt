@@ -13,9 +13,14 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import java.io.File
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.ZoneId
 
 @RunWith(RobolectricTestRunner::class)
 class TodoRepositoryTest {
+
+    private fun preset(frequency: RecurrenceFrequency) = TodoRecurrence.preset(frequency)
 
     private fun newRepo(): TodoRepository {
         val ctx = RuntimeEnvironment.getApplication()
@@ -99,6 +104,178 @@ class TodoRepositoryTest {
         assertEquals(TodoPriority.MEDIUM, t.priority)
     }
 
+    @Test fun recurring_add_roundtrips_custom_rule_and_series_position() = runTest {
+        val zone = ZoneId.of("America/New_York")
+        val due = LocalDate.of(2026, 6, 2).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val rule = TodoRecurrence(
+            frequency = RecurrenceFrequency.WEEKLY,
+            interval = 2,
+            weekdays = setOf(DayOfWeek.TUESDAY, DayOfWeek.THURSDAY),
+            endDate = LocalDate.of(2026, 12, 31),
+        )
+        val r = newRepo()
+        r.add("Water plants", due, recurrence = rule, zone = zone)
+
+        val t = r.snapshot().single()
+        assertEquals(rule, t.recurrence)
+        assertEquals(due, t.recurrenceAnchorMillis)
+        assertEquals(1, t.recurrenceOccurrence)
+    }
+
+    @Test fun completing_recurring_todo_advances_it_without_closing_the_series() = runTest {
+        val zone = ZoneId.of("America/New_York")
+        val due = LocalDate.of(2026, 6, 1).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val completedAt = LocalDate.of(2026, 6, 3).atTime(12, 0).atZone(zone).toInstant().toEpochMilli()
+        val r = newRepo()
+        r.add("Water plants", due, recurrence = preset(RecurrenceFrequency.DAILY), zone = zone)
+        val original = r.snapshot().single()
+
+        r.toggle(original.id, completedAt, zone)
+
+        val advanced = r.snapshot().single()
+        assertEquals(original.id, advanced.id)
+        assertFalse(advanced.completed)
+        assertEquals(
+            LocalDate.of(2026, 6, 4).atTime(9, 0).atZone(zone).toInstant().toEpochMilli(),
+            advanced.dueMillis,
+        )
+        assertEquals(due, advanced.recurrenceAnchorMillis)
+        assertEquals(4, advanced.recurrenceOccurrence)
+    }
+
+    @Test fun editing_details_preserves_a_recurring_series_anchor() = runTest {
+        val zone = ZoneId.of("America/New_York")
+        val january = LocalDate.of(2027, 1, 31).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val february = LocalDate.of(2027, 2, 28).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val r = newRepo()
+        val recurrence = preset(RecurrenceFrequency.MONTHLY)
+        r.add("Invoice", january, recurrence = recurrence, zone = zone)
+        val id = r.snapshot().single().id
+        r.toggle(id, january, zone)
+        assertEquals(february, r.snapshot().single().dueMillis)
+
+        r.update(id, "Send invoice", february, "Client A", TodoPriority.HIGH, recurrence, zone)
+
+        assertEquals(january, r.snapshot().single().recurrenceAnchorMillis)
+    }
+
+    @Test fun editing_only_the_time_keeps_the_monthly_anchor_day() = runTest {
+        val zone = ZoneId.of("America/New_York")
+        val january = LocalDate.of(2027, 1, 31).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val february = LocalDate.of(2027, 2, 28).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val februaryAtTwo = LocalDate.of(2027, 2, 28).atTime(14, 0).atZone(zone).toInstant().toEpochMilli()
+        val marchAtTwo = LocalDate.of(2027, 3, 31).atTime(14, 0).atZone(zone).toInstant().toEpochMilli()
+        val r = newRepo()
+        r.add("Invoice", january, recurrence = preset(RecurrenceFrequency.MONTHLY), zone = zone)
+        val id = r.snapshot().single().id
+        r.toggle(id, january, zone)
+        assertEquals(february, r.snapshot().single().dueMillis)
+
+        val current = r.snapshot().single()
+        r.update(
+            id,
+            current.title,
+            februaryAtTwo,
+            current.notes,
+            current.priority,
+            current.recurrence,
+            zone,
+        )
+        r.toggle(id, februaryAtTwo, zone)
+
+        assertEquals(marchAtTwo, r.snapshot().single().dueMillis)
+    }
+
+    @Test fun recurrence_requires_a_due_date() = runTest {
+        val r = newRepo()
+        r.add("Someday", null, recurrence = preset(RecurrenceFrequency.DAILY))
+
+        val t = r.snapshot().single()
+        assertNull(t.recurrence)
+        assertNull(t.recurrenceAnchorMillis)
+    }
+
+    @Test fun reaching_an_occurrence_limit_completes_and_closes_the_series() = runTest {
+        val zone = ZoneId.of("America/New_York")
+        val june1 = LocalDate.of(2026, 6, 1).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val june2 = LocalDate.of(2026, 6, 2).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val r = newRepo()
+        r.add(
+            "Two doses",
+            june1,
+            recurrence = TodoRecurrence(RecurrenceFrequency.DAILY, maxOccurrences = 2),
+            zone = zone,
+        )
+        val id = r.snapshot().single().id
+
+        r.toggle(id, june1, zone)
+        assertEquals(june2, r.snapshot().single().dueMillis)
+        assertEquals(2, r.snapshot().single().recurrenceOccurrence)
+        r.toggle(id, june2, zone)
+
+        val finished = r.snapshot().single()
+        assertTrue(finished.completed)
+        assertNull(finished.recurrence)
+        assertNull(finished.recurrenceAnchorMillis)
+        assertEquals(1, finished.recurrenceOccurrence)
+    }
+
+    @Test fun changing_the_rule_starts_a_new_series_at_the_current_due_date() = runTest {
+        val zone = ZoneId.of("America/New_York")
+        val january = LocalDate.of(2027, 1, 31).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val february = LocalDate.of(2027, 2, 28).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val r = newRepo()
+        val monthly = preset(RecurrenceFrequency.MONTHLY)
+        r.add("Invoice", january, recurrence = monthly, zone = zone)
+        val id = r.snapshot().single().id
+        r.toggle(id, january, zone)
+
+        val everyTwoMonths = TodoRecurrence(RecurrenceFrequency.MONTHLY, interval = 2)
+        r.update(id, "Invoice", february, "", TodoPriority.NONE, everyTwoMonths, zone)
+
+        val restarted = r.snapshot().single()
+        assertEquals(february, restarted.recurrenceAnchorMillis)
+        assertEquals(1, restarted.recurrenceOccurrence)
+        assertEquals(everyTwoMonths, restarted.recurrence)
+    }
+
+    @Test fun changing_only_the_series_end_preserves_the_existing_position() = runTest {
+        val zone = ZoneId.of("America/New_York")
+        val january = LocalDate.of(2027, 1, 31).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val february = LocalDate.of(2027, 2, 28).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val r = newRepo()
+        val monthly = preset(RecurrenceFrequency.MONTHLY)
+        r.add("Invoice", january, recurrence = monthly, zone = zone)
+        val id = r.snapshot().single().id
+        r.toggle(id, january, zone)
+
+        val endingAfterThree = monthly.copy(maxOccurrences = 3)
+        r.update(id, "Invoice", february, "", TodoPriority.NONE, endingAfterThree, zone)
+
+        val updated = r.snapshot().single()
+        assertEquals(january, updated.recurrenceAnchorMillis)
+        assertEquals(2, updated.recurrenceOccurrence)
+    }
+
+    @Test fun adding_recurrence_to_a_completed_todo_reopens_it() = runTest {
+        val r = newRepo()
+        r.add("Review budget", 123L)
+        val id = r.snapshot().single().id
+        r.toggle(id)
+        assertTrue(r.snapshot().single().completed)
+
+        r.update(
+            id,
+            "Review budget",
+            123L,
+            "",
+            TodoPriority.NONE,
+            preset(RecurrenceFrequency.MONTHLY),
+        )
+
+        assertFalse(r.snapshot().single().completed)
+    }
+
     @Test fun decodes_entries_written_before_notes_and_priority_existed() = runTest {
         val ctx = RuntimeEnvironment.getApplication()
         val file = File.createTempFile("todos_legacy", ".preferences_pb", ctx.cacheDir)
@@ -118,7 +295,27 @@ class TodoRepositoryTest {
         assertTrue(t.completed)
         assertEquals("", t.notes)
         assertEquals(TodoPriority.NONE, t.priority)
+        assertNull(t.recurrence)
+        assertNull(t.recurrenceAnchorMillis)
         // An unknown priority value (newer schema, hand-edited store) degrades to NONE.
         assertEquals(TodoPriority.NONE, list[1].priority)
+    }
+
+    @Test fun recurrence_without_a_stored_anchor_migrates_from_its_due_time() = runTest {
+        val ctx = RuntimeEnvironment.getApplication()
+        val file = File.createTempFile("todos_repeat_legacy", ".preferences_pb", ctx.cacheDir)
+        file.delete()
+        val store = PreferenceDataStoreFactory.create(produceFile = { file })
+        store.edit { prefs ->
+            prefs[stringPreferencesKey("todos_json")] =
+                """[{"id":"1","title":"Rent","due":123,"done":false,"repeat":"monthly"},""" +
+                """{"id":"2","title":"Unknown","due":456,"done":false,"repeat":"fortnightly"}]"""
+        }
+
+        val list = TodoRepository(store).snapshot()
+        assertEquals(preset(RecurrenceFrequency.MONTHLY), list[0].recurrence)
+        assertEquals(123L, list[0].recurrenceAnchorMillis)
+        assertNull(list[1].recurrence)
+        assertNull(list[1].recurrenceAnchorMillis)
     }
 }
