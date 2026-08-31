@@ -7,12 +7,14 @@ controlled so the live listing is reviewed in git (pattern borrowed from the
 ```
 store/
 ├── README.md                                this file — publish guide + field map
-├── play-listing.md                          title / short / full description (source of truth)
+├── listings/<locale>.md                     localized title / short / full description
+├── play-listing.md                          locale index + shared listing settings
 ├── release-notes.md                         "What's New" per version
 ├── privacy-policy.md                        required by Play — host it, paste the URL
 ├── play_icon_512.png                        512×512 app icon (from design/assets/icon-512.png)
 ├── play_feature_graphic_1024x500.png        feature graphic (dark + orange, matches the screenshots)
 ├── _generate_assets.py                      re-runnable: copies icon + screenshots from design/, builds feature graphic
+├── _publish_listing.py                      validates/syncs listings and maintains Play assets/tracks
 └── screenshots/
     └── screen_N_<feature>_1080x1920.png     Play-ready phone shots (from design/assets/screenshot-N.png)
 ```
@@ -30,7 +32,7 @@ Play-ready names and builds the feature graphic (the one asset not in the design
 - [x] Feature graphic — `play_feature_graphic_1024x500.png` (1024×500, dark + orange)
 - [x] Phone screenshots — **5** in `screenshots/` (1080×1920, exact 9:16, 24-bit). Play needs 2–8.
 
-**Text — done ✅** → `play-listing.md`, `release-notes.md`
+**Text — done ✅** → `listings/`, `play-listing.md`, `release-notes.md`
 
 **You still need to do in Play Console**
 - [ ] Create the app (Productivity, Free, not primarily for children)
@@ -46,9 +48,9 @@ Play-ready names and builds the feature graphic (the one asset not in the design
 
 | Play Console location | Asset / file |
 |---|---|
-| Store presence → Main store listing → App name | `play-listing.md` → App name |
-| … → Short description | `play-listing.md` → Short description |
-| … → Full description | `play-listing.md` → Full description |
+| Store presence → Main store listing → App name | `listings/<locale>.md` → `#` heading |
+| … → Short description | `listings/<locale>.md` → Short description |
+| … → Full description | `listings/<locale>.md` → Full description |
 | … → App icon | `play_icon_512.png` |
 | … → Feature graphic | `play_feature_graphic_1024x500.png` |
 | … → Phone screenshots | `screenshots/screen_*.png` |
@@ -128,8 +130,8 @@ Automated Play upload additionally requires:
   testing tracks** permission. Grant only the permissions this workflow needs.
 - The complete service-account JSON stored in the GitHub Actions secret
   `PLAY_SERVICE_ACCOUNT_JSON`; never commit the JSON key.
-- A non-empty, plain-text, maximum-500-character
-  `distribution/whatsnew/<version>/whatsnew-en-US` file.
+- Non-empty, plain-text, maximum-500-character release notes for all 15 locales under
+  `distribution/whatsnew/<version>/`. The workflow rejects a partial locale set.
 - A bundle targeting the currently required Android API level with 16 KB-aligned
   native libraries. The release workflow checks APK packaging alignment; Play
   performs the final bundle validation.
@@ -146,6 +148,25 @@ see `app/build.gradle.kts`):
 
 Recommended either way: enroll in **Play App Signing** (Play holds the app signing
 key; you keep an upload key).
+
+---
+
+## Localized listing text
+
+The app and Play listing share the same 15-language set. Edit the header-driven files in
+`store/listings/`, then validate them locally without credentials:
+
+```bash
+python store/_publish_listing.py --validate
+```
+
+To publish, open GitHub → Actions → **Play listing** → Run workflow and select
+`sync_listings`. The workflow validates the exact locale set and Play character limits,
+then updates all localized listings in one Play edit. It can also sync the English phone
+screenshots or promote an existing internal-track version in the same atomic operation.
+
+Locale codes: `ar`, `bn-BD`, `de-DE`, `en-US`, `es-ES`, `fr-FR`, `hi-IN`, `id`,
+`it-IT`, `ja-JP`, `ko-KR`, `pt-BR`, `tr-TR`, `vi`, and `zh-CN`.
 
 ---
 
@@ -179,9 +200,6 @@ feature graphic. Requires Pillow (`pip install pillow`).
 
 ## Intentionally skipped (vs. the player2 reference)
 
-player2 is a large team app; these were left out as overkill for a solo
-open-source utility. Add them later if you ever need to:
-- **Localized listings** (player2 ships 8 languages) — add `play-listing.<lang>.md` when you localize.
+player2 is a large team app; these remain out of scope for this solo open-source utility:
 - **Tablet / other device screenshots** — optional for phone apps; add a `screenshots/tablet/` folder if you want the tablet slots filled.
 - **ASO strategy / custom store pages / EAS config** — not relevant here (this is a native Gradle app, not Expo).
-- **Full metadata sync to Play** (fastlane `supply` pushing listing text, screenshots, and graphics straight to Play) — not wired up. Direct `.aab` upload with release notes **is** wired (opt-in `publish_to_play` in the Release workflow, via a Play service-account secret); only the store-listing/graphics sync stays manual. Note the *first* release must be uploaded manually anyway, to create the app on Play.

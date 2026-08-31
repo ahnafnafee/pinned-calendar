@@ -8,18 +8,27 @@ import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
+
+data class DayBucketLabels(
+    val today: String = "Today",
+    val tomorrow: String = "Tomorrow",
+    val allDay: String = "All day",
+    val relativeHeaderPattern: String = "%1\$s · %2\$s",
+)
 
 class DayBucketer(
     private val clock: Clock,
     private val zone: ZoneId = ZoneId.systemDefault(),
     use24Hour: Boolean = false,
+    private val locale: Locale = Locale.getDefault(),
+    private val labels: DayBucketLabels = DayBucketLabels(),
+    timePattern: String = if (use24Hour) "H:mm" else "h:mm a",
+    dayHeaderPattern: String = "EEE d",
 ) {
-    // 12-hour with AM/PM by default (9:00 AM); 24-hour drops the suffix (09:00).
-    private val timeFmt =
-        DateTimeFormatter.ofPattern(if (use24Hour) "H:mm" else "h:mm a", Locale.getDefault())
+    private val timeFmt = DateTimeFormatter.ofPattern(timePattern, locale)
+    private val dayHeaderFmt = DateTimeFormatter.ofPattern(dayHeaderPattern, locale)
 
     fun bucket(items: List<AgendaItem>): List<DaySection> {
         val today = LocalDate.now(clock.withZone(zone))
@@ -38,19 +47,27 @@ class DayBucketer(
     }
 
     private fun headerFor(date: LocalDate, today: LocalDate): String {
-        val dow = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-            .uppercase(Locale.getDefault())
-        val label = "$dow ${date.dayOfMonth}"
+        val label = dayHeaderFmt.format(date).uppercase(locale)
         return when (ChronoUnit.DAYS.between(today, date)) {
-            0L -> "TODAY · $label"
-            1L -> "TOMORROW · $label"
+            0L -> String.format(
+                locale,
+                labels.relativeHeaderPattern,
+                labels.today.uppercase(locale),
+                label,
+            )
+            1L -> String.format(
+                locale,
+                labels.relativeHeaderPattern,
+                labels.tomorrow.uppercase(locale),
+                label,
+            )
             else -> label
         }
     }
 
     private fun toRow(item: AgendaItem): NotificationRow {
         val time = when {
-            item.allDay -> "All day"
+            item.allDay -> labels.allDay
             item.start != null -> timeFmt.format(item.start.atZone(zone))
             else -> ""
         }

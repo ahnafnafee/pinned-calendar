@@ -1,0 +1,162 @@
+<resources>
+    <string name="channel_name">পিন করা এজেন্ডা</string>
+    <string name="channel_desc">সব সময় দৃশ্যমান সাপ্তাহিক এজেন্ডা পিন</string>
+    <string name="reminder_channel_name">করণীয় অনুস্মারক</string>
+    <string name="reminder_channel_desc">নির্ধারিত করণীয়টির সময় হলে সতর্কতা</string>
+    <string name="todo_reminder_due_now">এখনই সম্পন্ন করতে হবে</string>
+    <string name="todo_reminder_mark_done">সম্পন্ন হিসেবে চিহ্নিত করুন</string>
+    <string name="todo_reminder_snooze">৩০ মিনিটের জন্য স্থগিত করুন</string>
+    <string name="action_add">যোগ করুন</string>
+    <string name="action_allow">অনুমতি দিন</string>
+    <string name="action_cancel">বাতিল করুন</string>
+    <string name="action_clear">পরিষ্কার করুন</string>
+    <string name="action_delete">মুছে ফেলুন</string>
+    <string name="action_done">সম্পন্ন</string>
+    <string name="action_ok">ঠিক আছে</string>
+    <string name="action_save">সংরক্ষণ করুন</string>
+    <string name="settings_state_on">চালু</string>
+    <string name="number_integer">%1$d</string>
+    <string name="nav_todos">করণীয়</string>
+    <string name="nav_settings">সেটিংস</string>
+    <string name="settings_title">সেটিংস</string>
+    <string name="todos_title">করণীয়</string>
+    <string name="todo_new_due_today">নতুন করণীয় (আজকের জন্য)</string>
+    <string name="todo_empty">এখনও কোনো করণীয় নেই।</string>
+    <string name="todo_meta_notes">নোট</string>
+    <string name="todo_due_today">আজকের জন্য নির্ধারিত</string>
+    <string name="todo_due_tomorrow">আগামীকালের জন্য নির্ধারিত</string>
+    <string name="todo_due_date">নির্ধারিত: %1$s</string>
+    <string name="todo_field_title">শিরোনাম</string>
+    <string name="todo_schedule">সময় নির্ধারণ</string>
+    <string name="todo_schedule_today">আজ</string>
+    <string name="todo_schedule_tomorrow">আগামীকাল</string>
+    <string name="todo_schedule_next_week">আগামী সপ্তাহ</string>
+    <string name="todo_pick_date">তারিখ বেছে নিন</string>
+    <string name="todo_repeat">পুনরাবৃত্তি</string>
+    <string name="todo_priority">অগ্রাধিকার</string>
+    <string name="todo_notes">নোট</string>
+    <string name="todo_group_overdue">সময় পেরিয়েছে</string>
+    <string name="todo_group_today">আজ</string>
+    <string name="todo_group_upcoming">আসন্ন</string>
+    <string name="todo_group_no_date">তারিখ নেই</string>
+    <string name="todo_group_completed">সম্পন্ন</string>
+    <string name="todo_priority_none">কোনোটিই নয়</string>
+    <string name="todo_priority_low">কম</string>
+    <string name="todo_priority_medium">মাঝারি</string>
+    <string name="todo_priority_high">উচ্চ</string>
+    <string name="recurrence_never">কখনও নয়</string>
+    <string name="recurrence_daily">প্রতিদিন</string>
+    <string name="recurrence_weekly">প্রতি সপ্তাহে</string>
+    <string name="recurrence_monthly">প্রতি মাসে</string>
+    <string name="recurrence_yearly">প্রতি বছরে</string>
+    <string name="recurrence_custom">নিজের মতো…</string>
+    <string name="recurrence_custom_title">নিজের মতো পুনরাবৃত্তি</string>
+    <string name="recurrence_frequency">পুনরাবৃত্তির হার</string>
+    <string name="recurrence_repeat_every">পুনরাবৃত্তির ব্যবধান</string>
+    <string name="recurrence_repeat_on">যে দিনে পুনরাবৃত্তি হবে</string>
+    <string name="recurrence_ends">শেষ হবে</string>
+    <string name="recurrence_on_date">নির্দিষ্ট তারিখে</string>
+    <string name="recurrence_after">এর পরে</string>
+    <string name="recurrence_on_days">%1$s: %2$s</string>
+    <string name="recurrence_until">%1$s পর্যন্ত</string>
+    <string name="recurrence_help">বর্তমান পুনরাবৃত্তিটি সম্পন্ন করলে এই করণীয়টি পরবর্তী নির্ধারিত তারিখে চলে যাবে। বাদ পড়া তারিখগুলো এড়িয়ে যাওয়া হবে।</string>
+    <plurals name="recurrence_every_days"><item quantity="one">প্রতি %1$d দিনে</item><item quantity="other">প্রতি %1$d দিনে</item></plurals>
+    <plurals name="recurrence_every_weeks"><item quantity="one">প্রতি %1$d সপ্তাহে</item><item quantity="other">প্রতি %1$d সপ্তাহে</item></plurals>
+    <plurals name="recurrence_every_months"><item quantity="one">প্রতি %1$d মাসে</item><item quantity="other">প্রতি %1$d মাসে</item></plurals>
+    <plurals name="recurrence_every_years"><item quantity="one">প্রতি %1$d বছরে</item><item quantity="other">প্রতি %1$d বছরে</item></plurals>
+    <plurals name="recurrence_interval_days"><item quantity="one">%1$d দিন</item><item quantity="other">%1$d দিন</item></plurals>
+    <plurals name="recurrence_interval_weeks"><item quantity="one">%1$d সপ্তাহ</item><item quantity="other">%1$d সপ্তাহ</item></plurals>
+    <plurals name="recurrence_interval_months"><item quantity="one">%1$d মাস</item><item quantity="other">%1$d মাস</item></plurals>
+    <plurals name="recurrence_interval_years"><item quantity="one">%1$d বছর</item><item quantity="other">%1$d বছর</item></plurals>
+    <plurals name="recurrence_occurrences"><item quantity="one">%1$d বার</item><item quantity="other">%1$d বার</item></plurals>
+    <plurals name="recurrence_for_occurrences"><item quantity="one">%1$d বারের জন্য</item><item quantity="other">%1$d বারের জন্য</item></plurals>
+    <string name="settings_notifications">বিজ্ঞপ্তি</string>
+    <string name="settings_pin_title">বিজ্ঞপ্তিতে পিন করুন</string>
+    <string name="settings_pin_subtitle">এই সপ্তাহের এজেন্ডা বিজ্ঞপ্তি প্যানেলে রাখুন</string>
+    <string name="settings_priority_top">সবার উপরে</string>
+    <string name="settings_priority_normal">স্বাভাবিক</string>
+    <string name="settings_priority_silent">নীরব</string>
+    <string name="settings_priority_top_desc">অন্য বিজ্ঞপ্তির উপরে থাকে—কখনও পপ আপ হয় না বা শব্দ করে না।</string>
+    <string name="settings_priority_normal_desc">আপনার দৈনন্দিন বিজ্ঞপ্তির সঙ্গে থাকে।</string>
+    <string name="settings_priority_silent_desc">বিজ্ঞপ্তি প্যানেলের “নীরব” বিভাজকের নিচে থাকে।</string>
+    <string name="settings_double_swipe_title">সরাতে দুবার সোয়াইপ করুন</string>
+    <string name="settings_double_swipe_subtitle">বন্ধ করতে কয়েক সেকেন্ডের মধ্যে পিনটি দুবার সোয়াইপ করে সরান</string>
+    <string name="settings_reminders_title">করণীয় অনুস্মারক</string>
+    <string name="settings_reminders_subtitle">নির্ধারিত করণীয়টির সময় হলে সেটি সম্পন্ন করতে বা স্থগিত রাখতে দ্রুত পদক্ষেপসহ সতর্কতা পান</string>
+    <string name="settings_notification_system">সিস্টেম সেটিংসে সূক্ষ্মভাবে নিয়ন্ত্রণ করুন</string>
+    <string name="settings_notification_layout">বিজ্ঞপ্তির বিন্যাস</string>
+    <string name="settings_time_window">সময়ের পরিসর</string>
+    <string name="window_three_days">৩ দিন</string>
+    <string name="window_this_week">এই সপ্তাহ</string>
+    <string name="window_seven_days">৭ দিন</string>
+    <string name="window_fourteen_days">১৪ দিন</string>
+    <string name="settings_calendars">ক্যালেন্ডার</string>
+    <string name="settings_calendars_permission">কোন ক্যালেন্ডারগুলো দেখানো হবে তা বেছে নিতে ক্যালেন্ডার ব্যবহারের অনুমতি দিন।</string>
+    <string name="settings_display">প্রদর্শন</string>
+    <string name="settings_group_by_day">দিন অনুযায়ী ভাগ করুন</string>
+    <string name="settings_hide_completed">সম্পন্ন করণীয় লুকান</string>
+    <string name="settings_24_hour">২৪-ঘণ্টার সময়</string>
+    <string name="settings_24_hour_subtitle">সময় ২:৩০ অপরাহ্ণের বদলে ১৪:৩০ হিসেবে দেখান</string>
+    <string name="settings_max_items">বিজ্ঞপ্তিতে সর্বোচ্চ আইটেম: %1$d</string>
+    <string name="settings_appearance">রূপ</string>
+    <string name="theme_system">সিস্টেম</string>
+    <string name="theme_light">হালকা</string>
+    <string name="theme_dark">গাঢ়</string>
+    <string name="settings_material_you_subtitle">ওয়ালপেপারের রঙের বিন্যাস ব্যবহার করুন</string>
+    <string name="settings_amoled">AMOLED কালো</string>
+    <string name="settings_amoled_subtitle">ডার্ক মোডে সম্পূর্ণ কালো পৃষ্ঠ</string>
+    <string name="settings_accent">প্রধান রং (Material You বন্ধ থাকলে ব্যবহৃত)</string>
+    <string name="settings_palette">রঙের প্যালেট</string>
+    <string name="palette_tonal">টোনাল</string>
+    <string name="palette_vibrant">উজ্জ্বল</string>
+    <string name="palette_expressive">অভিব্যক্তিপূর্ণ</string>
+    <string name="palette_neutral">নিরপেক্ষ</string>
+    <string name="settings_font">ফন্ট</string>
+    <string name="font_system">সিস্টেম</string>
+    <string name="settings_reliability">নির্ভরযোগ্যতা</string>
+    <string name="settings_battery_title">ব্যাটারি অপ্টিমাইজেশন উপেক্ষা করুন</string>
+    <string name="settings_battery_on">চালু — পিনটি ব্যাকগ্রাউন্ডে নির্ভরযোগ্যভাবে কাজ করে</string>
+    <string name="settings_battery_recommended">কঠোর ব্যাকগ্রাউন্ড নিয়ন্ত্রণ থাকা ডিভাইসে পিনটি নিয়মিত হালনাগাদ রাখতে এটি চালু রাখার পরামর্শ দেওয়া হয়</string>
+    <string name="settings_about">সম্পর্কে</string>
+    <string name="settings_privacy_title">গোপনীয়তা নীতি</string>
+    <string name="settings_privacy_subtitle">Pinned Calendar কীভাবে আপনার তথ্য পরিচালনা করে—ওয়েবসাইট খুলবে</string>
+    <string name="overview_items_pinned">এই সপ্তাহে পিন করা\nআইটেম</string>
+    <plurals name="overview_events"><item quantity="one">%1$dটি ইভেন্ট</item><item quantity="other">%1$dটি ইভেন্ট</item></plurals>
+    <plurals name="overview_todos"><item quantity="one">%1$dটি করণীয়</item><item quantity="other">%1$dটি করণীয়</item></plurals>
+    <string name="layout_density">ঘনত্ব</string>
+    <string name="density_compact">সংক্ষিপ্ত</string>
+    <string name="density_cozy">স্বচ্ছন্দ</string>
+    <string name="density_comfortable">আরামদায়ক</string>
+    <string name="density_custom">নিজের মতো</string>
+    <string name="layout_row_spacing">সারির ব্যবধান</string>
+    <string name="layout_text_size">লেখার আকার</string>
+    <string name="layout_row_height">সারির উচ্চতা</string>
+    <string name="layout_time_column_width">সময় কলামের প্রস্থ</string>
+    <string name="layout_rows_before_expanding">প্রসারিত করার আগের সারির সংখ্যা</string>
+    <string name="layout_value">%1$s: %2$d</string>
+    <string name="layout_show_week_heading">“এই সপ্তাহ” শিরোনাম দেখান</string>
+    <string name="layout_show_week_heading_subtitle">প্রসারিত এজেন্ডার উপরে শিরোনামটি দেখান</string>
+    <string name="layout_show_today">আজ লেবেলটি দেখান</string>
+    <string name="layout_show_today_subtitle">একাধিক সারির সংক্ষিপ্ত ও প্রসারিত বিজ্ঞপ্তিতে আজ দেখান</string>
+    <string name="layout_outer_padding">বিজ্ঞপ্তির বাইরের ফাঁকা জায়গা</string>
+    <string name="layout_outer_padding_subtitle">বিজ্ঞপ্তির বিষয়বস্তুর উপরে ও নিচে উল্লম্ব ফাঁকা জায়গা যোগ করুন</string>
+    <string name="preview_collapsed">সংকুচিত</string>
+    <string name="preview_expanded">প্রসারিত</string>
+    <string name="agenda_empty">এই সপ্তাহে কিছু নির্ধারিত নেই</string>
+    <string name="agenda_week_header">এই সপ্তাহ · %1$d</string>
+    <plurals name="agenda_more_this_week"><item quantity="one">+এই সপ্তাহে আরও %1$dটি</item><item quantity="other">+এই সপ্তাহে আরও %1$dটি</item></plurals>
+    <string name="agenda_today">আজ</string>
+    <string name="agenda_tomorrow">আগামীকাল</string>
+    <string name="agenda_all_day">সারা দিন</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+    <string name="calendar_unnamed">(ক্যালেন্ডার)</string>
+    <string name="calendar_event_untitled">(শিরোনাম নেই)</string>
+    <string name="sample_team_standup">দলের দৈনিক বৈঠক</string>
+    <string name="sample_one_on_one">স্যামের সঙ্গে একান্ত বৈঠক</string>
+    <string name="sample_expense_report">খরচের প্রতিবেদন জমা দিন</string>
+    <string name="sample_dentist">দন্তচিকিৎসকের অ্যাপয়েন্টমেন্ট</string>
+    <string name="sample_design_review">নকশা পর্যালোচনা</string>
+    <string name="sample_lunch">প্রিয়ার সঙ্গে দুপুরের খাবার</string>
+    <string name="sample_passport">পাসপোর্ট নবায়ন করুন</string>
+    <string name="sample_sprint_planning">স্প্রিন্ট পরিকল্পনা</string>
+</resources>

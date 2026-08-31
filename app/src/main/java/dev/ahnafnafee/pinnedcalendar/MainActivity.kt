@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.database.ContentObserver
+import android.icu.text.ListFormatter
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,6 +16,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.PluralsRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -83,6 +85,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -107,12 +111,16 @@ import dev.ahnafnafee.pinnedcalendar.data.todo.TodoPriority
 import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRecurrence
 import dev.ahnafnafee.pinnedcalendar.data.todo.TodoRepository
 import dev.ahnafnafee.pinnedcalendar.domain.DayBucketer
+import dev.ahnafnafee.pinnedcalendar.domain.DayBucketLabels
 import dev.ahnafnafee.pinnedcalendar.domain.NotificationContentBuilder
 import dev.ahnafnafee.pinnedcalendar.domain.SampleAgenda
+import dev.ahnafnafee.pinnedcalendar.domain.SampleAgendaLabels
+import dev.ahnafnafee.pinnedcalendar.domain.TodoGroup
 import dev.ahnafnafee.pinnedcalendar.domain.TodoGroups
 import dev.ahnafnafee.pinnedcalendar.domain.TodoSchedule
 import dev.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
 import dev.ahnafnafee.pinnedcalendar.domain.model.ItemKind
+import dev.ahnafnafee.pinnedcalendar.localization.LocalePatterns
 import dev.ahnafnafee.pinnedcalendar.notify.AgendaRemoteViewsRenderer
 import dev.ahnafnafee.pinnedcalendar.notify.NotificationSettingsIntent
 import dev.ahnafnafee.pinnedcalendar.system.BatteryOptimization
@@ -130,6 +138,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -225,13 +234,13 @@ class MainActivity : ComponentActivity() {
                                 selected = selectedTab == 0,
                                 onClick = { selectedTab = 0 },
                                 icon = { Icon(painterResource(R.drawable.ic_tab_todos), contentDescription = null) },
-                                label = { Text("To-dos") },
+                                label = { Text(stringResource(R.string.nav_todos)) },
                             )
                             NavigationBarItem(
                                 selected = selectedTab == 1,
                                 onClick = { selectedTab = 1 },
                                 icon = { Icon(painterResource(R.drawable.ic_tab_settings), contentDescription = null) },
-                                label = { Text("Settings") },
+                                label = { Text(stringResource(R.string.nav_settings)) },
                             )
                         }
                     },
@@ -245,7 +254,11 @@ class MainActivity : ComponentActivity() {
                             .verticalScroll(if (selectedTab == 0) todoScroll else settingsScroll),
                     ) {
                         Text(
-                            if (selectedTab == 0) "Pinned Calendar" else "Settings",
+                            if (selectedTab == 0) {
+                                stringResource(R.string.app_name)
+                            } else {
+                                stringResource(R.string.settings_title)
+                            },
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 10.dp),
@@ -317,7 +330,7 @@ private fun TodosTab(
 
     WeekOverviewCard(agendaItems)
 
-    SettingsCard("To-dos") {
+    SettingsCard(stringResource(R.string.todos_title)) {
         Row(
             Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -325,7 +338,7 @@ private fun TodosTab(
             OutlinedTextField(
                 value = newTitle,
                 onValueChange = { newTitle = it },
-                label = { Text("New to-do (due today)") },
+                label = { Text(stringResource(R.string.todo_new_due_today)) },
                 singleLine = true,
                 shape = AppShape.field,
                 trailingIcon = {
@@ -352,13 +365,13 @@ private fun TodosTab(
                         onAdd(title)
                     }
                 },
-            ) { Text("Add") }
+            ) { Text(stringResource(R.string.action_add)) }
         }
         if (todoList.isEmpty()) {
-            CardCaption("No to-dos yet.")
+            CardCaption(stringResource(R.string.todo_empty))
         }
-        TodoGroups.of(todoList, LocalDate.now(), ZoneId.systemDefault()).forEach { (groupLabel, groupItems) ->
-            CardCaption(groupLabel)
+        TodoGroups.of(todoList, LocalDate.now(), ZoneId.systemDefault()).forEach { (group, groupItems) ->
+            CardCaption(group.localizedLabel())
             groupItems.forEach { todo ->
                 ListItem(
                     colors = transparentListItem(),
@@ -389,14 +402,20 @@ private fun TodosTab(
                         val hasNotes = todo.notes.isNotBlank()
                         if (due != null || repeat != null || hasNotes) {
                             Text(
-                                listOfNotNull(due, repeat, if (hasNotes) "Notes" else null).joinToString(" · "),
+                                listOfNotNull(
+                                    due,
+                                    repeat,
+                                    if (hasNotes) stringResource(R.string.todo_meta_notes) else null,
+                                ).joinToString(" · "),
                                 color = if (isOverdue(todo)) MaterialTheme.colorScheme.error
                                 else MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     },
                     trailingContent = {
-                        TextButton(onClick = { onDelete(todo.id) }) { Text("Delete") }
+                        TextButton(onClick = { onDelete(todo.id) }) {
+                            Text(stringResource(R.string.action_delete))
+                        }
                     },
                 )
             }
@@ -424,14 +443,18 @@ private fun TodosTab(
     }
 }
 
+@Composable
 private fun dueLabel(dueMillis: Long?): String? {
     val due = dueMillis ?: return null
     val date = Instant.ofEpochMilli(due).atZone(ZoneId.systemDefault()).toLocalDate()
     val today = LocalDate.now()
     return when (date) {
-        today -> "Due today"
-        today.plusDays(1) -> "Due tomorrow"
-        else -> "Due ${date.format(DateTimeFormatter.ofPattern("EEE, MMM d"))}"
+        today -> stringResource(R.string.todo_due_today)
+        today.plusDays(1) -> stringResource(R.string.todo_due_tomorrow)
+        else -> stringResource(
+            R.string.todo_due_date,
+            date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(currentLocale())),
+        )
     }
 }
 
@@ -440,6 +463,113 @@ private fun isOverdue(todo: LocalTodo): Boolean {
     return !todo.completed &&
         Instant.ofEpochMilli(due).atZone(ZoneId.systemDefault()).toLocalDate() < LocalDate.now()
 }
+
+@Composable
+private fun currentLocale(): Locale = LocalConfiguration.current.locales[0]
+
+@Composable
+private fun TodoGroup.localizedLabel(): String = stringResource(
+    when (this) {
+        TodoGroup.OVERDUE -> R.string.todo_group_overdue
+        TodoGroup.TODAY -> R.string.todo_group_today
+        TodoGroup.UPCOMING -> R.string.todo_group_upcoming
+        TodoGroup.NO_DATE -> R.string.todo_group_no_date
+        TodoGroup.COMPLETED -> R.string.todo_group_completed
+    },
+)
+
+@Composable
+private fun TodoPriority.localizedLabel(): String = stringResource(
+    when (this) {
+        TodoPriority.NONE -> R.string.todo_priority_none
+        TodoPriority.LOW -> R.string.todo_priority_low
+        TodoPriority.MEDIUM -> R.string.todo_priority_medium
+        TodoPriority.HIGH -> R.string.todo_priority_high
+    },
+)
+
+@Composable
+private fun RecurrenceFrequency.localizedPresetLabel(): String = stringResource(
+    when (this) {
+        RecurrenceFrequency.DAILY -> R.string.recurrence_daily
+        RecurrenceFrequency.WEEKLY -> R.string.recurrence_weekly
+        RecurrenceFrequency.MONTHLY -> R.string.recurrence_monthly
+        RecurrenceFrequency.YEARLY -> R.string.recurrence_yearly
+    },
+)
+
+@PluralsRes
+private fun RecurrenceFrequency.everyPluralResource(): Int = when (this) {
+    RecurrenceFrequency.DAILY -> R.plurals.recurrence_every_days
+    RecurrenceFrequency.WEEKLY -> R.plurals.recurrence_every_weeks
+    RecurrenceFrequency.MONTHLY -> R.plurals.recurrence_every_months
+    RecurrenceFrequency.YEARLY -> R.plurals.recurrence_every_years
+}
+
+@Composable
+private fun RecurrenceFrequency.localizedEveryLabel(interval: Int): String =
+    pluralStringResource(everyPluralResource(), interval, interval)
+
+@PluralsRes
+private fun RecurrenceFrequency.intervalPluralResource(): Int = when (this) {
+    RecurrenceFrequency.DAILY -> R.plurals.recurrence_interval_days
+    RecurrenceFrequency.WEEKLY -> R.plurals.recurrence_interval_weeks
+    RecurrenceFrequency.MONTHLY -> R.plurals.recurrence_interval_months
+    RecurrenceFrequency.YEARLY -> R.plurals.recurrence_interval_years
+}
+
+@Composable
+private fun RecurrenceFrequency.localizedIntervalLabel(interval: Int): String =
+    pluralStringResource(intervalPluralResource(), interval, interval)
+
+@Composable
+private fun NotificationPriority.localizedLabel(): String = stringResource(
+    when (this) {
+        NotificationPriority.TOP -> R.string.settings_priority_top
+        NotificationPriority.NORMAL -> R.string.settings_priority_normal
+        NotificationPriority.SILENT -> R.string.settings_priority_silent
+    },
+)
+
+@Composable
+private fun WindowMode.localizedLabel(): String = stringResource(
+    when (this) {
+        WindowMode.THREE_DAYS -> R.string.window_three_days
+        WindowMode.THIS_WEEK -> R.string.window_this_week
+        WindowMode.SEVEN_DAYS -> R.string.window_seven_days
+        WindowMode.FOURTEEN_DAYS -> R.string.window_fourteen_days
+    },
+)
+
+@Composable
+private fun ThemeMode.localizedLabel(): String = stringResource(
+    when (this) {
+        ThemeMode.SYSTEM -> R.string.theme_system
+        ThemeMode.LIGHT -> R.string.theme_light
+        ThemeMode.DARK -> R.string.theme_dark
+    },
+)
+
+@Composable
+private fun AppPalette.localizedLabel(): String = stringResource(
+    when (this) {
+        AppPalette.TONAL_SPOT -> R.string.palette_tonal
+        AppPalette.VIBRANT -> R.string.palette_vibrant
+        AppPalette.EXPRESSIVE -> R.string.palette_expressive
+        AppPalette.NEUTRAL -> R.string.palette_neutral
+    },
+)
+
+@Composable
+private fun AppFont.localizedLabel(): String = stringResource(
+    when (this) {
+        AppFont.GOOGLE_SANS -> R.string.font_google_sans
+        AppFont.SYSTEM -> R.string.font_system
+        AppFont.FIGTREE -> R.string.font_figtree
+        AppFont.OUTFIT -> R.string.font_outfit
+        AppFont.INTER -> R.string.font_inter
+    },
+)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -476,40 +606,42 @@ private fun TodoEditorSheet(
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Title") },
+                label = { Text(stringResource(R.string.todo_field_title)) },
                 singleLine = true,
                 shape = AppShape.field,
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            CardCaption("Schedule")
+            CardCaption(stringResource(R.string.todo_schedule))
             val zone = ZoneId.systemDefault()
             val today = LocalDate.now()
             val dueDate = dueMillis?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalDate() }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf(
-                    "Today" to today,
-                    "Tomorrow" to today.plusDays(1),
-                    "Next week" to today.plusWeeks(1),
+                    stringResource(R.string.todo_schedule_today) to today,
+                    stringResource(R.string.todo_schedule_tomorrow) to today.plusDays(1),
+                    stringResource(R.string.todo_schedule_next_week) to today.plusWeeks(1),
                 ).forEach { (label, date) ->
                     PillChip(dueDate == date, { dueMillisOrZero = TodoSchedule.at(dueMillis, date, zone) }, label)
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TextButton(onClick = { showDatePicker = true }) {
-                    Text(dueLabel(dueMillis) ?: "Pick a date")
+                    Text(dueLabel(dueMillis) ?: stringResource(R.string.todo_pick_date))
                 }
                 if (dueMillis != null) {
                     val is24Hour = android.text.format.DateFormat.is24HourFormat(LocalContext.current)
-                    TextButton(onClick = { showTimePicker = true }) { Text(timeLabel(dueMillis, zone, is24Hour)) }
+                    TextButton(onClick = { showTimePicker = true }) {
+                        Text(timeLabel(dueMillis, zone, is24Hour, currentLocale()))
+                    }
                     TextButton(onClick = {
                         dueMillisOrZero = 0L
                         recurrenceValue = ""
-                    }) { Text("Clear") }
+                    }) { Text(stringResource(R.string.action_clear)) }
                 }
             }
 
-            CardCaption("Repeat")
+            CardCaption(stringResource(R.string.todo_repeat))
             FlowRow(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -517,7 +649,7 @@ private fun TodoEditorSheet(
                 PillChip(
                     selected = recurrence == null,
                     onClick = { recurrenceValue = "" },
-                    label = "Never",
+                    label = stringResource(R.string.recurrence_never),
                 )
                 RecurrenceFrequency.entries.forEach { frequency ->
                     val preset = TodoRecurrence.preset(frequency)
@@ -529,7 +661,7 @@ private fun TodoEditorSheet(
                             }
                             recurrenceValue = preset.toStateValue()
                         },
-                        label = frequency.presetLabel,
+                        label = frequency.localizedPresetLabel(),
                     )
                 }
                 PillChip(
@@ -538,7 +670,7 @@ private fun TodoEditorSheet(
                         if (dueMillis == null) dueMillisOrZero = TodoSchedule.at(null, today, zone)
                         showRecurrenceEditor = true
                     },
-                    label = "Custom…",
+                    label = stringResource(R.string.recurrence_custom),
                 )
             }
             recurrence?.let {
@@ -550,13 +682,13 @@ private fun TodoEditorSheet(
                 )
             }
 
-            CardCaption("Priority")
+            CardCaption(stringResource(R.string.todo_priority))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TodoPriority.entries.forEach { p ->
                     FilterChip(
                         selected = priority == p,
                         onClick = { priorityValue = p.value },
-                        label = { Text(p.label) },
+                        label = { Text(p.localizedLabel()) },
                         shape = AppShape.chip,
                         border = null,
                         leadingIcon = p.colorHex?.let { hex -> { ColorDot(hex) } },
@@ -574,7 +706,7 @@ private fun TodoEditorSheet(
             OutlinedTextField(
                 value = notes,
                 onValueChange = { notes = it },
-                label = { Text("Notes") },
+                label = { Text(stringResource(R.string.todo_notes)) },
                 minLines = 2,
                 shape = AppShape.field,
                 modifier = Modifier.fillMaxWidth(),
@@ -585,10 +717,10 @@ private fun TodoEditorSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (isNew) {
-                    TextButton(onClick = onDismiss) { Text("Cancel") }
+                    TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
                 } else {
                     TextButton(onClick = onDelete) {
-                        Text("Delete", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error)
                     }
                 }
                 Spacer(Modifier.weight(1f))
@@ -605,7 +737,9 @@ private fun TodoEditorSheet(
                             ),
                         )
                     },
-                ) { Text(if (isNew) "Add" else "Save") }
+                ) {
+                    Text(stringResource(if (isNew) R.string.action_add else R.string.action_save))
+                }
             }
             Spacer(Modifier.height(20.dp))
         }
@@ -630,9 +764,13 @@ private fun TodoEditorSheet(
                         dueMillisOrZero = TodoSchedule.at(dueMillis, date, zone)
                     }
                     showDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.action_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showDatePicker = false }) { Text("Cancel") } },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
         ) {
             DatePicker(state = pickerState)
         }
@@ -654,9 +792,13 @@ private fun TodoEditorSheet(
                         .atTime(LocalTime.of(timeState.hour, timeState.minute))
                         .atZone(zone).toInstant().toEpochMilli()
                     showTimePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.action_ok)) }
             },
-            dismissButton = { TextButton(onClick = { showTimePicker = false }) { Text("Cancel") } },
+            dismissButton = {
+                TextButton(onClick = { showTimePicker = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
             text = { TimePicker(state = timeState) },
         )
     }
@@ -677,41 +819,48 @@ private fun TodoEditorSheet(
     }
 }
 
-private fun timeLabel(dueMillis: Long, zone: ZoneId, is24Hour: Boolean): String =
+private fun timeLabel(dueMillis: Long, zone: ZoneId, is24Hour: Boolean, locale: Locale): String =
     Instant.ofEpochMilli(dueMillis).atZone(zone).toLocalTime()
-        .format(DateTimeFormatter.ofPattern(if (is24Hour) "H:mm" else "h:mm a"))
+        .format(DateTimeFormatter.ofPattern(LocalePatterns.time(locale, is24Hour), locale))
 
 private enum class RecurrenceEndChoice { NEVER, ON_DATE, AFTER_COUNT }
 
+@Composable
 private fun recurrenceSummary(rule: TodoRecurrence, dueMillis: Long?, zone: ZoneId): String {
     val dueDate = dueMillis?.let { Instant.ofEpochMilli(it).atZone(zone).toLocalDate() }
         ?: LocalDate.now()
     val normalized = rule.normalized(dueDate)
+    val locale = currentLocale()
     val base = if (normalized.isSimplePreset) {
-        normalized.frequency.presetLabel
+        normalized.frequency.localizedPresetLabel()
     } else {
-        val unit = if (normalized.interval == 1) {
-            normalized.frequency.singularLabel
+        val every = normalized.frequency.localizedEveryLabel(normalized.interval)
+        if (normalized.frequency == RecurrenceFrequency.WEEKLY) {
+            val dayNames = normalized.weekdays.ifEmpty { setOf(dueDate.dayOfWeek) }
+                .sortedBy { it.value }
+                .map { it.getDisplayName(TextStyle.SHORT, locale) }
+            stringResource(
+                R.string.recurrence_on_days,
+                every,
+                ListFormatter.getInstance(locale).format(dayNames),
+            )
         } else {
-            normalized.frequency.pluralLabel
-        }
-        buildString {
-            append(if (normalized.interval == 1) "Every $unit" else "Every ${normalized.interval} $unit")
-            if (normalized.frequency == RecurrenceFrequency.WEEKLY) {
-                val days = normalized.weekdays.ifEmpty { setOf(dueDate.dayOfWeek) }
-                    .sortedBy { it.value }
-                    .joinToString(", ") { it.getDisplayName(TextStyle.SHORT, Locale.ENGLISH) }
-                append(" on $days")
-            }
+            every
         }
     }
     val ending = when {
         normalized.endDate != null ->
-            "until ${normalized.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH))}"
-        normalized.maxOccurrences != null -> {
-            val noun = if (normalized.maxOccurrences == 1) "occurrence" else "occurrences"
-            "for ${normalized.maxOccurrences} $noun"
-        }
+            stringResource(
+                R.string.recurrence_until,
+                normalized.endDate.format(
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale),
+                ),
+            )
+        normalized.maxOccurrences != null -> pluralStringResource(
+            R.plurals.recurrence_for_occurrences,
+            normalized.maxOccurrences,
+            normalized.maxOccurrences,
+        )
         else -> null
     }
     return listOfNotNull(base, ending).joinToString(" · ")
@@ -751,7 +900,7 @@ private fun RecurrenceEditorDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Custom recurrence") },
+        title = { Text(stringResource(R.string.recurrence_custom_title)) },
         confirmButton = {
             TextButton(onClick = {
                 val endDate = if (endChoice == RecurrenceEndChoice.ON_DATE) {
@@ -781,9 +930,11 @@ private fun RecurrenceEditorDialog(
                         },
                     ).normalized(anchorDate),
                 )
-            }) { Text("Done") }
+            }) { Text(stringResource(R.string.action_done)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
+        },
         text = {
             Column(
                 Modifier
@@ -791,26 +942,25 @@ private fun RecurrenceEditorDialog(
                     .heightIn(max = 520.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
-                DialogSectionLabel("Frequency")
+                DialogSectionLabel(stringResource(R.string.recurrence_frequency))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     RecurrenceFrequency.entries.forEach { option ->
                         PillChip(
                             selected = frequency == option,
                             onClick = { frequencyValue = option.persistedValue },
-                            label = option.presetLabel,
+                            label = option.localizedPresetLabel(),
                         )
                     }
                 }
 
-                DialogSectionLabel("Repeat every")
+                DialogSectionLabel(stringResource(R.string.recurrence_repeat_every))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         enabled = interval > 1,
                         onClick = { interval-- },
                     ) { Text("−", style = MaterialTheme.typography.titleLarge) }
-                    val unit = if (interval == 1) frequency.singularLabel else frequency.pluralLabel
                     Text(
-                        "$interval $unit",
+                        frequency.localizedIntervalLabel(interval),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 8.dp),
                     )
@@ -821,7 +971,7 @@ private fun RecurrenceEditorDialog(
                 }
 
                 if (frequency == RecurrenceFrequency.WEEKLY) {
-                    DialogSectionLabel("Repeat on")
+                    DialogSectionLabel(stringResource(R.string.recurrence_repeat_on))
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         DayOfWeek.entries.forEach { day ->
                             val bit = 1 shl (day.value - 1)
@@ -832,18 +982,18 @@ private fun RecurrenceEditorDialog(
                                     val updated = weekdayMask xor bit
                                     if (updated != 0) weekdayMask = updated
                                 },
-                                label = day.getDisplayName(TextStyle.SHORT, Locale.ENGLISH).take(2),
+                                label = day.getDisplayName(TextStyle.SHORT, currentLocale()),
                             )
                         }
                     }
                 }
 
-                DialogSectionLabel("Ends")
+                DialogSectionLabel(stringResource(R.string.recurrence_ends))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(
-                        RecurrenceEndChoice.NEVER to "Never",
-                        RecurrenceEndChoice.ON_DATE to "On date",
-                        RecurrenceEndChoice.AFTER_COUNT to "After",
+                        RecurrenceEndChoice.NEVER to stringResource(R.string.recurrence_never),
+                        RecurrenceEndChoice.ON_DATE to stringResource(R.string.recurrence_on_date),
+                        RecurrenceEndChoice.AFTER_COUNT to stringResource(R.string.recurrence_after),
                     ).forEach { (choice, label) ->
                         PillChip(
                             selected = endChoice == choice,
@@ -859,7 +1009,12 @@ private fun RecurrenceEditorDialog(
                             endDateEpochDay ?: anchorDate.plusMonths(1).toEpochDay(),
                         )
                         TextButton(onClick = { showEndDatePicker = true }) {
-                            Text(endDate.format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.ENGLISH)))
+                            Text(
+                                endDate.format(
+                                    DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                                        .withLocale(currentLocale()),
+                                ),
+                            )
                         }
                     }
                     RecurrenceEndChoice.AFTER_COUNT -> {
@@ -869,7 +1024,11 @@ private fun RecurrenceEditorDialog(
                                 onClick = { occurrenceCount-- },
                             ) { Text("−", style = MaterialTheme.typography.titleLarge) }
                             Text(
-                                "$occurrenceCount occurrences",
+                                pluralStringResource(
+                                    R.plurals.recurrence_occurrences,
+                                    occurrenceCount,
+                                    occurrenceCount,
+                                ),
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.padding(horizontal = 8.dp),
                             )
@@ -882,8 +1041,7 @@ private fun RecurrenceEditorDialog(
                 }
 
                 Text(
-                    "Completing the current occurrence advances this to-do to the next scheduled date. " +
-                        "Missed dates are skipped.",
+                    stringResource(R.string.recurrence_help),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 12.dp),
@@ -908,10 +1066,12 @@ private fun RecurrenceEditorDialog(
                         endDateEpochDay = maxOf(selected.toEpochDay(), anchorDate.toEpochDay())
                     }
                     showEndDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.action_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
+                TextButton(onClick = { showEndDatePicker = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
             },
         ) { DatePicker(state = pickerState) }
     }
@@ -937,37 +1097,37 @@ private fun SettingsTab(
     onRequestBatteryExemption: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
 ) {
-    SettingsCard("Notifications") {
+    SettingsCard(stringResource(R.string.settings_notifications)) {
         CardItem(
-            title = "Pin to notifications",
-            subtitle = "Keep this week's agenda in the drawer",
+            title = stringResource(R.string.settings_pin_title),
+            subtitle = stringResource(R.string.settings_pin_subtitle),
             trailing = {
                 Switch(checked = s.pinEnabled, onCheckedChange = { v -> edit { setPinEnabled(v) } })
             },
         )
-        CardCaption("Priority")
+        CardCaption(stringResource(R.string.todo_priority))
         ChipRow {
             NotificationPriority.entries.forEach { p ->
                 PillChip(
                     s.notificationPriority == p,
                     { edit { setNotificationPriority(p) } },
-                    p.label,
+                    p.localizedLabel(),
                 )
             }
         }
         CardCaption(
             when (s.notificationPriority) {
                 NotificationPriority.TOP ->
-                    "Sits above other notifications — never pops up or makes a sound."
+                    stringResource(R.string.settings_priority_top_desc)
                 NotificationPriority.NORMAL ->
-                    "Mixes in with your everyday notifications."
+                    stringResource(R.string.settings_priority_normal_desc)
                 NotificationPriority.SILENT ->
-                    "Stays below the shade's 'Silent' divider."
+                    stringResource(R.string.settings_priority_silent_desc)
             },
         )
         CardItem(
-            title = "Swipe twice to remove",
-            subtitle = "Swipe the pin away twice within a few seconds to turn it off",
+            title = stringResource(R.string.settings_double_swipe_title),
+            subtitle = stringResource(R.string.settings_double_swipe_subtitle),
             trailing = {
                 Switch(
                     checked = s.doubleSwipeDismiss,
@@ -976,8 +1136,8 @@ private fun SettingsTab(
             },
         )
         CardItem(
-            title = "To-do reminders",
-            subtitle = "A normal, swipeable notification when a scheduled to-do comes due. The pin is unaffected",
+            title = stringResource(R.string.settings_reminders_title),
+            subtitle = stringResource(R.string.settings_reminders_subtitle),
             trailing = {
                 Switch(
                     checked = s.todoReminders,
@@ -986,25 +1146,27 @@ private fun SettingsTab(
             },
         )
         Row(Modifier.padding(start = 8.dp)) {
-            TextButton(onClick = onOpenNotificationSettings) { Text("Fine-tune in system settings") }
-        }
-    }
-
-    SettingsCard("Notification layout") {
-        NotificationLayoutContent(s, edit)
-    }
-
-    SettingsCard("Time window") {
-        ChipRow {
-            WindowMode.entries.forEach { mode ->
-                PillChip(s.windowMode == mode, { edit { setWindowMode(mode) } }, mode.label)
+            TextButton(onClick = onOpenNotificationSettings) {
+                Text(stringResource(R.string.settings_notification_system))
             }
         }
     }
 
-    SettingsCard("Calendars") {
+    SettingsCard(stringResource(R.string.settings_notification_layout)) {
+        NotificationLayoutContent(s, edit)
+    }
+
+    SettingsCard(stringResource(R.string.settings_time_window)) {
+        ChipRow {
+            WindowMode.entries.forEach { mode ->
+                PillChip(s.windowMode == mode, { edit { setWindowMode(mode) } }, mode.localizedLabel())
+            }
+        }
+    }
+
+    SettingsCard(stringResource(R.string.settings_calendars)) {
         if (calendars.isEmpty()) {
-            CardCaption("Grant calendar access to choose which calendars appear.")
+            CardCaption(stringResource(R.string.settings_calendars_permission))
         }
         calendars.forEach { cal ->
             val enabled = !s.excludedCalendarIds.contains(cal.id)
@@ -1022,28 +1184,28 @@ private fun SettingsTab(
         }
     }
 
-    SettingsCard("Display") {
+    SettingsCard(stringResource(R.string.settings_display)) {
         CardItem(
-            title = "Group by day",
+            title = stringResource(R.string.settings_group_by_day),
             trailing = {
                 Switch(checked = s.groupByDay, onCheckedChange = { v -> edit { setGroupByDay(v) } })
             },
         )
         CardItem(
-            title = "Hide completed to-dos",
+            title = stringResource(R.string.settings_hide_completed),
             trailing = {
                 Switch(checked = s.hideCompletedTasks, onCheckedChange = { v -> edit { setHideCompleted(v) } })
             },
         )
         CardItem(
-            title = "24-hour time",
-            subtitle = "Show event times as 14:30 instead of 2:30 PM",
+            title = stringResource(R.string.settings_24_hour),
+            subtitle = stringResource(R.string.settings_24_hour_subtitle),
             trailing = {
                 Switch(checked = s.use24HourClock, onCheckedChange = { v -> edit { setUse24HourClock(v) } })
             },
         )
         Text(
-            "Max items in notification: ${s.maxItems}",
+            stringResource(R.string.settings_max_items, s.maxItems),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 20.dp, top = 6.dp),
         )
@@ -1055,31 +1217,31 @@ private fun SettingsTab(
         )
     }
 
-    SettingsCard("Appearance") {
+    SettingsCard(stringResource(R.string.settings_appearance)) {
         ChipRow {
             ThemeMode.entries.forEach { mode ->
                 PillChip(
                     s.themeMode == mode,
                     { edit { setThemeMode(mode) } },
-                    mode.name.lowercase().replaceFirstChar { it.uppercase() },
+                    mode.localizedLabel(),
                 )
             }
         }
         CardItem(
-            title = "Material You",
-            subtitle = "Use the wallpaper colour scheme",
+            title = stringResource(R.string.settings_material_you),
+            subtitle = stringResource(R.string.settings_material_you_subtitle),
             trailing = {
                 Switch(checked = s.materialYou, onCheckedChange = { v -> edit { setMaterialYou(v) } })
             },
         )
         CardItem(
-            title = "AMOLED black",
-            subtitle = "Pure-black surfaces in dark mode",
+            title = stringResource(R.string.settings_amoled),
+            subtitle = stringResource(R.string.settings_amoled_subtitle),
             trailing = {
                 Switch(checked = s.amoled, onCheckedChange = { v -> edit { setAmoled(v) } })
             },
         )
-        CardCaption("Accent (used when Material You is off)")
+        CardCaption(stringResource(R.string.settings_accent))
         FlowRow(
             Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -1108,46 +1270,51 @@ private fun SettingsTab(
                 )
             }
         }
-        CardCaption("Palette")
+        CardCaption(stringResource(R.string.settings_palette))
         ChipRow {
             AppPalette.entries.forEach { p ->
-                PillChip(s.palette == p, { edit { setPalette(p) } }, p.label)
+                PillChip(s.palette == p, { edit { setPalette(p) } }, p.localizedLabel())
             }
         }
-        CardCaption("Font")
+        CardCaption(stringResource(R.string.settings_font))
         ChipRow {
             AppFont.entries.forEach { f ->
-                PillChip(s.font == f, { edit { setFont(f) } }, f.label)
+                PillChip(s.font == f, { edit { setFont(f) } }, f.localizedLabel())
             }
         }
     }
 
-    SettingsCard("Reliability") {
+    SettingsCard(stringResource(R.string.settings_reliability)) {
         ListItem(
             colors = transparentListItem(),
-            headlineContent = { Text("Ignore battery optimizations") },
+            headlineContent = { Text(stringResource(R.string.settings_battery_title)) },
             supportingContent = {
                 Text(
-                    if (ignoringBattery) "On — the pin stays reliable in the background"
-                    else "Recommended on aggressive devices so the pin keeps updating",
+                    if (ignoringBattery) {
+                        stringResource(R.string.settings_battery_on)
+                    } else {
+                        stringResource(R.string.settings_battery_recommended)
+                    },
                 )
             },
             trailingContent = {
                 if (ignoringBattery) {
-                    Text("On", color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.settings_state_on), color = MaterialTheme.colorScheme.primary)
                 } else {
-                    Button(onClick = onRequestBatteryExemption) { Text("Allow") }
+                    Button(onClick = onRequestBatteryExemption) {
+                        Text(stringResource(R.string.action_allow))
+                    }
                 }
             },
         )
     }
 
-    SettingsCard("About") {
+    SettingsCard(stringResource(R.string.settings_about)) {
         ListItem(
             colors = transparentListItem(),
             modifier = Modifier.clickable(onClick = onOpenPrivacyPolicy),
-            headlineContent = { Text("Privacy policy") },
-            supportingContent = { Text("How Pinned Calendar handles your data — opens the website") },
+            headlineContent = { Text(stringResource(R.string.settings_privacy_title)) },
+            supportingContent = { Text(stringResource(R.string.settings_privacy_subtitle)) },
         )
     }
 }
@@ -1156,6 +1323,7 @@ private fun SettingsTab(
 private fun WeekOverviewCard(items: List<AgendaItem>) {
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now()
+    val locale = currentLocale()
     val days = (0L..6L).map { today.plusDays(it) }
     val countByDate = items.mapNotNull { it.start?.atZone(zone)?.toLocalDate() }
         .groupingBy { it }.eachCount()
@@ -1174,13 +1342,17 @@ private fun WeekOverviewCard(items: List<AgendaItem>) {
         Column(Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "${items.size}",
+                    stringResource(R.string.number_integer, items.size),
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Bold,
                     color = onColor,
                 )
                 Spacer(Modifier.width(12.dp))
-                Text("items pinned\nthis week", style = MaterialTheme.typography.titleMedium, color = onColor)
+                Text(
+                    stringResource(R.string.overview_items_pinned),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = onColor,
+                )
             }
             Spacer(Modifier.height(18.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -1199,14 +1371,14 @@ private fun WeekOverviewCard(items: List<AgendaItem>) {
                                 .background(if (counts[i] > 0) MaterialTheme.colorScheme.primary else onColor.copy(alpha = 0.18f)),
                         )
                         Spacer(Modifier.height(6.dp))
-                        Text(dayInitial(d), style = MaterialTheme.typography.labelSmall, color = onColor)
+                        Text(dayInitial(d, locale), style = MaterialTheme.typography.labelSmall, color = onColor)
                     }
                 }
             }
             Spacer(Modifier.height(14.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatPill("$events events", onColor)
-                StatPill("$tasks to-dos", onColor)
+                StatPill(pluralStringResource(R.plurals.overview_events, events, events), onColor)
+                StatPill(pluralStringResource(R.plurals.overview_todos, tasks, tasks), onColor)
             }
         }
     }
@@ -1224,8 +1396,8 @@ private fun StatPill(text: String, onColor: Color) {
     }
 }
 
-private fun dayInitial(d: LocalDate): String =
-    d.dayOfWeek.getDisplayName(java.time.format.TextStyle.NARROW, java.util.Locale.getDefault())
+private fun dayInitial(d: LocalDate, locale: Locale): String =
+    d.dayOfWeek.getDisplayName(TextStyle.NARROW, locale)
 
 @Composable
 private fun PillChip(selected: Boolean, onClick: () -> Unit, label: String) {
@@ -1311,14 +1483,13 @@ private val SEED_SWATCHES = listOf(
 
 /** A coherent padding/text/height triple for the notification rows. */
 private enum class DensityPreset(
-    val label: String,
     val paddingDp: Int,
     val textSp: Int,
     val heightDp: Int,
 ) {
-    COMPACT("Compact", 2, 12, 16),
-    COZY("Cozy", 5, 14, 22),
-    COMFORTABLE("Comfortable", 8, 16, 28),
+    COMPACT(2, 12, 16),
+    COZY(5, 14, 22),
+    COMFORTABLE(8, 16, 28),
     ;
 
     fun matches(s: AppSettings): Boolean =
@@ -1328,13 +1499,22 @@ private enum class DensityPreset(
 }
 
 @Composable
+private fun DensityPreset.localizedLabel(): String = stringResource(
+    when (this) {
+        DensityPreset.COMPACT -> R.string.density_compact
+        DensityPreset.COZY -> R.string.density_cozy
+        DensityPreset.COMFORTABLE -> R.string.density_comfortable
+    },
+)
+
+@Composable
 private fun ColumnScope.NotificationLayoutContent(
     s: AppSettings,
     edit: (suspend SettingsRepository.() -> Unit) -> Unit,
 ) {
     NotificationPreview(s)
 
-    CardCaption("Density")
+    CardCaption(stringResource(R.string.layout_density))
     // The active preset is derived from the stored triple, so the chips never disagree with
     // what the notification actually renders. Custom is a UI state, not a persisted value:
     // a hand-tuned triple lands on Custom once on entry, and after that only the chips move
@@ -1350,24 +1530,32 @@ private fun ColumnScope.NotificationLayoutContent(
                     customChosen = false
                     edit { setNotificationDensity(preset.paddingDp, preset.textSp, preset.heightDp) }
                 },
-                label = preset.label,
+                label = preset.localizedLabel(),
             )
         }
-        PillChip(customChosen, { customChosen = true }, "Custom")
+        PillChip(customChosen, { customChosen = true }, stringResource(R.string.density_custom))
     }
     if (customChosen) {
-        SliderRow("Row spacing", s.notificationRowPaddingDp, 0f..12f) { edit { setNotificationRowPadding(it) } }
-        SliderRow("Text size", s.notificationRowTextSizeSp, 11f..18f) { edit { setNotificationRowTextSize(it) } }
-        SliderRow("Row height", s.notificationRowHeightDp, 12f..32f) { edit { setNotificationRowHeight(it) } }
-        SliderRow("Time column width", s.notificationTimeColumnWidthDp, 32f..64f) {
+        SliderRow(stringResource(R.string.layout_row_spacing), s.notificationRowPaddingDp, 0f..12f) {
+            edit { setNotificationRowPadding(it) }
+        }
+        SliderRow(stringResource(R.string.layout_text_size), s.notificationRowTextSizeSp, 11f..18f) {
+            edit { setNotificationRowTextSize(it) }
+        }
+        SliderRow(stringResource(R.string.layout_row_height), s.notificationRowHeightDp, 12f..32f) {
+            edit { setNotificationRowHeight(it) }
+        }
+        SliderRow(stringResource(R.string.layout_time_column_width), s.notificationTimeColumnWidthDp, 32f..64f) {
             edit { setNotificationTimeColumnWidth(it) }
         }
     }
 
-    SliderRow("Rows before expanding", s.collapsedItems, 1f..6f) { edit { setCollapsedItems(it) } }
+    SliderRow(stringResource(R.string.layout_rows_before_expanding), s.collapsedItems, 1f..6f) {
+        edit { setCollapsedItems(it) }
+    }
     CardItem(
-        title = "Show “This week” heading",
-        subtitle = "Display the heading above the expanded agenda",
+        title = stringResource(R.string.layout_show_week_heading),
+        subtitle = stringResource(R.string.layout_show_week_heading_subtitle),
         trailing = {
             Switch(
                 checked = s.showNotificationHeader,
@@ -1376,8 +1564,8 @@ private fun ColumnScope.NotificationLayoutContent(
         },
     )
     CardItem(
-        title = "Show Today label",
-        subtitle = "Display Today in multi-row compact and expanded notifications",
+        title = stringResource(R.string.layout_show_today),
+        subtitle = stringResource(R.string.layout_show_today_subtitle),
         trailing = {
             Switch(
                 checked = s.showTodayHeader,
@@ -1386,8 +1574,8 @@ private fun ColumnScope.NotificationLayoutContent(
         },
     )
     CardItem(
-        title = "Outer notification padding",
-        subtitle = "Add vertical space above and below the notification content",
+        title = stringResource(R.string.layout_outer_padding),
+        subtitle = stringResource(R.string.layout_outer_padding_subtitle),
         trailing = {
             Switch(
                 checked = s.notificationContentPadding,
@@ -1400,7 +1588,7 @@ private fun ColumnScope.NotificationLayoutContent(
 @Composable
 private fun SliderRow(label: String, value: Int, range: ClosedFloatingPointRange<Float>, onChange: (Int) -> Unit) {
     Text(
-        "$label: $value",
+        stringResource(R.string.layout_value, label, value),
         style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier.padding(start = 20.dp, top = 6.dp),
     )
@@ -1416,13 +1604,47 @@ private fun SliderRow(label: String, value: Int, range: ClosedFloatingPointRange
 private fun NotificationPreview(s: AppSettings) {
     val configuration = LocalConfiguration.current
     var showExpanded by rememberSaveable { mutableStateOf(false) }
+    val locale = currentLocale()
+    val dayLabels = DayBucketLabels(
+        today = stringResource(R.string.agenda_today),
+        tomorrow = stringResource(R.string.agenda_tomorrow),
+        allDay = stringResource(R.string.agenda_all_day),
+        relativeHeaderPattern = stringResource(R.string.agenda_relative_day_header),
+    )
+    val sampleLabels = SampleAgendaLabels(
+        teamStandup = stringResource(R.string.sample_team_standup),
+        oneOnOne = stringResource(R.string.sample_one_on_one),
+        expenseReport = stringResource(R.string.sample_expense_report),
+        dentist = stringResource(R.string.sample_dentist),
+        designReview = stringResource(R.string.sample_design_review),
+        lunch = stringResource(R.string.sample_lunch),
+        passport = stringResource(R.string.sample_passport),
+        sprintPlanning = stringResource(R.string.sample_sprint_planning),
+    )
 
     // Sample content runs through the real pipeline (bucketer + content builder), so the preview
     // obeys the same grouping, capping, and clock settings the posted notification does.
-    val content = remember(s.use24HourClock, s.groupByDay, s.hideCompletedTasks, s.maxItems) {
+    val content = remember(
+        s.use24HourClock,
+        s.groupByDay,
+        s.hideCompletedTasks,
+        s.maxItems,
+        locale,
+        dayLabels,
+        sampleLabels,
+    ) {
         val clock = Clock.systemDefaultZone()
-        NotificationContentBuilder(DayBucketer(clock, use24Hour = s.use24HourClock)).build(
-            SampleAgenda.items(clock),
+        NotificationContentBuilder(
+            DayBucketer(
+                clock,
+                use24Hour = s.use24HourClock,
+                locale = locale,
+                labels = dayLabels,
+                timePattern = LocalePatterns.time(locale, s.use24HourClock),
+                dayHeaderPattern = LocalePatterns.dayHeader(locale),
+            ),
+        ).build(
+            SampleAgenda.items(clock, labels = sampleLabels),
             DisplaySettings(s.maxItems, s.hideCompletedTasks, s.groupByDay),
         )
     }
@@ -1435,8 +1657,8 @@ private fun NotificationPreview(s: AppSettings) {
     val shadeBackground = if (systemDark) Color(0xFF1F2124) else Color(0xFFE9EBEE)
 
     ChipRow {
-        PillChip(!showExpanded, { showExpanded = false }, "Collapsed")
-        PillChip(showExpanded, { showExpanded = true }, "Expanded")
+        PillChip(!showExpanded, { showExpanded = false }, stringResource(R.string.preview_collapsed))
+        PillChip(showExpanded, { showExpanded = true }, stringResource(R.string.preview_expanded))
     }
     AndroidView(
         factory = { ctx -> FrameLayout(ctx) },

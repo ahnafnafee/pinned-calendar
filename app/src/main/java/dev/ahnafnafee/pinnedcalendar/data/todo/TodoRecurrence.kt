@@ -3,16 +3,11 @@ package dev.ahnafnafee.pinnedcalendar.data.todo
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-enum class RecurrenceFrequency(
-    val persistedValue: String,
-    val presetLabel: String,
-    val singularLabel: String,
-    val pluralLabel: String,
-) {
-    DAILY("daily", "Daily", "day", "days"),
-    WEEKLY("weekly", "Weekly", "week", "weeks"),
-    MONTHLY("monthly", "Monthly", "month", "months"),
-    YEARLY("yearly", "Yearly", "year", "years"),
+enum class RecurrenceFrequency(val persistedValue: String) {
+    DAILY("daily"),
+    WEEKLY("weekly"),
+    MONTHLY("monthly"),
+    YEARLY("yearly"),
     ;
 
     companion object {

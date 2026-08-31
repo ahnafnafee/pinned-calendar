@@ -1,0 +1,162 @@
+<resources>
+    <string name="channel_name">جدول الأعمال المثبّت</string>
+    <string name="channel_desc">جدول الأعمال الأسبوعي الظاهر دائمًا</string>
+    <string name="reminder_channel_name">تذكيرات المهام</string>
+    <string name="reminder_channel_desc">تنبيهات عند حلول موعد مهمة مجدولة</string>
+    <string name="todo_reminder_due_now">مستحقة الآن</string>
+    <string name="todo_reminder_mark_done">تحديد كمكتملة</string>
+    <string name="todo_reminder_snooze">تأجيل ٣٠ دقيقة</string>
+    <string name="action_add">إضافة</string>
+    <string name="action_allow">سماح</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_clear">مسح</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_done">تم</string>
+    <string name="action_ok">موافق</string>
+    <string name="action_save">حفظ</string>
+    <string name="settings_state_on">مفعّل</string>
+    <string name="number_integer">%1$d</string>
+    <string name="nav_todos">المهام</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="todos_title">المهام</string>
+    <string name="todo_new_due_today">مهمة جديدة (مستحقة اليوم)</string>
+    <string name="todo_empty">لا توجد مهام بعد.</string>
+    <string name="todo_meta_notes">ملاحظات</string>
+    <string name="todo_due_today">مستحقة اليوم</string>
+    <string name="todo_due_tomorrow">مستحقة غدًا</string>
+    <string name="todo_due_date">مستحقة في %1$s</string>
+    <string name="todo_field_title">العنوان</string>
+    <string name="todo_schedule">جدولة</string>
+    <string name="todo_schedule_today">اليوم</string>
+    <string name="todo_schedule_tomorrow">غدًا</string>
+    <string name="todo_schedule_next_week">الأسبوع القادم</string>
+    <string name="todo_pick_date">اختيار تاريخ</string>
+    <string name="todo_repeat">تكرار</string>
+    <string name="todo_priority">الأولوية</string>
+    <string name="todo_notes">ملاحظات</string>
+    <string name="todo_group_overdue">متأخرة</string>
+    <string name="todo_group_today">اليوم</string>
+    <string name="todo_group_upcoming">القادمة</string>
+    <string name="todo_group_no_date">بلا تاريخ</string>
+    <string name="todo_group_completed">مكتملة</string>
+    <string name="todo_priority_none">بلا أولوية</string>
+    <string name="todo_priority_low">منخفضة</string>
+    <string name="todo_priority_medium">متوسطة</string>
+    <string name="todo_priority_high">عالية</string>
+    <string name="recurrence_never">أبدًا</string>
+    <string name="recurrence_daily">يوميًا</string>
+    <string name="recurrence_weekly">أسبوعيًا</string>
+    <string name="recurrence_monthly">شهريًا</string>
+    <string name="recurrence_yearly">سنويًا</string>
+    <string name="recurrence_custom">مخصص…</string>
+    <string name="recurrence_custom_title">تكرار مخصص</string>
+    <string name="recurrence_frequency">الوتيرة</string>
+    <string name="recurrence_repeat_every">التكرار كل</string>
+    <string name="recurrence_repeat_on">التكرار في</string>
+    <string name="recurrence_ends">الانتهاء</string>
+    <string name="recurrence_on_date">في تاريخ</string>
+    <string name="recurrence_after">بعد</string>
+    <string name="recurrence_on_days">%1$s في %2$s</string>
+    <string name="recurrence_until">حتى %1$s</string>
+    <string name="recurrence_help">يؤدي إكمال التكرار الحالي إلى نقل هذه المهمة إلى التاريخ المجدول التالي. يتم تخطي التواريخ الفائتة.</string>
+    <plurals name="recurrence_every_days"><item quantity="zero">كل %1$d يوم</item><item quantity="one">كل يوم</item><item quantity="two">كل يومين</item><item quantity="few">كل %1$d أيام</item><item quantity="many">كل %1$d يومًا</item><item quantity="other">كل %1$d يوم</item></plurals>
+    <plurals name="recurrence_every_weeks"><item quantity="zero">كل %1$d أسبوع</item><item quantity="one">كل أسبوع</item><item quantity="two">كل أسبوعين</item><item quantity="few">كل %1$d أسابيع</item><item quantity="many">كل %1$d أسبوعًا</item><item quantity="other">كل %1$d أسبوع</item></plurals>
+    <plurals name="recurrence_every_months"><item quantity="zero">كل %1$d شهر</item><item quantity="one">كل شهر</item><item quantity="two">كل شهرين</item><item quantity="few">كل %1$d أشهر</item><item quantity="many">كل %1$d شهرًا</item><item quantity="other">كل %1$d شهر</item></plurals>
+    <plurals name="recurrence_every_years"><item quantity="zero">كل %1$d سنة</item><item quantity="one">كل سنة</item><item quantity="two">كل سنتين</item><item quantity="few">كل %1$d سنوات</item><item quantity="many">كل %1$d سنةً</item><item quantity="other">كل %1$d سنة</item></plurals>
+    <plurals name="recurrence_interval_days"><item quantity="zero">%1$d يوم</item><item quantity="one">%1$d يوم</item><item quantity="two">يومان</item><item quantity="few">%1$d أيام</item><item quantity="many">%1$d يومًا</item><item quantity="other">%1$d يوم</item></plurals>
+    <plurals name="recurrence_interval_weeks"><item quantity="zero">%1$d أسبوع</item><item quantity="one">%1$d أسبوع</item><item quantity="two">أسبوعان</item><item quantity="few">%1$d أسابيع</item><item quantity="many">%1$d أسبوعًا</item><item quantity="other">%1$d أسبوع</item></plurals>
+    <plurals name="recurrence_interval_months"><item quantity="zero">%1$d شهر</item><item quantity="one">%1$d شهر</item><item quantity="two">شهران</item><item quantity="few">%1$d أشهر</item><item quantity="many">%1$d شهرًا</item><item quantity="other">%1$d شهر</item></plurals>
+    <plurals name="recurrence_interval_years"><item quantity="zero">%1$d سنة</item><item quantity="one">%1$d سنة</item><item quantity="two">سنتان</item><item quantity="few">%1$d سنوات</item><item quantity="many">%1$d سنةً</item><item quantity="other">%1$d سنة</item></plurals>
+    <plurals name="recurrence_occurrences"><item quantity="zero">%1$d مرة</item><item quantity="one">%1$d مرة</item><item quantity="two">مرتان</item><item quantity="few">%1$d مرات</item><item quantity="many">%1$d مرة</item><item quantity="other">%1$d مرة</item></plurals>
+    <plurals name="recurrence_for_occurrences"><item quantity="zero">لـ%1$d مرة</item><item quantity="one">لمرة واحدة</item><item quantity="two">لمرتين</item><item quantity="few">لـ%1$d مرات</item><item quantity="many">لـ%1$d مرة</item><item quantity="other">لـ%1$d مرة</item></plurals>
+    <string name="settings_notifications">الإشعارات</string>
+    <string name="settings_pin_title">تثبيت في الإشعارات</string>
+    <string name="settings_pin_subtitle">إبقاء جدول أعمال هذا الأسبوع في لوحة الإشعارات</string>
+    <string name="settings_priority_top">في الأعلى</string>
+    <string name="settings_priority_normal">عادية</string>
+    <string name="settings_priority_silent">صامتة</string>
+    <string name="settings_priority_top_desc">تظهر فوق الإشعارات الأخرى من دون نافذة منبثقة أو صوت.</string>
+    <string name="settings_priority_normal_desc">تظهر بين إشعاراتك اليومية المعتادة.</string>
+    <string name="settings_priority_silent_desc">تبقى أسفل فاصل “الإشعارات الصامتة” في لوحة الإشعارات.</string>
+    <string name="settings_double_swipe_title">التمرير مرتين للإزالة</string>
+    <string name="settings_double_swipe_subtitle">أزِل جدول الأعمال المثبّت بالتمرير مرتين خلال بضع ثوانٍ لإيقافه</string>
+    <string name="settings_reminders_title">تذكيرات المهام</string>
+    <string name="settings_reminders_subtitle">تلقي تنبيه عند حلول موعد مهمة مجدولة، مع إجراءات لإكمالها أو تأجيلها</string>
+    <string name="settings_notification_system">ضبط دقيق في إعدادات النظام</string>
+    <string name="settings_notification_layout">تخطيط الإشعار</string>
+    <string name="settings_time_window">النطاق الزمني</string>
+    <string name="window_three_days">٣ أيام</string>
+    <string name="window_this_week">هذا الأسبوع</string>
+    <string name="window_seven_days">٧ أيام</string>
+    <string name="window_fourteen_days">١٤ يومًا</string>
+    <string name="settings_calendars">التقاويم</string>
+    <string name="settings_calendars_permission">اسمح بالوصول إلى التقويم لاختيار التقاويم التي تظهر.</string>
+    <string name="settings_display">العرض</string>
+    <string name="settings_group_by_day">التجميع حسب اليوم</string>
+    <string name="settings_hide_completed">إخفاء المهام المكتملة</string>
+    <string name="settings_24_hour">تنسيق ٢٤ ساعة</string>
+    <string name="settings_24_hour_subtitle">عرض الوقت بصيغة ١٤:٣٠ بدلًا من ٢:٣٠ م</string>
+    <string name="settings_max_items">الحد الأقصى للعناصر في الإشعار: %1$d</string>
+    <string name="settings_appearance">المظهر</string>
+    <string name="theme_system">النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+    <string name="settings_material_you_subtitle">استخدام نظام ألوان الخلفية</string>
+    <string name="settings_amoled">أسود AMOLED</string>
+    <string name="settings_amoled_subtitle">أسطح سوداء بالكامل في الوضع الداكن</string>
+    <string name="settings_accent">اللون المميز (يُستخدم عند إيقاف Material You)</string>
+    <string name="settings_palette">لوحة الألوان</string>
+    <string name="palette_tonal">متدرجة</string>
+    <string name="palette_vibrant">زاهية</string>
+    <string name="palette_expressive">تعبيرية</string>
+    <string name="palette_neutral">محايدة</string>
+    <string name="settings_font">الخط</string>
+    <string name="font_system">النظام</string>
+    <string name="settings_reliability">الموثوقية</string>
+    <string name="settings_battery_title">تجاهل تحسينات البطارية</string>
+    <string name="settings_battery_on">مفعّل — يظل جدول الأعمال المثبّت موثوقًا في الخلفية</string>
+    <string name="settings_battery_recommended">يوصى بتفعيله على الأجهزة ذات القيود الصارمة ليظل جدول الأعمال المثبّت محدّثًا</string>
+    <string name="settings_about">حول</string>
+    <string name="settings_privacy_title">سياسة الخصوصية</string>
+    <string name="settings_privacy_subtitle">كيفية تعامل Pinned Calendar مع بياناتك — يفتح الموقع الإلكتروني</string>
+    <string name="overview_items_pinned">العناصر المثبّتة\nهذا الأسبوع</string>
+    <plurals name="overview_events"><item quantity="zero">%1$d حدث</item><item quantity="one">%1$d حدث</item><item quantity="two">حدثان</item><item quantity="few">%1$d أحداث</item><item quantity="many">%1$d حدثًا</item><item quantity="other">%1$d حدث</item></plurals>
+    <plurals name="overview_todos"><item quantity="zero">%1$d مهمة</item><item quantity="one">%1$d مهمة</item><item quantity="two">مهمتان</item><item quantity="few">%1$d مهام</item><item quantity="many">%1$d مهمة</item><item quantity="other">%1$d مهمة</item></plurals>
+    <string name="layout_density">الكثافة</string>
+    <string name="density_compact">مضغوطة</string>
+    <string name="density_cozy">متقاربة</string>
+    <string name="density_comfortable">مريحة</string>
+    <string name="density_custom">مخصصة</string>
+    <string name="layout_row_spacing">تباعد الصفوف</string>
+    <string name="layout_text_size">حجم النص</string>
+    <string name="layout_row_height">ارتفاع الصف</string>
+    <string name="layout_time_column_width">عرض عمود الوقت</string>
+    <string name="layout_rows_before_expanding">عدد الصفوف قبل التوسيع</string>
+    <string name="layout_value">%1$s: %2$d</string>
+    <string name="layout_show_week_heading">إظهار عنوان “هذا الأسبوع”</string>
+    <string name="layout_show_week_heading_subtitle">عرض العنوان أعلى جدول الأعمال الموسّع</string>
+    <string name="layout_show_today">إظهار تسمية اليوم</string>
+    <string name="layout_show_today_subtitle">عرض اليوم في الإشعارات المضغوطة متعددة الصفوف والموسّعة</string>
+    <string name="layout_outer_padding">الحشو الخارجي للإشعار</string>
+    <string name="layout_outer_padding_subtitle">إضافة مساحة رأسية أعلى محتوى الإشعار وأسفله</string>
+    <string name="preview_collapsed">مطوي</string>
+    <string name="preview_expanded">موسّع</string>
+    <string name="agenda_empty">لا شيء مجدول هذا الأسبوع</string>
+    <string name="agenda_week_header">هذا الأسبوع · %1$d</string>
+    <plurals name="agenda_more_this_week"><item quantity="zero">+%1$d عناصر أخرى هذا الأسبوع</item><item quantity="one">+%1$d آخر هذا الأسبوع</item><item quantity="two">+%1$d آخران هذا الأسبوع</item><item quantity="few">+%1$d أخرى هذا الأسبوع</item><item quantity="many">+%1$d آخر هذا الأسبوع</item><item quantity="other">+%1$d آخر هذا الأسبوع</item></plurals>
+    <string name="agenda_today">اليوم</string>
+    <string name="agenda_tomorrow">غدًا</string>
+    <string name="agenda_all_day">طوال اليوم</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+    <string name="calendar_unnamed">(تقويم)</string>
+    <string name="calendar_event_untitled">(بلا عنوان)</string>
+    <string name="sample_team_standup">اجتماع الفريق اليومي</string>
+    <string name="sample_one_on_one">اجتماع فردي مع سام</string>
+    <string name="sample_expense_report">إرسال تقرير المصروفات</string>
+    <string name="sample_dentist">موعد طبيب الأسنان</string>
+    <string name="sample_design_review">مراجعة التصميم</string>
+    <string name="sample_lunch">الغداء مع بريا</string>
+    <string name="sample_passport">تجديد جواز السفر</string>
+    <string name="sample_sprint_planning">تخطيط السبرنت</string>
+</resources>

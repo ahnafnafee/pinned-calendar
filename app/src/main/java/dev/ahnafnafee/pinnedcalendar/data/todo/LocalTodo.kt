@@ -17,11 +17,11 @@ data class LocalTodo(
  * Flag colors follow the red / amber / blue language task apps have made conventional;
  * NONE renders with the neutral task color.
  */
-enum class TodoPriority(val value: Int, val label: String, val colorHex: String?) {
-    NONE(0, "None", null),
-    LOW(1, "Low", "#4285F4"),
-    MEDIUM(2, "Medium", "#F9AB00"),
-    HIGH(3, "High", "#EA4335"),
+enum class TodoPriority(val value: Int, val colorHex: String?) {
+    NONE(0, null),
+    LOW(1, "#4285F4"),
+    MEDIUM(2, "#F9AB00"),
+    HIGH(3, "#EA4335"),
     ;
 
     companion object {

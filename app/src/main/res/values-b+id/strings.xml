@@ -1,0 +1,163 @@
+<resources>
+    <!-- BCP-47 resource qualifier keeps Indonesian aligned with the public "id" locale tag. -->
+    <string name="channel_name">Agenda tersemat</string>
+    <string name="channel_desc">Sematan agenda mingguan yang selalu terlihat</string>
+    <string name="reminder_channel_name">Pengingat tugas</string>
+    <string name="reminder_channel_desc">Peringatan saat tugas terjadwal jatuh tempo</string>
+    <string name="todo_reminder_due_now">Jatuh tempo sekarang</string>
+    <string name="todo_reminder_mark_done">Tandai selesai</string>
+    <string name="todo_reminder_snooze">Tunda 30 mnt</string>
+    <string name="action_add">Tambah</string>
+    <string name="action_allow">Izinkan</string>
+    <string name="action_cancel">Batal</string>
+    <string name="action_clear">Bersihkan</string>
+    <string name="action_delete">Hapus</string>
+    <string name="action_done">Selesai</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Simpan</string>
+    <string name="settings_state_on">Aktif</string>
+    <string name="number_integer">%1$d</string>
+    <string name="nav_todos">Tugas</string>
+    <string name="nav_settings">Setelan</string>
+    <string name="settings_title">Setelan</string>
+    <string name="todos_title">Tugas</string>
+    <string name="todo_new_due_today">Tugas baru (jatuh tempo hari ini)</string>
+    <string name="todo_empty">Belum ada tugas.</string>
+    <string name="todo_meta_notes">Catatan</string>
+    <string name="todo_due_today">Jatuh tempo hari ini</string>
+    <string name="todo_due_tomorrow">Jatuh tempo besok</string>
+    <string name="todo_due_date">Jatuh tempo %1$s</string>
+    <string name="todo_field_title">Judul</string>
+    <string name="todo_schedule">Jadwalkan</string>
+    <string name="todo_schedule_today">Hari ini</string>
+    <string name="todo_schedule_tomorrow">Besok</string>
+    <string name="todo_schedule_next_week">Minggu depan</string>
+    <string name="todo_pick_date">Pilih tanggal</string>
+    <string name="todo_repeat">Ulangi</string>
+    <string name="todo_priority">Prioritas</string>
+    <string name="todo_notes">Catatan</string>
+    <string name="todo_group_overdue">Terlambat</string>
+    <string name="todo_group_today">Hari ini</string>
+    <string name="todo_group_upcoming">Mendatang</string>
+    <string name="todo_group_no_date">Tanpa tanggal</string>
+    <string name="todo_group_completed">Selesai</string>
+    <string name="todo_priority_none">Tidak ada</string>
+    <string name="todo_priority_low">Rendah</string>
+    <string name="todo_priority_medium">Sedang</string>
+    <string name="todo_priority_high">Tinggi</string>
+    <string name="recurrence_never">Tidak pernah</string>
+    <string name="recurrence_daily">Harian</string>
+    <string name="recurrence_weekly">Mingguan</string>
+    <string name="recurrence_monthly">Bulanan</string>
+    <string name="recurrence_yearly">Tahunan</string>
+    <string name="recurrence_custom">Kustom…</string>
+    <string name="recurrence_custom_title">Pengulangan kustom</string>
+    <string name="recurrence_frequency">Frekuensi</string>
+    <string name="recurrence_repeat_every">Ulangi setiap</string>
+    <string name="recurrence_repeat_on">Ulangi pada</string>
+    <string name="recurrence_ends">Berakhir</string>
+    <string name="recurrence_on_date">Pada tanggal</string>
+    <string name="recurrence_after">Setelah</string>
+    <string name="recurrence_on_days">%1$s pada %2$s</string>
+    <string name="recurrence_until">hingga %1$s</string>
+    <string name="recurrence_help">Menyelesaikan kemunculan saat ini akan memajukan tugas ini ke tanggal terjadwal berikutnya. Tanggal yang terlewat akan dilewati.</string>
+    <plurals name="recurrence_every_days"><item quantity="other">Setiap %1$d hari</item></plurals>
+    <plurals name="recurrence_every_weeks"><item quantity="other">Setiap %1$d minggu</item></plurals>
+    <plurals name="recurrence_every_months"><item quantity="other">Setiap %1$d bulan</item></plurals>
+    <plurals name="recurrence_every_years"><item quantity="other">Setiap %1$d tahun</item></plurals>
+    <plurals name="recurrence_interval_days"><item quantity="other">%1$d hari</item></plurals>
+    <plurals name="recurrence_interval_weeks"><item quantity="other">%1$d minggu</item></plurals>
+    <plurals name="recurrence_interval_months"><item quantity="other">%1$d bulan</item></plurals>
+    <plurals name="recurrence_interval_years"><item quantity="other">%1$d tahun</item></plurals>
+    <plurals name="recurrence_occurrences"><item quantity="other">%1$d kemunculan</item></plurals>
+    <plurals name="recurrence_for_occurrences"><item quantity="other">selama %1$d kemunculan</item></plurals>
+    <string name="settings_notifications">Notifikasi</string>
+    <string name="settings_pin_title">Sematkan ke notifikasi</string>
+    <string name="settings_pin_subtitle">Pertahankan agenda minggu ini di panel notifikasi</string>
+    <string name="settings_priority_top">Teratas</string>
+    <string name="settings_priority_normal">Normal</string>
+    <string name="settings_priority_silent">Senyap</string>
+    <string name="settings_priority_top_desc">Berada di atas notifikasi lain tanpa muncul atau mengeluarkan suara.</string>
+    <string name="settings_priority_normal_desc">Menyatu dengan notifikasi sehari-hari.</string>
+    <string name="settings_priority_silent_desc">Berada di bawah pemisah “Senyap” pada panel.</string>
+    <string name="settings_double_swipe_title">Geser dua kali untuk menghapus</string>
+    <string name="settings_double_swipe_subtitle">Geser sematan dua kali dalam beberapa detik untuk menonaktifkannya</string>
+    <string name="settings_reminders_title">Pengingat tugas</string>
+    <string name="settings_reminders_subtitle">Dapatkan peringatan saat tugas terjadwal jatuh tempo, dengan tindakan untuk menyelesaikan atau menundanya</string>
+    <string name="settings_notification_system">Sesuaikan di setelan sistem</string>
+    <string name="settings_notification_layout">Tata letak notifikasi</string>
+    <string name="settings_time_window">Rentang waktu</string>
+    <string name="window_three_days">3 hari</string>
+    <string name="window_this_week">Minggu ini</string>
+    <string name="window_seven_days">7 hari</string>
+    <string name="window_fourteen_days">14 hari</string>
+    <string name="settings_calendars">Kalender</string>
+    <string name="settings_calendars_permission">Berikan akses kalender untuk memilih kalender yang ditampilkan.</string>
+    <string name="settings_display">Tampilan</string>
+    <string name="settings_group_by_day">Kelompokkan menurut hari</string>
+    <string name="settings_hide_completed">Sembunyikan tugas selesai</string>
+    <string name="settings_24_hour">Waktu 24 jam</string>
+    <string name="settings_24_hour_subtitle">Tampilkan waktu sebagai 14.30, bukan 2.30 PM</string>
+    <string name="settings_max_items">Item maksimum dalam notifikasi: %1$d</string>
+    <string name="settings_appearance">Tampilan</string>
+    <string name="theme_system">Sistem</string>
+    <string name="theme_light">Terang</string>
+    <string name="theme_dark">Gelap</string>
+    <string name="settings_material_you_subtitle">Gunakan skema warna wallpaper</string>
+    <string name="settings_amoled">Hitam AMOLED</string>
+    <string name="settings_amoled_subtitle">Permukaan hitam murni dalam mode gelap</string>
+    <string name="settings_accent">Aksen (digunakan saat Material You nonaktif)</string>
+    <string name="settings_palette">Palet</string>
+    <string name="palette_tonal">Tonal</string>
+    <string name="palette_vibrant">Cerah</string>
+    <string name="palette_expressive">Ekspresif</string>
+    <string name="palette_neutral">Netral</string>
+    <string name="settings_font">Font</string>
+    <string name="font_system">Sistem</string>
+    <string name="settings_reliability">Keandalan</string>
+    <string name="settings_battery_title">Abaikan pengoptimalan baterai</string>
+    <string name="settings_battery_on">Aktif — sematan tetap andal di latar belakang</string>
+    <string name="settings_battery_recommended">Disarankan pada perangkat agresif agar sematan terus diperbarui</string>
+    <string name="settings_about">Tentang</string>
+    <string name="settings_privacy_title">Kebijakan privasi</string>
+    <string name="settings_privacy_subtitle">Cara Pinned Calendar menangani data Anda — membuka situs web</string>
+    <string name="overview_items_pinned">item tersemat\nminggu ini</string>
+    <plurals name="overview_events"><item quantity="other">%1$d acara</item></plurals>
+    <plurals name="overview_todos"><item quantity="other">%1$d tugas</item></plurals>
+    <string name="layout_density">Kepadatan</string>
+    <string name="density_compact">Ringkas</string>
+    <string name="density_cozy">Sedang</string>
+    <string name="density_comfortable">Lega</string>
+    <string name="density_custom">Kustom</string>
+    <string name="layout_row_spacing">Jarak baris</string>
+    <string name="layout_text_size">Ukuran teks</string>
+    <string name="layout_row_height">Tinggi baris</string>
+    <string name="layout_time_column_width">Lebar kolom waktu</string>
+    <string name="layout_rows_before_expanding">Baris sebelum diperluas</string>
+    <string name="layout_value">%1$s: %2$d</string>
+    <string name="layout_show_week_heading">Tampilkan judul “Minggu ini”</string>
+    <string name="layout_show_week_heading_subtitle">Tampilkan judul di atas agenda yang diperluas</string>
+    <string name="layout_show_today">Tampilkan label Hari ini</string>
+    <string name="layout_show_today_subtitle">Tampilkan Hari ini dalam notifikasi ringkas multibaris dan notifikasi yang diperluas</string>
+    <string name="layout_outer_padding">Padding luar notifikasi</string>
+    <string name="layout_outer_padding_subtitle">Tambahkan ruang vertikal di atas dan bawah isi notifikasi</string>
+    <string name="preview_collapsed">Ciut</string>
+    <string name="preview_expanded">Diperluas</string>
+    <string name="agenda_empty">Tidak ada yang dijadwalkan minggu ini</string>
+    <string name="agenda_week_header">Minggu ini · %1$d</string>
+    <plurals name="agenda_more_this_week"><item quantity="other">+%1$d lagi minggu ini</item></plurals>
+    <string name="agenda_today">Hari ini</string>
+    <string name="agenda_tomorrow">Besok</string>
+    <string name="agenda_all_day">Sepanjang hari</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+    <string name="calendar_unnamed">(kalender)</string>
+    <string name="calendar_event_untitled">(Tanpa judul)</string>
+    <string name="sample_team_standup">Rapat singkat tim</string>
+    <string name="sample_one_on_one">Pertemuan empat mata dengan Sam</string>
+    <string name="sample_expense_report">Kirim laporan pengeluaran</string>
+    <string name="sample_dentist">Janji temu dokter gigi</string>
+    <string name="sample_design_review">Tinjauan desain</string>
+    <string name="sample_lunch">Makan siang dengan Priya</string>
+    <string name="sample_passport">Perpanjang paspor</string>
+    <string name="sample_sprint_planning">Perencanaan sprint</string>
+</resources>

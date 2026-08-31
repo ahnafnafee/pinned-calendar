@@ -55,6 +55,23 @@ class TodoRepositoryTest {
         assertEquals(0, r.snapshot().size)
     }
 
+    @Test fun reminder_completion_only_changes_the_matching_open_occurrence() = runTest {
+        val r = newRepo()
+        val due = 123L
+        r.add("Task", due)
+        val id = r.snapshot().single().id
+
+        r.completeOccurrence(id, expectedDueMillis = due + 1)
+        assertFalse(r.snapshot().single().completed)
+
+        r.completeOccurrence(id, expectedDueMillis = due)
+        assertTrue(r.snapshot().single().completed)
+
+        // A duplicated broadcast cannot toggle the completed item open again.
+        r.completeOccurrence(id, expectedDueMillis = due)
+        assertTrue(r.snapshot().single().completed)
+    }
+
     @Test fun undated_todo_persists_null_due() = runTest {
         val r = newRepo()
         r.add("Someday", null)
@@ -141,6 +158,22 @@ class TodoRepositoryTest {
         )
         assertEquals(due, advanced.recurrenceAnchorMillis)
         assertEquals(4, advanced.recurrenceOccurrence)
+    }
+
+    @Test fun repeated_reminder_completion_does_not_skip_a_recurring_occurrence() = runTest {
+        val zone = ZoneId.of("America/New_York")
+        val due = LocalDate.of(2026, 6, 1).atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+        val completedAt = LocalDate.of(2026, 6, 1).atTime(9, 1).atZone(zone).toInstant().toEpochMilli()
+        val r = newRepo()
+        r.add("Water plants", due, recurrence = preset(RecurrenceFrequency.DAILY), zone = zone)
+        val id = r.snapshot().single().id
+
+        r.completeOccurrence(id, due, completedAt, zone)
+        val advancedOnce = r.snapshot().single()
+        r.completeOccurrence(id, due, completedAt, zone)
+
+        assertEquals(advancedOnce, r.snapshot().single())
+        assertEquals(2, advancedOnce.recurrenceOccurrence)
     }
 
     @Test fun editing_details_preserves_a_recurring_series_anchor() = runTest {

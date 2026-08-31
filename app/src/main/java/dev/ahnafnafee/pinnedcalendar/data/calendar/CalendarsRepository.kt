@@ -2,6 +2,7 @@ package dev.ahnafnafee.pinnedcalendar.data.calendar
 
 import android.content.Context
 import android.provider.CalendarContract
+import dev.ahnafnafee.pinnedcalendar.R
 
 data class CalendarInfo(val id: String, val name: String, val colorHex: String?)
 
@@ -26,7 +27,7 @@ class CalendarsRepository(private val context: Context) {
                 out.add(
                     CalendarInfo(
                         id = c.getLong(idIdx).toString(),
-                        name = c.getString(nameIdx) ?: "(calendar)",
+                        name = c.getString(nameIdx) ?: context.getString(R.string.calendar_unnamed),
                         colorHex = if (color != 0) String.format("#%06X", 0xFFFFFF and color) else null,
                     ),
                 )

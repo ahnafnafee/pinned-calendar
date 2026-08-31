@@ -55,7 +55,7 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
     ): RemoteViews {
         val rv = RemoteViews(context.packageName, R.layout.notif_collapsed)
         if (content.isEmpty) {
-            rv.setTextViewText(R.id.collapsed_line, "Nothing scheduled this week")
+            rv.setTextViewText(R.id.collapsed_line, context.getString(R.string.agenda_empty))
             rv.setTextColor(R.id.collapsed_line, primaryText)
             rv.setViewVisibility(R.id.collapsed_dot, View.INVISIBLE)
             rv.setTextViewText(R.id.collapsed_more, "")
@@ -93,7 +93,7 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
             val row = RemoteViews(context.packageName, R.layout.notif_row)
             row.setViewVisibility(R.id.row_bar, View.GONE)
             row.setViewVisibility(R.id.row_time, View.GONE)
-            row.setTextViewText(R.id.row_title, "Nothing scheduled this week")
+            row.setTextViewText(R.id.row_title, context.getString(R.string.agenda_empty))
             row.setTextColor(R.id.row_title, primaryText)
             row.setFloat(R.id.row_title, "setTextSize", rowTextSizeSp.coerceIn(11, 18).toFloat())
             rv.addView(R.id.collapsed_container, row)
@@ -151,7 +151,10 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
             if (showHeader) View.VISIBLE else View.GONE,
         )
 
-        rv.setTextViewText(R.id.expanded_title, "This week · ${content.headerCount}")
+        rv.setTextViewText(
+            R.id.expanded_title,
+            context.getString(R.string.agenda_week_header, content.headerCount),
+        )
         rv.setTextColor(R.id.expanded_title, accent)
         var clickReq = 200
         for (section in content.sections) {
@@ -170,7 +173,14 @@ class AgendaRemoteViewsRenderer(private val context: Context) {
         }
         if (content.moreCount > 0) {
             rv.setViewVisibility(R.id.expanded_more, View.VISIBLE)
-            rv.setTextViewText(R.id.expanded_more, "+${content.moreCount} more this week")
+            rv.setTextViewText(
+                R.id.expanded_more,
+                context.resources.getQuantityString(
+                    R.plurals.agenda_more_this_week,
+                    content.moreCount,
+                    content.moreCount,
+                ),
+            )
             rv.setTextColor(R.id.expanded_more, accent)
             rv.setOnClickPendingIntent(R.id.expanded_more, AppLaunch.pendingIntent(context))
         } else {

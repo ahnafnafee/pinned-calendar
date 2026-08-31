@@ -42,22 +42,19 @@ object ChannelManager {
             if (mgr.getNotificationChannel(id) != null) mgr.deleteNotificationChannel(id)
         }
 
-        if (mgr.getNotificationChannel(activeId) == null) {
-            // All levels stay silent (null sound, no vibration). TOP uses IMPORTANCE_HIGH so the pin
-            // ranks above everyday notifications; HIGH — unlike a normal alerting notification — may
-            // show a brief heads-up the first time it posts, which setOnlyAlertOnce limits to once.
-            val channel = NotificationChannel(
-                activeId,
-                context.getString(R.string.channel_name),
-                importance(priority),
-            ).apply {
-                description = context.getString(R.string.channel_desc)
-                setShowBadge(false)
-                setSound(null, null)
-                enableVibration(false)
-            }
-            mgr.createNotificationChannel(channel)
+        // Recreating an existing channel updates its localized name and description while Android
+        // preserves user-controlled settings. All levels stay silent (null sound, no vibration).
+        val channel = NotificationChannel(
+            activeId,
+            context.getString(R.string.channel_name),
+            importance(priority),
+        ).apply {
+            description = context.getString(R.string.channel_desc)
+            setShowBadge(false)
+            setSound(null, null)
+            enableVibration(false)
         }
+        mgr.createNotificationChannel(channel)
     }
 
     /**
@@ -70,14 +67,12 @@ object ChannelManager {
         LEGACY_REMINDER_CHANNEL_IDS.forEach { id ->
             if (mgr.getNotificationChannel(id) != null) mgr.deleteNotificationChannel(id)
         }
-        if (mgr.getNotificationChannel(REMINDER_CHANNEL_ID) == null) {
-            mgr.createNotificationChannel(
-                NotificationChannel(
-                    REMINDER_CHANNEL_ID,
-                    context.getString(R.string.reminder_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH,
-                ).apply { description = context.getString(R.string.reminder_channel_desc) },
-            )
-        }
+        mgr.createNotificationChannel(
+            NotificationChannel(
+                REMINDER_CHANNEL_ID,
+                context.getString(R.string.reminder_channel_name),
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply { description = context.getString(R.string.reminder_channel_desc) },
+        )
     }
 }

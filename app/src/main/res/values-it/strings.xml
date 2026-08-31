@@ -1,0 +1,162 @@
+<resources>
+    <string name="channel_name">Agenda fissata</string>
+    <string name="channel_desc">L’agenda settimanale sempre visibile</string>
+    <string name="reminder_channel_name">Promemoria attività</string>
+    <string name="reminder_channel_desc">Avvisi quando scade un’attività programmata</string>
+    <string name="todo_reminder_due_now">Scade ora</string>
+    <string name="todo_reminder_mark_done">Segna come completata</string>
+    <string name="todo_reminder_snooze">Posticipa di 30 min</string>
+    <string name="action_add">Aggiungi</string>
+    <string name="action_allow">Consenti</string>
+    <string name="action_cancel">Annulla</string>
+    <string name="action_clear">Cancella</string>
+    <string name="action_delete">Elimina</string>
+    <string name="action_done">Fine</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Salva</string>
+    <string name="settings_state_on">Attivo</string>
+    <string name="number_integer">%1$d</string>
+    <string name="nav_todos">Attività</string>
+    <string name="nav_settings">Impostazioni</string>
+    <string name="settings_title">Impostazioni</string>
+    <string name="todos_title">Attività</string>
+    <string name="todo_new_due_today">Nuova attività (scade oggi)</string>
+    <string name="todo_empty">Nessuna attività.</string>
+    <string name="todo_meta_notes">Note</string>
+    <string name="todo_due_today">Scade oggi</string>
+    <string name="todo_due_tomorrow">Scade domani</string>
+    <string name="todo_due_date">Scade il %1$s</string>
+    <string name="todo_field_title">Titolo</string>
+    <string name="todo_schedule">Pianificazione</string>
+    <string name="todo_schedule_today">Oggi</string>
+    <string name="todo_schedule_tomorrow">Domani</string>
+    <string name="todo_schedule_next_week">Settimana prossima</string>
+    <string name="todo_pick_date">Scegli una data</string>
+    <string name="todo_repeat">Ripeti</string>
+    <string name="todo_priority">Priorità</string>
+    <string name="todo_notes">Note</string>
+    <string name="todo_group_overdue">Scadute</string>
+    <string name="todo_group_today">Oggi</string>
+    <string name="todo_group_upcoming">In arrivo</string>
+    <string name="todo_group_no_date">Senza data</string>
+    <string name="todo_group_completed">Completate</string>
+    <string name="todo_priority_none">Nessuna</string>
+    <string name="todo_priority_low">Bassa</string>
+    <string name="todo_priority_medium">Media</string>
+    <string name="todo_priority_high">Alta</string>
+    <string name="recurrence_never">Mai</string>
+    <string name="recurrence_daily">Ogni giorno</string>
+    <string name="recurrence_weekly">Ogni settimana</string>
+    <string name="recurrence_monthly">Ogni mese</string>
+    <string name="recurrence_yearly">Ogni anno</string>
+    <string name="recurrence_custom">Personalizzata…</string>
+    <string name="recurrence_custom_title">Ricorrenza personalizzata</string>
+    <string name="recurrence_frequency">Frequenza</string>
+    <string name="recurrence_repeat_every">Ripeti ogni</string>
+    <string name="recurrence_repeat_on">Ripeti il</string>
+    <string name="recurrence_ends">Termina</string>
+    <string name="recurrence_on_date">In una data</string>
+    <string name="recurrence_after">Dopo</string>
+    <string name="recurrence_on_days">%1$s il %2$s</string>
+    <string name="recurrence_until">fino al %1$s</string>
+    <string name="recurrence_help">Completando l’occorrenza corrente, l’attività passa alla prossima data programmata. Le date perse vengono saltate.</string>
+    <plurals name="recurrence_every_days"><item quantity="one">Ogni giorno</item><item quantity="many">Ogni %1$d giorni</item><item quantity="other">Ogni %1$d giorni</item></plurals>
+    <plurals name="recurrence_every_weeks"><item quantity="one">Ogni settimana</item><item quantity="many">Ogni %1$d settimane</item><item quantity="other">Ogni %1$d settimane</item></plurals>
+    <plurals name="recurrence_every_months"><item quantity="one">Ogni mese</item><item quantity="many">Ogni %1$d mesi</item><item quantity="other">Ogni %1$d mesi</item></plurals>
+    <plurals name="recurrence_every_years"><item quantity="one">Ogni anno</item><item quantity="many">Ogni %1$d anni</item><item quantity="other">Ogni %1$d anni</item></plurals>
+    <plurals name="recurrence_interval_days"><item quantity="one">%1$d giorno</item><item quantity="many">%1$d giorni</item><item quantity="other">%1$d giorni</item></plurals>
+    <plurals name="recurrence_interval_weeks"><item quantity="one">%1$d settimana</item><item quantity="many">%1$d settimane</item><item quantity="other">%1$d settimane</item></plurals>
+    <plurals name="recurrence_interval_months"><item quantity="one">%1$d mese</item><item quantity="many">%1$d mesi</item><item quantity="other">%1$d mesi</item></plurals>
+    <plurals name="recurrence_interval_years"><item quantity="one">%1$d anno</item><item quantity="many">%1$d anni</item><item quantity="other">%1$d anni</item></plurals>
+    <plurals name="recurrence_occurrences"><item quantity="one">%1$d occorrenza</item><item quantity="many">%1$d occorrenze</item><item quantity="other">%1$d occorrenze</item></plurals>
+    <plurals name="recurrence_for_occurrences"><item quantity="one">per %1$d occorrenza</item><item quantity="many">per %1$d occorrenze</item><item quantity="other">per %1$d occorrenze</item></plurals>
+    <string name="settings_notifications">Notifiche</string>
+    <string name="settings_pin_title">Fissa nelle notifiche</string>
+    <string name="settings_pin_subtitle">Mantieni l’agenda della settimana nel pannello</string>
+    <string name="settings_priority_top">In alto</string>
+    <string name="settings_priority_normal">Normale</string>
+    <string name="settings_priority_silent">Silenziosa</string>
+    <string name="settings_priority_top_desc">Resta sopra le altre notifiche senza comparire né emettere suoni.</string>
+    <string name="settings_priority_normal_desc">Si mescola alle notifiche di tutti i giorni.</string>
+    <string name="settings_priority_silent_desc">Resta sotto la sezione “Silenziose”.</string>
+    <string name="settings_double_swipe_title">Scorri due volte per rimuovere</string>
+    <string name="settings_double_swipe_subtitle">Scorri via l’agenda due volte in pochi secondi per disattivarla</string>
+    <string name="settings_reminders_title">Promemoria attività</string>
+    <string name="settings_reminders_subtitle">Ricevi un avviso alla scadenza e completa o posticipa l’attività</string>
+    <string name="settings_notification_system">Regola nelle impostazioni di sistema</string>
+    <string name="settings_notification_layout">Layout della notifica</string>
+    <string name="settings_time_window">Intervallo di tempo</string>
+    <string name="window_three_days">3 giorni</string>
+    <string name="window_this_week">Questa settimana</string>
+    <string name="window_seven_days">7 giorni</string>
+    <string name="window_fourteen_days">14 giorni</string>
+    <string name="settings_calendars">Calendari</string>
+    <string name="settings_calendars_permission">Concedi l’accesso al calendario per scegliere quali mostrare.</string>
+    <string name="settings_display">Visualizzazione</string>
+    <string name="settings_group_by_day">Raggruppa per giorno</string>
+    <string name="settings_hide_completed">Nascondi attività completate</string>
+    <string name="settings_24_hour">Formato 24 ore</string>
+    <string name="settings_24_hour_subtitle">Mostra gli orari come 14:30 invece di 2:30 PM</string>
+    <string name="settings_max_items">Elementi massimi nella notifica: %1$d</string>
+    <string name="settings_appearance">Aspetto</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Chiaro</string>
+    <string name="theme_dark">Scuro</string>
+    <string name="settings_material_you_subtitle">Usa i colori dello sfondo</string>
+    <string name="settings_amoled">Nero AMOLED</string>
+    <string name="settings_amoled_subtitle">Superfici completamente nere in modalità scura</string>
+    <string name="settings_accent">Accento (quando Material You è disattivato)</string>
+    <string name="settings_palette">Tavolozza</string>
+    <string name="palette_tonal">Tonale</string>
+    <string name="palette_vibrant">Vivace</string>
+    <string name="palette_expressive">Espressiva</string>
+    <string name="palette_neutral">Neutra</string>
+    <string name="settings_font">Carattere</string>
+    <string name="font_system">Sistema</string>
+    <string name="settings_reliability">Affidabilità</string>
+    <string name="settings_battery_title">Ignora ottimizzazioni batteria</string>
+    <string name="settings_battery_on">Attivo — l’agenda resta affidabile in background</string>
+    <string name="settings_battery_recommended">Consigliato sui dispositivi aggressivi per mantenere aggiornata l’agenda</string>
+    <string name="settings_about">Informazioni</string>
+    <string name="settings_privacy_title">Informativa sulla privacy</string>
+    <string name="settings_privacy_subtitle">Come Pinned Calendar gestisce i tuoi dati — apre il sito web</string>
+    <string name="overview_items_pinned">elementi fissati\nquesta settimana</string>
+    <plurals name="overview_events"><item quantity="one">%1$d evento</item><item quantity="many">%1$d eventi</item><item quantity="other">%1$d eventi</item></plurals>
+    <plurals name="overview_todos"><item quantity="one">%1$d attività</item><item quantity="many">%1$d attività</item><item quantity="other">%1$d attività</item></plurals>
+    <string name="layout_density">Densità</string>
+    <string name="density_compact">Compatta</string>
+    <string name="density_cozy">Equilibrata</string>
+    <string name="density_comfortable">Comoda</string>
+    <string name="density_custom">Personalizzata</string>
+    <string name="layout_row_spacing">Spaziatura righe</string>
+    <string name="layout_text_size">Dimensione testo</string>
+    <string name="layout_row_height">Altezza riga</string>
+    <string name="layout_time_column_width">Larghezza colonna orario</string>
+    <string name="layout_rows_before_expanding">Righe prima dell’espansione</string>
+    <string name="layout_value">%1$s: %2$d</string>
+    <string name="layout_show_week_heading">Mostra titolo “Questa settimana”</string>
+    <string name="layout_show_week_heading_subtitle">Mostra il titolo sopra l’agenda espansa</string>
+    <string name="layout_show_today">Mostra etichetta Oggi</string>
+    <string name="layout_show_today_subtitle">Mostra Oggi nelle notifiche compatte multiriga ed espanse</string>
+    <string name="layout_outer_padding">Spaziatura esterna notifica</string>
+    <string name="layout_outer_padding_subtitle">Aggiungi spazio verticale sopra e sotto il contenuto</string>
+    <string name="preview_collapsed">Compressa</string>
+    <string name="preview_expanded">Espansa</string>
+    <string name="agenda_empty">Niente in programma questa settimana</string>
+    <string name="agenda_week_header">Questa settimana · %1$d</string>
+    <plurals name="agenda_more_this_week"><item quantity="one">+%1$d altro questa settimana</item><item quantity="many">+%1$d altri questa settimana</item><item quantity="other">+%1$d altri questa settimana</item></plurals>
+    <string name="agenda_today">Oggi</string>
+    <string name="agenda_tomorrow">Domani</string>
+    <string name="agenda_all_day">Tutto il giorno</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+    <string name="calendar_unnamed">(calendario)</string>
+    <string name="calendar_event_untitled">(Senza titolo)</string>
+    <string name="sample_team_standup">Riunione del team</string>
+    <string name="sample_one_on_one">Incontro con Sam</string>
+    <string name="sample_expense_report">Invia nota spese</string>
+    <string name="sample_dentist">Appuntamento dal dentista</string>
+    <string name="sample_design_review">Revisione del design</string>
+    <string name="sample_lunch">Pranzo con Priya</string>
+    <string name="sample_passport">Rinnova passaporto</string>
+    <string name="sample_sprint_planning">Pianificazione sprint</string>
+</resources>
