@@ -7,7 +7,7 @@ name: Release
 #
 # Google Play upload is OFF by default: it runs only when the "publish_to_play" box is
 # checked at dispatch, and then uploads the .aab to the internal-testing track with the
-# release notes from distribution/whatsnew/<version>/whatsnew-en-US.
+# localized release notes from distribution/whatsnew/<version>/whatsnew-<locale>.
 #
 # The version input is the single source of truth:
 #   - rejected if not MAJOR.MINOR.PATCH
@@ -117,21 +117,26 @@ jobs:
           SA_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           VERSION_NAME: ${{ steps.ver.outputs.version_name }}
         run: |
+          set -euo pipefail
           if [ -z "$SA_JSON" ]; then
             echo "::error::publish_to_play is checked but the PLAY_SERVICE_ACCOUNT_JSON secret is missing. Add it (see this workflow's header) or re-run with the box unchecked." >&2
             exit 1
           fi
-          notes="distribution/whatsnew/$VERSION_NAME/whatsnew-en-US"
-          if [ ! -s "$notes" ]; then
-            echo "::error::publish_to_play is checked but Play release notes are missing at $notes. Create it (plain text, max 500 chars) so this version ships a 'What's new'." >&2
-            exit 1
-          fi
-          notes_chars="$(wc -m < "$notes" | tr -d '[:space:]')"
-          if [ "$notes_chars" -gt 500 ]; then
-            echo "::error::Play release notes at $notes are $notes_chars characters; Google Play allows at most 500." >&2
-            exit 1
-          fi
-          echo "✓ Play secret present and $notes_chars-character release notes found at $notes — the .aab will go to the internal track."
+          notes_dir="distribution/whatsnew/$VERSION_NAME"
+          locales=(ar bn-BD de-DE en-US es-ES fr-FR hi-IN id it-IT ja-JP ko-KR pt-BR tr-TR vi zh-CN)
+          for locale in "${locales[@]}"; do
+            notes="$notes_dir/whatsnew-$locale"
+            if [ ! -s "$notes" ]; then
+              echo "::error::Play release notes are missing at $notes. Every supported locale needs plain text of at most 500 characters." >&2
+              exit 1
+            fi
+            notes_chars="$(wc -m < "$notes" | tr -d '[:space:]')"
+            if [ "$notes_chars" -gt 500 ]; then
+              echo "::error::Play release notes at $notes are $notes_chars characters; Google Play allows at most 500." >&2
+              exit 1
+            fi
+          done
+          echo "✓ Play secret present and release notes for all ${#locales[@]} locales passed the 500-character limit."
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -251,7 +256,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: dev.ahnafnafee.pinnedcalendar
           releaseFiles: ${{ steps.artifacts.outputs.aab }}
-          # Per-version notes, matched to the release; the preflight guarantees this exists.
+          # Per-version localized notes; the preflight guarantees all 15 files exist.
           whatsNewDirectory: distribution/whatsnew/${{ steps.ver.outputs.version_name }}
           tracks: internal
           status: completed

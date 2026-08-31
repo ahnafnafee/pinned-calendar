@@ -55,23 +55,30 @@ class TodoRepository(private val dataStore: DataStore<Preferences>) {
     ) = mutate { list ->
         list.map { todo ->
             if (todo.id != id) return@map todo
-            if (!todo.completed && todo.recurrence != null) {
-                RecurringTodoSchedule.nextDueAfterCompletion(todo, completedAtMillis, zone)
-                    ?.let { next ->
-                        todo.copy(
-                            dueMillis = next.dueMillis,
-                            completed = false,
-                            recurrenceOccurrence = next.occurrenceNumber,
-                        )
-                    }
-                    ?: todo.copy(
-                        completed = true,
-                        recurrence = null,
-                        recurrenceAnchorMillis = null,
-                        recurrenceOccurrence = 1,
-                    )
+            if (!todo.completed) {
+                complete(todo, completedAtMillis, zone)
             } else {
-                todo.copy(completed = !todo.completed)
+                todo.copy(completed = false)
+            }
+        }
+    }
+
+    /**
+     * Completes only the exact open occurrence represented by a reminder action. Matching the due
+     * time makes repeated taps and stale recurring-reminder actions idempotent instead of advancing
+     * a series more than once.
+     */
+    suspend fun completeOccurrence(
+        id: String,
+        expectedDueMillis: Long,
+        completedAtMillis: Long = System.currentTimeMillis(),
+        zone: ZoneId = ZoneId.systemDefault(),
+    ) = mutate { list ->
+        list.map { todo ->
+            if (todo.id == id && !todo.completed && todo.dueMillis == expectedDueMillis) {
+                complete(todo, completedAtMillis, zone)
+            } else {
+                todo
             }
         }
     }
@@ -120,6 +127,24 @@ class TodoRepository(private val dataStore: DataStore<Preferences>) {
 
     private suspend fun mutate(transform: (List<LocalTodo>) -> List<LocalTodo>) {
         dataStore.edit { prefs -> prefs[KEY] = encode(transform(decode(prefs[KEY]))) }
+    }
+
+    private fun complete(todo: LocalTodo, completedAtMillis: Long, zone: ZoneId): LocalTodo {
+        if (todo.recurrence == null) return todo.copy(completed = true)
+        return RecurringTodoSchedule.nextDueAfterCompletion(todo, completedAtMillis, zone)
+            ?.let { next ->
+                todo.copy(
+                    dueMillis = next.dueMillis,
+                    completed = false,
+                    recurrenceOccurrence = next.occurrenceNumber,
+                )
+            }
+            ?: todo.copy(
+                completed = true,
+                recurrence = null,
+                recurrenceAnchorMillis = null,
+                recurrenceOccurrence = 1,
+            )
     }
 
     private fun nextId(list: List<LocalTodo>): String =

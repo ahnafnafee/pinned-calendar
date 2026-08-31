@@ -1,8 +1,226 @@
 <resources>
-    <string name="app_name">Pinned Calendar</string>
-    <string name="app_short_name">Pinned</string>
+    <string name="app_name" translatable="false">Pinned Calendar</string>
+    <string name="app_short_name" translatable="false">Pinned</string>
+
+    <!-- Notification channels and reminder actions -->
     <string name="channel_name">Pinned agenda</string>
     <string name="channel_desc">The always-visible weekly agenda pin</string>
     <string name="reminder_channel_name">To-do reminders</string>
     <string name="reminder_channel_desc">Alerts when a scheduled to-do comes due</string>
+    <string name="todo_reminder_due_now">Due now</string>
+    <string name="todo_reminder_mark_done">Mark done</string>
+    <string name="todo_reminder_snooze">Snooze 30 min</string>
+
+    <!-- Shared actions and state -->
+    <string name="action_add">Add</string>
+    <string name="action_allow">Allow</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_done">Done</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Save</string>
+    <string name="settings_state_on">On</string>
+    <string name="number_integer">%1$d</string>
+
+    <!-- Navigation and to-do list -->
+    <string name="nav_todos">To-dos</string>
+    <string name="nav_settings">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="todos_title">To-dos</string>
+    <string name="todo_new_due_today">New to-do (due today)</string>
+    <string name="todo_empty">No to-dos yet.</string>
+    <string name="todo_meta_notes">Notes</string>
+    <string name="todo_due_today">Due today</string>
+    <string name="todo_due_tomorrow">Due tomorrow</string>
+    <string name="todo_due_date">Due %1$s</string>
+    <string name="todo_field_title">Title</string>
+    <string name="todo_schedule">Schedule</string>
+    <string name="todo_schedule_today">Today</string>
+    <string name="todo_schedule_tomorrow">Tomorrow</string>
+    <string name="todo_schedule_next_week">Next week</string>
+    <string name="todo_pick_date">Pick a date</string>
+    <string name="todo_repeat">Repeat</string>
+    <string name="todo_priority">Priority</string>
+    <string name="todo_notes">Notes</string>
+
+    <!-- To-do groups and priorities -->
+    <string name="todo_group_overdue">Overdue</string>
+    <string name="todo_group_today">Today</string>
+    <string name="todo_group_upcoming">Upcoming</string>
+    <string name="todo_group_no_date">No date</string>
+    <string name="todo_group_completed">Completed</string>
+    <string name="todo_priority_none">None</string>
+    <string name="todo_priority_low">Low</string>
+    <string name="todo_priority_medium">Medium</string>
+    <string name="todo_priority_high">High</string>
+
+    <!-- Recurrence -->
+    <string name="recurrence_never">Never</string>
+    <string name="recurrence_daily">Daily</string>
+    <string name="recurrence_weekly">Weekly</string>
+    <string name="recurrence_monthly">Monthly</string>
+    <string name="recurrence_yearly">Yearly</string>
+    <string name="recurrence_custom">Custom…</string>
+    <string name="recurrence_custom_title">Custom recurrence</string>
+    <string name="recurrence_frequency">Frequency</string>
+    <string name="recurrence_repeat_every">Repeat every</string>
+    <string name="recurrence_repeat_on">Repeat on</string>
+    <string name="recurrence_ends">Ends</string>
+    <string name="recurrence_on_date">On date</string>
+    <string name="recurrence_after">After</string>
+    <string name="recurrence_on_days">%1$s on %2$s</string>
+    <string name="recurrence_until">until %1$s</string>
+    <string name="recurrence_help">Completing the current occurrence advances this to-do to the next scheduled date. Missed dates are skipped.</string>
+    <plurals name="recurrence_every_days">
+        <item quantity="one">Every day</item>
+        <item quantity="other">Every %1$d days</item>
+    </plurals>
+    <plurals name="recurrence_every_weeks">
+        <item quantity="one">Every week</item>
+        <item quantity="other">Every %1$d weeks</item>
+    </plurals>
+    <plurals name="recurrence_every_months">
+        <item quantity="one">Every month</item>
+        <item quantity="other">Every %1$d months</item>
+    </plurals>
+    <plurals name="recurrence_every_years">
+        <item quantity="one">Every year</item>
+        <item quantity="other">Every %1$d years</item>
+    </plurals>
+    <plurals name="recurrence_interval_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <plurals name="recurrence_interval_weeks">
+        <item quantity="one">%1$d week</item>
+        <item quantity="other">%1$d weeks</item>
+    </plurals>
+    <plurals name="recurrence_interval_months">
+        <item quantity="one">%1$d month</item>
+        <item quantity="other">%1$d months</item>
+    </plurals>
+    <plurals name="recurrence_interval_years">
+        <item quantity="one">%1$d year</item>
+        <item quantity="other">%1$d years</item>
+    </plurals>
+    <plurals name="recurrence_occurrences">
+        <item quantity="one">%1$d occurrence</item>
+        <item quantity="other">%1$d occurrences</item>
+    </plurals>
+    <plurals name="recurrence_for_occurrences">
+        <item quantity="one">for %1$d occurrence</item>
+        <item quantity="other">for %1$d occurrences</item>
+    </plurals>
+
+    <!-- Settings -->
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_pin_title">Pin to notifications</string>
+    <string name="settings_pin_subtitle">Keep this week’s agenda in the drawer</string>
+    <string name="settings_priority_top">Top</string>
+    <string name="settings_priority_normal">Normal</string>
+    <string name="settings_priority_silent">Silent</string>
+    <string name="settings_priority_top_desc">Sits above other notifications — never pops up or makes a sound.</string>
+    <string name="settings_priority_normal_desc">Mixes in with your everyday notifications.</string>
+    <string name="settings_priority_silent_desc">Stays below the shade’s “Silent” divider.</string>
+    <string name="settings_double_swipe_title">Swipe twice to remove</string>
+    <string name="settings_double_swipe_subtitle">Swipe the pin away twice within a few seconds to turn it off</string>
+    <string name="settings_reminders_title">To-do reminders</string>
+    <string name="settings_reminders_subtitle">Get an alert when a scheduled to-do is due, with actions to mark it done or snooze it</string>
+    <string name="settings_notification_system">Fine-tune in system settings</string>
+    <string name="settings_notification_layout">Notification layout</string>
+    <string name="settings_time_window">Time window</string>
+    <string name="window_three_days">3 days</string>
+    <string name="window_this_week">This week</string>
+    <string name="window_seven_days">7 days</string>
+    <string name="window_fourteen_days">14 days</string>
+    <string name="settings_calendars">Calendars</string>
+    <string name="settings_calendars_permission">Grant calendar access to choose which calendars appear.</string>
+    <string name="settings_display">Display</string>
+    <string name="settings_group_by_day">Group by day</string>
+    <string name="settings_hide_completed">Hide completed to-dos</string>
+    <string name="settings_24_hour">24-hour time</string>
+    <string name="settings_24_hour_subtitle">Show event times as 14:30 instead of 2:30 PM</string>
+    <string name="settings_max_items">Max items in notification: %1$d</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_material_you" translatable="false">Material You</string>
+    <string name="settings_material_you_subtitle">Use the wallpaper colour scheme</string>
+    <string name="settings_amoled">AMOLED black</string>
+    <string name="settings_amoled_subtitle">Pure-black surfaces in dark mode</string>
+    <string name="settings_accent">Accent (used when Material You is off)</string>
+    <string name="settings_palette">Palette</string>
+    <string name="palette_tonal">Tonal</string>
+    <string name="palette_vibrant">Vibrant</string>
+    <string name="palette_expressive">Expressive</string>
+    <string name="palette_neutral">Neutral</string>
+    <string name="settings_font">Font</string>
+    <string name="font_google_sans" translatable="false">Google Sans</string>
+    <string name="font_system">System</string>
+    <string name="font_figtree" translatable="false">Figtree</string>
+    <string name="font_outfit" translatable="false">Outfit</string>
+    <string name="font_inter" translatable="false">Inter</string>
+    <string name="settings_reliability">Reliability</string>
+    <string name="settings_battery_title">Ignore battery optimizations</string>
+    <string name="settings_battery_on">On — the pin stays reliable in the background</string>
+    <string name="settings_battery_recommended">Recommended on aggressive devices so the pin keeps updating</string>
+    <string name="settings_about">About</string>
+    <string name="settings_privacy_title">Privacy policy</string>
+    <string name="settings_privacy_subtitle">How Pinned Calendar handles your data — opens the website</string>
+
+    <!-- Overview and notification preview -->
+    <string name="overview_items_pinned">items pinned\nthis week</string>
+    <plurals name="overview_events">
+        <item quantity="one">%1$d event</item>
+        <item quantity="other">%1$d events</item>
+    </plurals>
+    <plurals name="overview_todos">
+        <item quantity="one">%1$d to-do</item>
+        <item quantity="other">%1$d to-dos</item>
+    </plurals>
+    <string name="layout_density">Density</string>
+    <string name="density_compact">Compact</string>
+    <string name="density_cozy">Cozy</string>
+    <string name="density_comfortable">Comfortable</string>
+    <string name="density_custom">Custom</string>
+    <string name="layout_row_spacing">Row spacing</string>
+    <string name="layout_text_size">Text size</string>
+    <string name="layout_row_height">Row height</string>
+    <string name="layout_time_column_width">Time column width</string>
+    <string name="layout_rows_before_expanding">Rows before expanding</string>
+    <string name="layout_value">%1$s: %2$d</string>
+    <string name="layout_show_week_heading">Show “This week” heading</string>
+    <string name="layout_show_week_heading_subtitle">Display the heading above the expanded agenda</string>
+    <string name="layout_show_today">Show Today label</string>
+    <string name="layout_show_today_subtitle">Display Today in multi-row compact and expanded notifications</string>
+    <string name="layout_outer_padding">Outer notification padding</string>
+    <string name="layout_outer_padding_subtitle">Add vertical space above and below the notification content</string>
+    <string name="preview_collapsed">Collapsed</string>
+    <string name="preview_expanded">Expanded</string>
+
+    <!-- Agenda notification content -->
+    <string name="agenda_empty">Nothing scheduled this week</string>
+    <string name="agenda_week_header">This week · %1$d</string>
+    <plurals name="agenda_more_this_week">
+        <item quantity="one">+%1$d more this week</item>
+        <item quantity="other">+%1$d more this week</item>
+    </plurals>
+    <string name="agenda_today">Today</string>
+    <string name="agenda_tomorrow">Tomorrow</string>
+    <string name="agenda_all_day">All day</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+
+    <!-- Provider fallbacks and localized preview data -->
+    <string name="calendar_unnamed">(calendar)</string>
+    <string name="calendar_event_untitled">(No title)</string>
+    <string name="sample_team_standup">Team standup</string>
+    <string name="sample_one_on_one">1:1 with Sam</string>
+    <string name="sample_expense_report">Submit expense report</string>
+    <string name="sample_dentist">Dentist appointment</string>
+    <string name="sample_design_review">Design review</string>
+    <string name="sample_lunch">Lunch with Priya</string>
+    <string name="sample_passport">Renew passport</string>
+    <string name="sample_sprint_planning">Sprint planning</string>
 </resources>

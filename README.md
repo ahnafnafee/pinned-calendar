@@ -72,7 +72,7 @@ An ongoing notification keeps this week's events and to-dos at the top of the sh
 
 ### `2` Rich to-dos
 
-Add quick tasks in the app and they merge into the same agenda, carrying forward day to day until completed or deleted. Tap a to-do to edit it: rename, schedule with quick chips (today, tomorrow, next week) or any date and time, set a priority flag whose color rides into the pin, and attach notes. Recurrence includes daily, weekly, monthly, and yearly presets plus custom intervals, selectable weekdays, and endings by date or occurrence count. Completing a recurring to-do advances it to the first upcoming occurrence, skipping missed dates while preserving month-end, leap-year, and local-time intent. The list groups into Overdue, Today, Upcoming, and Completed. An opt-in setting sends an alerting, swipeable reminder notification whenever a scheduled occurrence comes due, leaving the pin untouched. Android can show it as a heads-up alert when system notification settings allow.
+Add quick tasks in the app and they merge into the same agenda, carrying forward day to day until completed or deleted. Tap a to-do to edit it: rename, schedule with quick chips (today, tomorrow, next week) or any date and time, set a priority flag whose color rides into the pin, and attach notes. Recurrence includes daily, weekly, monthly, and yearly presets plus custom intervals, selectable weekdays, and endings by date or occurrence count. Completing a recurring to-do advances it to the first upcoming occurrence, skipping missed dates while preserving month-end, leap-year, and local-time intent. The list groups into Overdue, Today, Upcoming, and Completed. Reminders are enabled by default and send an alerting, swipeable notification whenever a scheduled occurrence comes due, leaving the pin untouched. Each reminder can mark the occurrence done or snooze it for 30 minutes. Android can show it as a heads-up alert when system notification settings allow.
 
 ### `3` The pin, your way
 
@@ -82,11 +82,15 @@ A live preview in settings renders the actual notification (collapsed or expande
 
 Wallpaper-based dynamic color, seed colors, palette styles, AMOLED black, selectable fonts, and light, dark, or system themes, plus a theme- and accent-adaptive launcher icon.
 
-### `5` Private by design
+### `5` 15 languages
+
+The complete app and reminder experience is localized in English, Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Spanish, Turkish, and Vietnamese. Arabic includes right-to-left layout support, and Android 13+ exposes these choices in the system app-language picker.
+
+### `6` Private by design
 
 No accounts, no ads, no trackers, no cloud, and no `INTERNET` permission. The app reads your device calendars with per-calendar colors and sends nothing anywhere.
 
-### `6` Light on battery
+### `7` Light on battery
 
 No foreground service. Background refresh runs on WorkManager with a ContentObserver for instant updates when a calendar changes, plus an optional battery-optimization exemption for aggressive OEMs.
 
@@ -125,7 +129,7 @@ The app is split into two tabs.
 
 **Settings**, everything else, Material You styled:
 
-- Notifications: pin on/off, priority (Top · Normal · Silent), optional swipe-twice-to-remove, and opt-in to-do reminders as alerting, swipeable notifications that are heads-up eligible when system settings allow.
+- Notifications: pin on/off, priority (Top · Normal · Silent), optional swipe-twice-to-remove, and default-on to-do reminders with done and 30-minute snooze actions.
 - Notification layout: a live preview of the pin, density presets (Compact · Cozy · Comfortable · Custom), rows shown before expanding, and the heading toggles.
 - Time window: 3 days · this week · 7 days · 14 days.
 - Calendars: toggle each synced calendar on or off.
@@ -166,7 +170,7 @@ Pinned Calendar is offline-first. It has no `INTERNET` permission and sends noth
 | `READ_CALENDAR` | Read the events already synced on your device. |
 | `POST_NOTIFICATIONS` | Show the pinned agenda (Android 13+). |
 | `RECEIVE_BOOT_COMPLETED` | Re-pin the agenda after a reboot. |
-| `SCHEDULE_EXACT_ALARM` | Fire opt-in to-do reminders on time; falls back to inexact when denied. |
+| `SCHEDULE_EXACT_ALARM` | Fire enabled to-do reminders on time; falls back to inexact when denied. |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Optional: keep background refresh reliable on aggressive devices. |
 
 No accounts, ads, trackers, or cloud. Full policy: [pinnedcalendar.ahnafnafee.dev/privacy][privacy-link].

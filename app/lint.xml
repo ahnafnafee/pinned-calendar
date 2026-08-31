@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- Android's BCP-47 qualifier uses id; LocaleFolder still recommends Java's legacy in alias. -->
+    <issue id="LocaleFolder">
+        <ignore path="src/main/res/values-b+id" />
+    </issue>
+</lint>

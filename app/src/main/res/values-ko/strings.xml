@@ -1,0 +1,162 @@
+<resources>
+    <string name="channel_name">고정된 일정</string>
+    <string name="channel_desc">항상 표시되는 주간 일정</string>
+    <string name="reminder_channel_name">할 일 알림</string>
+    <string name="reminder_channel_desc">예약한 할 일의 기한이 되면 알림</string>
+    <string name="todo_reminder_due_now">지금이 기한입니다</string>
+    <string name="todo_reminder_mark_done">완료로 표시</string>
+    <string name="todo_reminder_snooze">30분 후 다시 알림</string>
+    <string name="action_add">추가</string>
+    <string name="action_allow">허용</string>
+    <string name="action_cancel">취소</string>
+    <string name="action_clear">지우기</string>
+    <string name="action_delete">삭제</string>
+    <string name="action_done">완료</string>
+    <string name="action_ok">확인</string>
+    <string name="action_save">저장</string>
+    <string name="settings_state_on">켜짐</string>
+    <string name="number_integer">%1$d</string>
+    <string name="nav_todos">할 일</string>
+    <string name="nav_settings">설정</string>
+    <string name="settings_title">설정</string>
+    <string name="todos_title">할 일</string>
+    <string name="todo_new_due_today">새 할 일(오늘까지)</string>
+    <string name="todo_empty">아직 할 일이 없습니다.</string>
+    <string name="todo_meta_notes">메모</string>
+    <string name="todo_due_today">오늘까지</string>
+    <string name="todo_due_tomorrow">내일까지</string>
+    <string name="todo_due_date">기한: %1$s</string>
+    <string name="todo_field_title">제목</string>
+    <string name="todo_schedule">일정</string>
+    <string name="todo_schedule_today">오늘</string>
+    <string name="todo_schedule_tomorrow">내일</string>
+    <string name="todo_schedule_next_week">다음 주</string>
+    <string name="todo_pick_date">날짜 선택</string>
+    <string name="todo_repeat">반복</string>
+    <string name="todo_priority">우선순위</string>
+    <string name="todo_notes">메모</string>
+    <string name="todo_group_overdue">기한 지남</string>
+    <string name="todo_group_today">오늘</string>
+    <string name="todo_group_upcoming">예정</string>
+    <string name="todo_group_no_date">날짜 없음</string>
+    <string name="todo_group_completed">완료됨</string>
+    <string name="todo_priority_none">없음</string>
+    <string name="todo_priority_low">낮음</string>
+    <string name="todo_priority_medium">중간</string>
+    <string name="todo_priority_high">높음</string>
+    <string name="recurrence_never">반복 안 함</string>
+    <string name="recurrence_daily">매일</string>
+    <string name="recurrence_weekly">매주</string>
+    <string name="recurrence_monthly">매월</string>
+    <string name="recurrence_yearly">매년</string>
+    <string name="recurrence_custom">맞춤…</string>
+    <string name="recurrence_custom_title">맞춤 반복</string>
+    <string name="recurrence_frequency">빈도</string>
+    <string name="recurrence_repeat_every">반복 간격</string>
+    <string name="recurrence_repeat_on">반복 요일</string>
+    <string name="recurrence_ends">종료</string>
+    <string name="recurrence_on_date">지정 날짜</string>
+    <string name="recurrence_after">횟수</string>
+    <string name="recurrence_on_days">%1$s, %2$s</string>
+    <string name="recurrence_until">%1$s까지</string>
+    <string name="recurrence_help">현재 회차를 완료하면 이 할 일이 다음 예정 날짜로 이동합니다. 놓친 날짜는 건너뜁니다.</string>
+    <plurals name="recurrence_every_days"><item quantity="other">%1$d일마다</item></plurals>
+    <plurals name="recurrence_every_weeks"><item quantity="other">%1$d주마다</item></plurals>
+    <plurals name="recurrence_every_months"><item quantity="other">%1$d개월마다</item></plurals>
+    <plurals name="recurrence_every_years"><item quantity="other">%1$d년마다</item></plurals>
+    <plurals name="recurrence_interval_days"><item quantity="other">%1$d일</item></plurals>
+    <plurals name="recurrence_interval_weeks"><item quantity="other">%1$d주</item></plurals>
+    <plurals name="recurrence_interval_months"><item quantity="other">%1$d개월</item></plurals>
+    <plurals name="recurrence_interval_years"><item quantity="other">%1$d년</item></plurals>
+    <plurals name="recurrence_occurrences"><item quantity="other">%1$d회</item></plurals>
+    <plurals name="recurrence_for_occurrences"><item quantity="other">%1$d회 동안</item></plurals>
+    <string name="settings_notifications">알림</string>
+    <string name="settings_pin_title">알림에 고정</string>
+    <string name="settings_pin_subtitle">이번 주 일정을 알림 창에 계속 표시</string>
+    <string name="settings_priority_top">상단</string>
+    <string name="settings_priority_normal">보통</string>
+    <string name="settings_priority_silent">무음</string>
+    <string name="settings_priority_top_desc">다른 알림보다 위에 표시되며 팝업이나 소리는 없습니다.</string>
+    <string name="settings_priority_normal_desc">일상적인 알림과 함께 표시됩니다.</string>
+    <string name="settings_priority_silent_desc">알림 창의 “무음” 구분선 아래에 표시됩니다.</string>
+    <string name="settings_double_swipe_title">두 번 밀어 삭제</string>
+    <string name="settings_double_swipe_subtitle">몇 초 안에 고정 알림을 두 번 밀면 꺼집니다</string>
+    <string name="settings_reminders_title">할 일 알림</string>
+    <string name="settings_reminders_subtitle">예약한 할 일의 기한에 완료 또는 다시 알림 동작이 포함된 알림을 받습니다</string>
+    <string name="settings_notification_system">시스템 설정에서 세부 조정</string>
+    <string name="settings_notification_layout">알림 레이아웃</string>
+    <string name="settings_time_window">기간</string>
+    <string name="window_three_days">3일</string>
+    <string name="window_this_week">이번 주</string>
+    <string name="window_seven_days">7일</string>
+    <string name="window_fourteen_days">14일</string>
+    <string name="settings_calendars">캘린더</string>
+    <string name="settings_calendars_permission">표시할 캘린더를 선택하려면 캘린더 접근을 허용하세요.</string>
+    <string name="settings_display">표시</string>
+    <string name="settings_group_by_day">날짜별 그룹화</string>
+    <string name="settings_hide_completed">완료된 할 일 숨기기</string>
+    <string name="settings_24_hour">24시간 형식</string>
+    <string name="settings_24_hour_subtitle">시간을 2:30 PM 대신 14:30으로 표시</string>
+    <string name="settings_max_items">알림의 최대 항목 수: %1$d</string>
+    <string name="settings_appearance">화면 스타일</string>
+    <string name="theme_system">시스템</string>
+    <string name="theme_light">라이트</string>
+    <string name="theme_dark">다크</string>
+    <string name="settings_material_you_subtitle">배경화면 색상 구성표 사용</string>
+    <string name="settings_amoled">AMOLED 블랙</string>
+    <string name="settings_amoled_subtitle">다크 모드에서 완전한 검은색 배경 사용</string>
+    <string name="settings_accent">강조 색상(Material You가 꺼져 있을 때 사용)</string>
+    <string name="settings_palette">팔레트</string>
+    <string name="palette_tonal">톤</string>
+    <string name="palette_vibrant">선명함</string>
+    <string name="palette_expressive">표현력</string>
+    <string name="palette_neutral">중립</string>
+    <string name="settings_font">글꼴</string>
+    <string name="font_system">시스템</string>
+    <string name="settings_reliability">안정성</string>
+    <string name="settings_battery_title">배터리 최적화 무시</string>
+    <string name="settings_battery_on">켜짐 — 고정 알림이 백그라운드에서 안정적으로 유지됩니다</string>
+    <string name="settings_battery_recommended">백그라운드 제한이 강한 기기에서 고정 알림을 계속 업데이트하려면 권장</string>
+    <string name="settings_about">정보</string>
+    <string name="settings_privacy_title">개인정보처리방침</string>
+    <string name="settings_privacy_subtitle">Pinned Calendar의 데이터 처리 방식 — 웹사이트 열기</string>
+    <string name="overview_items_pinned">이번 주에 고정된\n항목</string>
+    <plurals name="overview_events"><item quantity="other">일정 %1$d개</item></plurals>
+    <plurals name="overview_todos"><item quantity="other">할 일 %1$d개</item></plurals>
+    <string name="layout_density">밀도</string>
+    <string name="density_compact">좁게</string>
+    <string name="density_cozy">보통</string>
+    <string name="density_comfortable">넓게</string>
+    <string name="density_custom">맞춤</string>
+    <string name="layout_row_spacing">행 간격</string>
+    <string name="layout_text_size">텍스트 크기</string>
+    <string name="layout_row_height">행 높이</string>
+    <string name="layout_time_column_width">시간 열 너비</string>
+    <string name="layout_rows_before_expanding">펼치기 전 행 수</string>
+    <string name="layout_value">%1$s: %2$d</string>
+    <string name="layout_show_week_heading">“이번 주” 제목 표시</string>
+    <string name="layout_show_week_heading_subtitle">펼친 일정 위에 제목 표시</string>
+    <string name="layout_show_today">오늘 라벨 표시</string>
+    <string name="layout_show_today_subtitle">여러 줄의 좁은 알림과 펼친 알림에 오늘 표시</string>
+    <string name="layout_outer_padding">알림 바깥쪽 여백</string>
+    <string name="layout_outer_padding_subtitle">알림 내용 위아래에 세로 여백 추가</string>
+    <string name="preview_collapsed">접힘</string>
+    <string name="preview_expanded">펼침</string>
+    <string name="agenda_empty">이번 주에 예정된 항목이 없습니다</string>
+    <string name="agenda_week_header">이번 주 · %1$d</string>
+    <plurals name="agenda_more_this_week"><item quantity="other">+이번 주에 %1$d개 더 있음</item></plurals>
+    <string name="agenda_today">오늘</string>
+    <string name="agenda_tomorrow">내일</string>
+    <string name="agenda_all_day">종일</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+    <string name="calendar_unnamed">(캘린더)</string>
+    <string name="calendar_event_untitled">(제목 없음)</string>
+    <string name="sample_team_standup">팀 스탠드업</string>
+    <string name="sample_one_on_one">Sam과 일대일 미팅</string>
+    <string name="sample_expense_report">경비 보고서 제출</string>
+    <string name="sample_dentist">치과 예약</string>
+    <string name="sample_design_review">디자인 검토</string>
+    <string name="sample_lunch">Priya와 점심</string>
+    <string name="sample_passport">여권 갱신</string>
+    <string name="sample_sprint_planning">스프린트 계획</string>
+</resources>

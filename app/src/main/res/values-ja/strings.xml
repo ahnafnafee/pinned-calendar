@@ -1,0 +1,162 @@
+<resources>
+    <string name="channel_name">固定された予定</string>
+    <string name="channel_desc">常に表示される週間予定</string>
+    <string name="reminder_channel_name">ToDo リマインダー</string>
+    <string name="reminder_channel_desc">予定した ToDo の期限に通知します</string>
+    <string name="todo_reminder_due_now">期限です</string>
+    <string name="todo_reminder_mark_done">完了にする</string>
+    <string name="todo_reminder_snooze">30 分後に再通知</string>
+    <string name="action_add">追加</string>
+    <string name="action_allow">許可</string>
+    <string name="action_cancel">キャンセル</string>
+    <string name="action_clear">クリア</string>
+    <string name="action_delete">削除</string>
+    <string name="action_done">完了</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">保存</string>
+    <string name="settings_state_on">オン</string>
+    <string name="number_integer">%1$d</string>
+    <string name="nav_todos">ToDo</string>
+    <string name="nav_settings">設定</string>
+    <string name="settings_title">設定</string>
+    <string name="todos_title">ToDo</string>
+    <string name="todo_new_due_today">新しい ToDo（今日が期限）</string>
+    <string name="todo_empty">ToDo はまだありません。</string>
+    <string name="todo_meta_notes">メモ</string>
+    <string name="todo_due_today">今日が期限</string>
+    <string name="todo_due_tomorrow">明日が期限</string>
+    <string name="todo_due_date">期限：%1$s</string>
+    <string name="todo_field_title">タイトル</string>
+    <string name="todo_schedule">日時</string>
+    <string name="todo_schedule_today">今日</string>
+    <string name="todo_schedule_tomorrow">明日</string>
+    <string name="todo_schedule_next_week">来週</string>
+    <string name="todo_pick_date">日付を選択</string>
+    <string name="todo_repeat">繰り返し</string>
+    <string name="todo_priority">優先度</string>
+    <string name="todo_notes">メモ</string>
+    <string name="todo_group_overdue">期限切れ</string>
+    <string name="todo_group_today">今日</string>
+    <string name="todo_group_upcoming">今後</string>
+    <string name="todo_group_no_date">日付なし</string>
+    <string name="todo_group_completed">完了</string>
+    <string name="todo_priority_none">なし</string>
+    <string name="todo_priority_low">低</string>
+    <string name="todo_priority_medium">中</string>
+    <string name="todo_priority_high">高</string>
+    <string name="recurrence_never">なし</string>
+    <string name="recurrence_daily">毎日</string>
+    <string name="recurrence_weekly">毎週</string>
+    <string name="recurrence_monthly">毎月</string>
+    <string name="recurrence_yearly">毎年</string>
+    <string name="recurrence_custom">カスタム…</string>
+    <string name="recurrence_custom_title">カスタムの繰り返し</string>
+    <string name="recurrence_frequency">頻度</string>
+    <string name="recurrence_repeat_every">繰り返す間隔</string>
+    <string name="recurrence_repeat_on">繰り返す曜日</string>
+    <string name="recurrence_ends">終了</string>
+    <string name="recurrence_on_date">指定日</string>
+    <string name="recurrence_after">回数</string>
+    <string name="recurrence_on_days">%1$s（%2$s）</string>
+    <string name="recurrence_until">%1$s まで</string>
+    <string name="recurrence_help">現在の回を完了すると、この ToDo は次の予定日に進みます。過ぎた日付はスキップされます。</string>
+    <plurals name="recurrence_every_days"><item quantity="other">%1$d 日ごと</item></plurals>
+    <plurals name="recurrence_every_weeks"><item quantity="other">%1$d 週間ごと</item></plurals>
+    <plurals name="recurrence_every_months"><item quantity="other">%1$d か月ごと</item></plurals>
+    <plurals name="recurrence_every_years"><item quantity="other">%1$d 年ごと</item></plurals>
+    <plurals name="recurrence_interval_days"><item quantity="other">%1$d 日</item></plurals>
+    <plurals name="recurrence_interval_weeks"><item quantity="other">%1$d 週間</item></plurals>
+    <plurals name="recurrence_interval_months"><item quantity="other">%1$d か月</item></plurals>
+    <plurals name="recurrence_interval_years"><item quantity="other">%1$d 年</item></plurals>
+    <plurals name="recurrence_occurrences"><item quantity="other">%1$d 回</item></plurals>
+    <plurals name="recurrence_for_occurrences"><item quantity="other">%1$d 回まで</item></plurals>
+    <string name="settings_notifications">通知</string>
+    <string name="settings_pin_title">通知に固定</string>
+    <string name="settings_pin_subtitle">今週の予定を通知パネルに表示し続けます</string>
+    <string name="settings_priority_top">上部</string>
+    <string name="settings_priority_normal">通常</string>
+    <string name="settings_priority_silent">サイレント</string>
+    <string name="settings_priority_top_desc">他の通知より上に表示されます。ポップアップや音はありません。</string>
+    <string name="settings_priority_normal_desc">通常の通知と一緒に表示されます。</string>
+    <string name="settings_priority_silent_desc">通知パネルの「サイレント」区切りの下に表示されます。</string>
+    <string name="settings_double_swipe_title">2 回スワイプして削除</string>
+    <string name="settings_double_swipe_subtitle">数秒以内に固定通知を 2 回スワイプするとオフになります</string>
+    <string name="settings_reminders_title">ToDo リマインダー</string>
+    <string name="settings_reminders_subtitle">予定した ToDo の期限に、完了または再通知を選べる通知を受け取ります</string>
+    <string name="settings_notification_system">システム設定で調整</string>
+    <string name="settings_notification_layout">通知のレイアウト</string>
+    <string name="settings_time_window">期間</string>
+    <string name="window_three_days">3 日間</string>
+    <string name="window_this_week">今週</string>
+    <string name="window_seven_days">7 日間</string>
+    <string name="window_fourteen_days">14 日間</string>
+    <string name="settings_calendars">カレンダー</string>
+    <string name="settings_calendars_permission">表示するカレンダーを選ぶには、カレンダーへのアクセスを許可してください。</string>
+    <string name="settings_display">表示</string>
+    <string name="settings_group_by_day">日ごとにグループ化</string>
+    <string name="settings_hide_completed">完了した ToDo を隠す</string>
+    <string name="settings_24_hour">24 時間表示</string>
+    <string name="settings_24_hour_subtitle">時刻を 2:30 PM ではなく 14:30 と表示します</string>
+    <string name="settings_max_items">通知に表示する最大項目数：%1$d</string>
+    <string name="settings_appearance">外観</string>
+    <string name="theme_system">システム</string>
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+    <string name="settings_material_you_subtitle">壁紙の配色を使用します</string>
+    <string name="settings_amoled">AMOLED ブラック</string>
+    <string name="settings_amoled_subtitle">ダークモードで完全な黒の背景を使用します</string>
+    <string name="settings_accent">アクセント（Material You がオフのときに使用）</string>
+    <string name="settings_palette">パレット</string>
+    <string name="palette_tonal">トーナル</string>
+    <string name="palette_vibrant">ビブラント</string>
+    <string name="palette_expressive">エクスプレッシブ</string>
+    <string name="palette_neutral">ニュートラル</string>
+    <string name="settings_font">フォント</string>
+    <string name="font_system">システム</string>
+    <string name="settings_reliability">信頼性</string>
+    <string name="settings_battery_title">バッテリー最適化を無視</string>
+    <string name="settings_battery_on">オン — バックグラウンドでも固定通知を安定して維持します</string>
+    <string name="settings_battery_recommended">バックグラウンド制限が厳しい端末で固定通知を更新し続けるために推奨</string>
+    <string name="settings_about">このアプリについて</string>
+    <string name="settings_privacy_title">プライバシーポリシー</string>
+    <string name="settings_privacy_subtitle">Pinned Calendar によるデータの取り扱い — ウェブサイトを開きます</string>
+    <string name="overview_items_pinned">今週固定された\n項目</string>
+    <plurals name="overview_events"><item quantity="other">予定 %1$d 件</item></plurals>
+    <plurals name="overview_todos"><item quantity="other">ToDo %1$d 件</item></plurals>
+    <string name="layout_density">密度</string>
+    <string name="density_compact">コンパクト</string>
+    <string name="density_cozy">標準</string>
+    <string name="density_comfortable">ゆったり</string>
+    <string name="density_custom">カスタム</string>
+    <string name="layout_row_spacing">行間</string>
+    <string name="layout_text_size">文字サイズ</string>
+    <string name="layout_row_height">行の高さ</string>
+    <string name="layout_time_column_width">時刻列の幅</string>
+    <string name="layout_rows_before_expanding">展開前の行数</string>
+    <string name="layout_value">%1$s：%2$d</string>
+    <string name="layout_show_week_heading">「今週」の見出しを表示</string>
+    <string name="layout_show_week_heading_subtitle">展開した予定の上に見出しを表示します</string>
+    <string name="layout_show_today">「今日」ラベルを表示</string>
+    <string name="layout_show_today_subtitle">複数行のコンパクト通知と展開通知に「今日」を表示します</string>
+    <string name="layout_outer_padding">通知の外側の余白</string>
+    <string name="layout_outer_padding_subtitle">通知内容の上下に余白を追加します</string>
+    <string name="preview_collapsed">折りたたみ</string>
+    <string name="preview_expanded">展開</string>
+    <string name="agenda_empty">今週の予定はありません</string>
+    <string name="agenda_week_header">今週 · %1$d</string>
+    <plurals name="agenda_more_this_week"><item quantity="other">今週は他に %1$d 件</item></plurals>
+    <string name="agenda_today">今日</string>
+    <string name="agenda_tomorrow">明日</string>
+    <string name="agenda_all_day">終日</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+    <string name="calendar_unnamed">（カレンダー）</string>
+    <string name="calendar_event_untitled">（タイトルなし）</string>
+    <string name="sample_team_standup">チーム朝会</string>
+    <string name="sample_one_on_one">Sam との 1 対 1</string>
+    <string name="sample_expense_report">経費報告書を提出</string>
+    <string name="sample_dentist">歯科の予約</string>
+    <string name="sample_design_review">デザインレビュー</string>
+    <string name="sample_lunch">Priya とランチ</string>
+    <string name="sample_passport">パスポートを更新</string>
+    <string name="sample_sprint_planning">スプリント計画</string>
+</resources>

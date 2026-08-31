@@ -89,7 +89,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         notificationRowHeightDp = (this[NOTIFICATION_ROW_HEIGHT] ?: 22).coerceIn(12, 32),
         notificationTimeColumnWidthDp = (this[NOTIFICATION_TIME_COLUMN_WIDTH] ?: 64).coerceIn(32, 64),
         notificationContentPadding = this[NOTIFICATION_CONTENT_PADDING] ?: true,
-        todoReminders = this[TODO_REMINDERS] ?: false,
+        todoReminders = this[TODO_REMINDERS] ?: true,
         use24HourClock = this[CLOCK_24H] ?: false,
         themeMode = this[THEME].toEnum(ThemeMode.DARK) { ThemeMode.valueOf(it) },
         materialYou = this[MATERIAL_YOU] ?: false,

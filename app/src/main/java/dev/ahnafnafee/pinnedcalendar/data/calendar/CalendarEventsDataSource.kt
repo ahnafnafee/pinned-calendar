@@ -2,6 +2,7 @@ package dev.ahnafnafee.pinnedcalendar.data.calendar
 
 import android.content.Context
 import android.provider.CalendarContract
+import dev.ahnafnafee.pinnedcalendar.R
 import dev.ahnafnafee.pinnedcalendar.domain.model.AgendaItem
 import dev.ahnafnafee.pinnedcalendar.domain.model.ItemKind
 import java.time.Instant
@@ -47,7 +48,8 @@ class CalendarEventsDataSource(
                 val calId = c.getLong(calIdx).toString()
                 if (calId in excludedCalendarIds) continue
                 val id = c.getLong(idIdx)
-                val title = c.getString(titleIdx)?.ifBlank { "(No title)" } ?: "(No title)"
+                val untitled = context.getString(R.string.calendar_event_untitled)
+                val title = c.getString(titleIdx)?.ifBlank { untitled } ?: untitled
                 val begin = c.getLong(beginIdx)
                 val allDay = c.getInt(allDayIdx) == 1
                 val color = c.getInt(colorIdx)

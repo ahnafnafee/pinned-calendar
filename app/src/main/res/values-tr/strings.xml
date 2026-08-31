@@ -1,0 +1,162 @@
+<resources>
+    <string name="channel_name">Sabitlenmiş ajanda</string>
+    <string name="channel_desc">Her zaman görünen haftalık ajanda sabitlemesi</string>
+    <string name="reminder_channel_name">Yapılacaklar hatırlatıcıları</string>
+    <string name="reminder_channel_desc">Planlanmış bir işin zamanı geldiğinde uyarı verir</string>
+    <string name="todo_reminder_due_now">Şimdi zamanı</string>
+    <string name="todo_reminder_mark_done">Tamamlandı olarak işaretle</string>
+    <string name="todo_reminder_snooze">30 dk ertele</string>
+    <string name="action_add">Ekle</string>
+    <string name="action_allow">İzin ver</string>
+    <string name="action_cancel">İptal</string>
+    <string name="action_clear">Temizle</string>
+    <string name="action_delete">Sil</string>
+    <string name="action_done">Bitti</string>
+    <string name="action_ok">Tamam</string>
+    <string name="action_save">Kaydet</string>
+    <string name="settings_state_on">Açık</string>
+    <string name="number_integer">%1$d</string>
+    <string name="nav_todos">Yapılacaklar</string>
+    <string name="nav_settings">Ayarlar</string>
+    <string name="settings_title">Ayarlar</string>
+    <string name="todos_title">Yapılacaklar</string>
+    <string name="todo_new_due_today">Yeni yapılacak (bugün)</string>
+    <string name="todo_empty">Henüz yapılacak iş yok.</string>
+    <string name="todo_meta_notes">Notlar</string>
+    <string name="todo_due_today">Bugün</string>
+    <string name="todo_due_tomorrow">Yarın</string>
+    <string name="todo_due_date">Son tarih: %1$s</string>
+    <string name="todo_field_title">Başlık</string>
+    <string name="todo_schedule">Planla</string>
+    <string name="todo_schedule_today">Bugün</string>
+    <string name="todo_schedule_tomorrow">Yarın</string>
+    <string name="todo_schedule_next_week">Gelecek hafta</string>
+    <string name="todo_pick_date">Tarih seç</string>
+    <string name="todo_repeat">Tekrarla</string>
+    <string name="todo_priority">Öncelik</string>
+    <string name="todo_notes">Notlar</string>
+    <string name="todo_group_overdue">Gecikenler</string>
+    <string name="todo_group_today">Bugün</string>
+    <string name="todo_group_upcoming">Yaklaşanlar</string>
+    <string name="todo_group_no_date">Tarihsiz</string>
+    <string name="todo_group_completed">Tamamlananlar</string>
+    <string name="todo_priority_none">Yok</string>
+    <string name="todo_priority_low">Düşük</string>
+    <string name="todo_priority_medium">Orta</string>
+    <string name="todo_priority_high">Yüksek</string>
+    <string name="recurrence_never">Asla</string>
+    <string name="recurrence_daily">Günlük</string>
+    <string name="recurrence_weekly">Haftalık</string>
+    <string name="recurrence_monthly">Aylık</string>
+    <string name="recurrence_yearly">Yıllık</string>
+    <string name="recurrence_custom">Özel…</string>
+    <string name="recurrence_custom_title">Özel yineleme</string>
+    <string name="recurrence_frequency">Sıklık</string>
+    <string name="recurrence_repeat_every">Tekrarlama aralığı</string>
+    <string name="recurrence_repeat_on">Tekrarlanacak günler</string>
+    <string name="recurrence_ends">Bitiş</string>
+    <string name="recurrence_on_date">Belirli tarihte</string>
+    <string name="recurrence_after">Sonra</string>
+    <string name="recurrence_on_days">%1$s: %2$s</string>
+    <string name="recurrence_until">%1$s tarihine kadar</string>
+    <string name="recurrence_help">Geçerli yinelemeyi tamamladığınızda bu iş bir sonraki planlanmış tarihe ilerler. Kaçırılan tarihler atlanır.</string>
+    <plurals name="recurrence_every_days"><item quantity="one">Her gün</item><item quantity="other">Her %1$d günde bir</item></plurals>
+    <plurals name="recurrence_every_weeks"><item quantity="one">Her hafta</item><item quantity="other">Her %1$d haftada bir</item></plurals>
+    <plurals name="recurrence_every_months"><item quantity="one">Her ay</item><item quantity="other">Her %1$d ayda bir</item></plurals>
+    <plurals name="recurrence_every_years"><item quantity="one">Her yıl</item><item quantity="other">Her %1$d yılda bir</item></plurals>
+    <plurals name="recurrence_interval_days"><item quantity="one">%1$d gün</item><item quantity="other">%1$d gün</item></plurals>
+    <plurals name="recurrence_interval_weeks"><item quantity="one">%1$d hafta</item><item quantity="other">%1$d hafta</item></plurals>
+    <plurals name="recurrence_interval_months"><item quantity="one">%1$d ay</item><item quantity="other">%1$d ay</item></plurals>
+    <plurals name="recurrence_interval_years"><item quantity="one">%1$d yıl</item><item quantity="other">%1$d yıl</item></plurals>
+    <plurals name="recurrence_occurrences"><item quantity="one">%1$d yineleme</item><item quantity="other">%1$d yineleme</item></plurals>
+    <plurals name="recurrence_for_occurrences"><item quantity="one">%1$d yineleme boyunca</item><item quantity="other">%1$d yineleme boyunca</item></plurals>
+    <string name="settings_notifications">Bildirimler</string>
+    <string name="settings_pin_title">Bildirimlere sabitle</string>
+    <string name="settings_pin_subtitle">Bu haftanın ajandasını bildirim panelinde tut</string>
+    <string name="settings_priority_top">Üstte</string>
+    <string name="settings_priority_normal">Normal</string>
+    <string name="settings_priority_silent">Sessiz</string>
+    <string name="settings_priority_top_desc">Diğer bildirimlerin üstünde kalır; açılır pencere göstermez veya ses çıkarmaz.</string>
+    <string name="settings_priority_normal_desc">Günlük bildirimlerinizin arasında yer alır.</string>
+    <string name="settings_priority_silent_desc">Bildirim panelindeki “Sessiz” ayırıcısının altında kalır.</string>
+    <string name="settings_double_swipe_title">Kaldırmak için iki kez kaydır</string>
+    <string name="settings_double_swipe_subtitle">Kapatmak için sabitlenmiş ajandayı birkaç saniye içinde iki kez kaydırın</string>
+    <string name="settings_reminders_title">Yapılacaklar hatırlatıcıları</string>
+    <string name="settings_reminders_subtitle">Planlanmış bir işin zamanı geldiğinde tamamlamak veya ertelemek için eylemler içeren bir uyarı alın</string>
+    <string name="settings_notification_system">Sistem ayarlarında ince ayar yap</string>
+    <string name="settings_notification_layout">Bildirim düzeni</string>
+    <string name="settings_time_window">Zaman aralığı</string>
+    <string name="window_three_days">3 gün</string>
+    <string name="window_this_week">Bu hafta</string>
+    <string name="window_seven_days">7 gün</string>
+    <string name="window_fourteen_days">14 gün</string>
+    <string name="settings_calendars">Takvimler</string>
+    <string name="settings_calendars_permission">Gösterilecek takvimleri seçmek için takvim erişimine izin verin.</string>
+    <string name="settings_display">Görünüm</string>
+    <string name="settings_group_by_day">Güne göre grupla</string>
+    <string name="settings_hide_completed">Tamamlanan işleri gizle</string>
+    <string name="settings_24_hour">24 saat biçimi</string>
+    <string name="settings_24_hour_subtitle">Saatleri 2:30 PM yerine 14:30 olarak göster</string>
+    <string name="settings_max_items">Bildirimdeki en fazla öğe: %1$d</string>
+    <string name="settings_appearance">Görünüm</string>
+    <string name="theme_system">Sistem</string>
+    <string name="theme_light">Açık</string>
+    <string name="theme_dark">Koyu</string>
+    <string name="settings_material_you_subtitle">Duvar kağıdının renk düzenini kullan</string>
+    <string name="settings_amoled">AMOLED siyahı</string>
+    <string name="settings_amoled_subtitle">Koyu modda tamamen siyah yüzeyler</string>
+    <string name="settings_accent">Vurgu (Material You kapalıyken kullanılır)</string>
+    <string name="settings_palette">Palet</string>
+    <string name="palette_tonal">Tonlu</string>
+    <string name="palette_vibrant">Canlı</string>
+    <string name="palette_expressive">Etkileyici</string>
+    <string name="palette_neutral">Nötr</string>
+    <string name="settings_font">Yazı tipi</string>
+    <string name="font_system">Sistem</string>
+    <string name="settings_reliability">Güvenilirlik</string>
+    <string name="settings_battery_title">Pil optimizasyonlarını yok say</string>
+    <string name="settings_battery_on">Açık — sabitlenmiş ajanda arka planda güvenilir kalır</string>
+    <string name="settings_battery_recommended">Ajandanın güncel kalması için agresif cihazlarda önerilir</string>
+    <string name="settings_about">Hakkında</string>
+    <string name="settings_privacy_title">Gizlilik politikası</string>
+    <string name="settings_privacy_subtitle">Pinned Calendar verilerinizi nasıl işler — web sitesini açar</string>
+    <string name="overview_items_pinned">sabitlenmiş öğe\nbu hafta</string>
+    <plurals name="overview_events"><item quantity="one">%1$d etkinlik</item><item quantity="other">%1$d etkinlik</item></plurals>
+    <plurals name="overview_todos"><item quantity="one">%1$d yapılacak</item><item quantity="other">%1$d yapılacak</item></plurals>
+    <string name="layout_density">Yoğunluk</string>
+    <string name="density_compact">Sıkı</string>
+    <string name="density_cozy">Rahat</string>
+    <string name="density_comfortable">Geniş</string>
+    <string name="density_custom">Özel</string>
+    <string name="layout_row_spacing">Satır aralığı</string>
+    <string name="layout_text_size">Metin boyutu</string>
+    <string name="layout_row_height">Satır yüksekliği</string>
+    <string name="layout_time_column_width">Saat sütunu genişliği</string>
+    <string name="layout_rows_before_expanding">Genişletmeden önceki satırlar</string>
+    <string name="layout_value">%1$s: %2$d</string>
+    <string name="layout_show_week_heading">“Bu hafta” başlığını göster</string>
+    <string name="layout_show_week_heading_subtitle">Başlığı genişletilmiş ajandanın üstünde göster</string>
+    <string name="layout_show_today">Bugün etiketini göster</string>
+    <string name="layout_show_today_subtitle">Çok satırlı sıkı ve genişletilmiş bildirimlerde Bugün etiketini göster</string>
+    <string name="layout_outer_padding">Bildirim dış dolgusu</string>
+    <string name="layout_outer_padding_subtitle">Bildirim içeriğinin üstüne ve altına dikey boşluk ekle</string>
+    <string name="preview_collapsed">Daraltılmış</string>
+    <string name="preview_expanded">Genişletilmiş</string>
+    <string name="agenda_empty">Bu hafta planlanmış bir şey yok</string>
+    <string name="agenda_week_header">Bu hafta · %1$d</string>
+    <plurals name="agenda_more_this_week"><item quantity="one">+bu hafta %1$d tane daha</item><item quantity="other">+bu hafta %1$d tane daha</item></plurals>
+    <string name="agenda_today">Bugün</string>
+    <string name="agenda_tomorrow">Yarın</string>
+    <string name="agenda_all_day">Tüm gün</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+    <string name="calendar_unnamed">(takvim)</string>
+    <string name="calendar_event_untitled">(Başlıksız)</string>
+    <string name="sample_team_standup">Ekip toplantısı</string>
+    <string name="sample_one_on_one">Sam ile bire bir görüşme</string>
+    <string name="sample_expense_report">Gider raporunu gönder</string>
+    <string name="sample_dentist">Diş hekimi randevusu</string>
+    <string name="sample_design_review">Tasarım değerlendirmesi</string>
+    <string name="sample_lunch">Priya ile öğle yemeği</string>
+    <string name="sample_passport">Pasaportu yenile</string>
+    <string name="sample_sprint_planning">Sprint planlaması</string>
+</resources>

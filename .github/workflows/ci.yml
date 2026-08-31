@@ -52,8 +52,11 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Unit tests + debug build
-        run: ./gradlew :app:testDebugUnitTest :app:assembleDebug --stacktrace --no-daemon
+      - name: Validate localized Play listings
+        run: python store/_publish_listing.py --validate
+
+      - name: Unit tests + lint + debug build
+        run: ./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug --stacktrace --no-daemon
 
       - name: Upload test report on failure
         if: failure()

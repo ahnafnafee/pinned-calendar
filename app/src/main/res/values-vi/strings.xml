@@ -1,0 +1,162 @@
+<resources>
+    <string name="channel_name">Lịch đã ghim</string>
+    <string name="channel_desc">Lịch biểu hằng tuần luôn hiển thị</string>
+    <string name="reminder_channel_name">Lời nhắc việc cần làm</string>
+    <string name="reminder_channel_desc">Thông báo khi việc đã lên lịch đến hạn</string>
+    <string name="todo_reminder_due_now">Đến hạn bây giờ</string>
+    <string name="todo_reminder_mark_done">Đánh dấu đã xong</string>
+    <string name="todo_reminder_snooze">Tạm hoãn 30 phút</string>
+    <string name="action_add">Thêm</string>
+    <string name="action_allow">Cho phép</string>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_clear">Xóa</string>
+    <string name="action_delete">Xóa</string>
+    <string name="action_done">Xong</string>
+    <string name="action_ok">OK</string>
+    <string name="action_save">Lưu</string>
+    <string name="settings_state_on">Bật</string>
+    <string name="number_integer">%1$d</string>
+    <string name="nav_todos">Việc cần làm</string>
+    <string name="nav_settings">Cài đặt</string>
+    <string name="settings_title">Cài đặt</string>
+    <string name="todos_title">Việc cần làm</string>
+    <string name="todo_new_due_today">Việc mới (đến hạn hôm nay)</string>
+    <string name="todo_empty">Chưa có việc cần làm.</string>
+    <string name="todo_meta_notes">Ghi chú</string>
+    <string name="todo_due_today">Đến hạn hôm nay</string>
+    <string name="todo_due_tomorrow">Đến hạn ngày mai</string>
+    <string name="todo_due_date">Đến hạn %1$s</string>
+    <string name="todo_field_title">Tiêu đề</string>
+    <string name="todo_schedule">Lên lịch</string>
+    <string name="todo_schedule_today">Hôm nay</string>
+    <string name="todo_schedule_tomorrow">Ngày mai</string>
+    <string name="todo_schedule_next_week">Tuần tới</string>
+    <string name="todo_pick_date">Chọn ngày</string>
+    <string name="todo_repeat">Lặp lại</string>
+    <string name="todo_priority">Mức ưu tiên</string>
+    <string name="todo_notes">Ghi chú</string>
+    <string name="todo_group_overdue">Quá hạn</string>
+    <string name="todo_group_today">Hôm nay</string>
+    <string name="todo_group_upcoming">Sắp tới</string>
+    <string name="todo_group_no_date">Không có ngày</string>
+    <string name="todo_group_completed">Đã hoàn thành</string>
+    <string name="todo_priority_none">Không có</string>
+    <string name="todo_priority_low">Thấp</string>
+    <string name="todo_priority_medium">Trung bình</string>
+    <string name="todo_priority_high">Cao</string>
+    <string name="recurrence_never">Không bao giờ</string>
+    <string name="recurrence_daily">Hằng ngày</string>
+    <string name="recurrence_weekly">Hằng tuần</string>
+    <string name="recurrence_monthly">Hằng tháng</string>
+    <string name="recurrence_yearly">Hằng năm</string>
+    <string name="recurrence_custom">Tùy chỉnh…</string>
+    <string name="recurrence_custom_title">Lặp lại tùy chỉnh</string>
+    <string name="recurrence_frequency">Tần suất</string>
+    <string name="recurrence_repeat_every">Lặp lại mỗi</string>
+    <string name="recurrence_repeat_on">Lặp lại vào</string>
+    <string name="recurrence_ends">Kết thúc</string>
+    <string name="recurrence_on_date">Vào ngày</string>
+    <string name="recurrence_after">Sau</string>
+    <string name="recurrence_on_days">%1$s vào %2$s</string>
+    <string name="recurrence_until">đến %1$s</string>
+    <string name="recurrence_help">Khi hoàn thành lần hiện tại, việc này sẽ chuyển sang ngày đã lên lịch tiếp theo. Các ngày bị bỏ lỡ sẽ được bỏ qua.</string>
+    <plurals name="recurrence_every_days"><item quantity="other">Mỗi %1$d ngày</item></plurals>
+    <plurals name="recurrence_every_weeks"><item quantity="other">Mỗi %1$d tuần</item></plurals>
+    <plurals name="recurrence_every_months"><item quantity="other">Mỗi %1$d tháng</item></plurals>
+    <plurals name="recurrence_every_years"><item quantity="other">Mỗi %1$d năm</item></plurals>
+    <plurals name="recurrence_interval_days"><item quantity="other">%1$d ngày</item></plurals>
+    <plurals name="recurrence_interval_weeks"><item quantity="other">%1$d tuần</item></plurals>
+    <plurals name="recurrence_interval_months"><item quantity="other">%1$d tháng</item></plurals>
+    <plurals name="recurrence_interval_years"><item quantity="other">%1$d năm</item></plurals>
+    <plurals name="recurrence_occurrences"><item quantity="other">%1$d lần</item></plurals>
+    <plurals name="recurrence_for_occurrences"><item quantity="other">trong %1$d lần</item></plurals>
+    <string name="settings_notifications">Thông báo</string>
+    <string name="settings_pin_title">Ghim vào thông báo</string>
+    <string name="settings_pin_subtitle">Giữ lịch biểu tuần này trong ngăn thông báo</string>
+    <string name="settings_priority_top">Trên cùng</string>
+    <string name="settings_priority_normal">Bình thường</string>
+    <string name="settings_priority_silent">Im lặng</string>
+    <string name="settings_priority_top_desc">Nằm trên các thông báo khác mà không bật lên hay phát âm thanh.</string>
+    <string name="settings_priority_normal_desc">Hiển thị cùng các thông báo hằng ngày.</string>
+    <string name="settings_priority_silent_desc">Nằm dưới vạch phân cách “Im lặng” của ngăn thông báo.</string>
+    <string name="settings_double_swipe_title">Vuốt hai lần để xóa</string>
+    <string name="settings_double_swipe_subtitle">Vuốt bỏ lịch đã ghim hai lần trong vài giây để tắt</string>
+    <string name="settings_reminders_title">Lời nhắc việc cần làm</string>
+    <string name="settings_reminders_subtitle">Nhận thông báo khi việc đã lên lịch đến hạn, kèm thao tác hoàn thành hoặc tạm hoãn</string>
+    <string name="settings_notification_system">Tinh chỉnh trong cài đặt hệ thống</string>
+    <string name="settings_notification_layout">Bố cục thông báo</string>
+    <string name="settings_time_window">Khoảng thời gian</string>
+    <string name="window_three_days">3 ngày</string>
+    <string name="window_this_week">Tuần này</string>
+    <string name="window_seven_days">7 ngày</string>
+    <string name="window_fourteen_days">14 ngày</string>
+    <string name="settings_calendars">Lịch</string>
+    <string name="settings_calendars_permission">Cấp quyền truy cập lịch để chọn lịch nào sẽ hiển thị.</string>
+    <string name="settings_display">Hiển thị</string>
+    <string name="settings_group_by_day">Nhóm theo ngày</string>
+    <string name="settings_hide_completed">Ẩn việc đã hoàn thành</string>
+    <string name="settings_24_hour">Giờ 24 tiếng</string>
+    <string name="settings_24_hour_subtitle">Hiển thị giờ dạng 14:30 thay vì 2:30 PM</string>
+    <string name="settings_max_items">Số mục tối đa trong thông báo: %1$d</string>
+    <string name="settings_appearance">Giao diện</string>
+    <string name="theme_system">Hệ thống</string>
+    <string name="theme_light">Sáng</string>
+    <string name="theme_dark">Tối</string>
+    <string name="settings_material_you_subtitle">Dùng bảng màu của hình nền</string>
+    <string name="settings_amoled">Màu đen AMOLED</string>
+    <string name="settings_amoled_subtitle">Bề mặt đen thuần trong chế độ tối</string>
+    <string name="settings_accent">Màu nhấn (dùng khi tắt Material You)</string>
+    <string name="settings_palette">Bảng màu</string>
+    <string name="palette_tonal">Theo tông</string>
+    <string name="palette_vibrant">Rực rỡ</string>
+    <string name="palette_expressive">Biểu cảm</string>
+    <string name="palette_neutral">Trung tính</string>
+    <string name="settings_font">Phông chữ</string>
+    <string name="font_system">Hệ thống</string>
+    <string name="settings_reliability">Độ tin cậy</string>
+    <string name="settings_battery_title">Bỏ qua tối ưu hóa pin</string>
+    <string name="settings_battery_on">Bật — lịch ghim vẫn hoạt động ổn định trong nền</string>
+    <string name="settings_battery_recommended">Khuyến nghị trên thiết bị quản lý nền nghiêm ngặt để lịch ghim luôn cập nhật</string>
+    <string name="settings_about">Giới thiệu</string>
+    <string name="settings_privacy_title">Chính sách quyền riêng tư</string>
+    <string name="settings_privacy_subtitle">Cách Pinned Calendar xử lý dữ liệu của bạn — mở trang web</string>
+    <string name="overview_items_pinned">mục đã ghim\ntrong tuần này</string>
+    <plurals name="overview_events"><item quantity="other">%1$d sự kiện</item></plurals>
+    <plurals name="overview_todos"><item quantity="other">%1$d việc cần làm</item></plurals>
+    <string name="layout_density">Mật độ</string>
+    <string name="density_compact">Gọn</string>
+    <string name="density_cozy">Vừa</string>
+    <string name="density_comfortable">Thoáng</string>
+    <string name="density_custom">Tùy chỉnh</string>
+    <string name="layout_row_spacing">Khoảng cách hàng</string>
+    <string name="layout_text_size">Cỡ chữ</string>
+    <string name="layout_row_height">Chiều cao hàng</string>
+    <string name="layout_time_column_width">Độ rộng cột thời gian</string>
+    <string name="layout_rows_before_expanding">Số hàng trước khi mở rộng</string>
+    <string name="layout_value">%1$s: %2$d</string>
+    <string name="layout_show_week_heading">Hiển thị tiêu đề “Tuần này”</string>
+    <string name="layout_show_week_heading_subtitle">Hiển thị tiêu đề phía trên lịch biểu mở rộng</string>
+    <string name="layout_show_today">Hiển thị nhãn Hôm nay</string>
+    <string name="layout_show_today_subtitle">Hiển thị Hôm nay trong thông báo gọn nhiều hàng và thông báo mở rộng</string>
+    <string name="layout_outer_padding">Khoảng đệm ngoài thông báo</string>
+    <string name="layout_outer_padding_subtitle">Thêm khoảng trống dọc bên trên và bên dưới nội dung thông báo</string>
+    <string name="preview_collapsed">Thu gọn</string>
+    <string name="preview_expanded">Mở rộng</string>
+    <string name="agenda_empty">Không có lịch nào trong tuần này</string>
+    <string name="agenda_week_header">Tuần này · %1$d</string>
+    <plurals name="agenda_more_this_week"><item quantity="other">+%1$d mục khác trong tuần này</item></plurals>
+    <string name="agenda_today">Hôm nay</string>
+    <string name="agenda_tomorrow">Ngày mai</string>
+    <string name="agenda_all_day">Cả ngày</string>
+    <string name="agenda_relative_day_header">%1$s · %2$s</string>
+    <string name="calendar_unnamed">(lịch)</string>
+    <string name="calendar_event_untitled">(Không có tiêu đề)</string>
+    <string name="sample_team_standup">Họp nhanh nhóm</string>
+    <string name="sample_one_on_one">Họp riêng với Sam</string>
+    <string name="sample_expense_report">Gửi báo cáo chi phí</string>
+    <string name="sample_dentist">Hẹn nha sĩ</string>
+    <string name="sample_design_review">Đánh giá thiết kế</string>
+    <string name="sample_lunch">Ăn trưa với Priya</string>
+    <string name="sample_passport">Gia hạn hộ chiếu</string>
+    <string name="sample_sprint_planning">Lập kế hoạch sprint</string>
+</resources>

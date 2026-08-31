@@ -1,12 +1,17 @@
 name: Play listing
 
 # Manual Play Console maintenance over the Android Publisher API, using the same
-# service-account secret as the Release workflow. Screenshot sync replaces the en-US
-# phone screenshots with store/screenshots/; promotion moves an already-uploaded
-# versionCode from the internal track to production at full rollout.
+# service-account secret as the Release workflow. Listing sync publishes all 15 locale
+# files atomically; screenshot sync replaces the en-US phone screenshots; promotion moves
+# an already-uploaded versionCode from the internal track to production at full rollout.
 on:
   workflow_dispatch:
     inputs:
+      sync_listings:
+        description: 'Publish all localized text from store/listings/'
+        required: false
+        type: boolean
+        default: false
       sync_screenshots:
         description: 'Replace the en-US phone screenshots with store/screenshots/'
         required: false
@@ -35,12 +40,13 @@ jobs:
 
       - name: Guard inputs
         env:
+          LISTINGS: ${{ inputs.sync_listings }}
           SYNC: ${{ inputs.sync_screenshots }}
           CODE: ${{ inputs.promote_version_code }}
           SA_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
         run: |
-          if [ "$SYNC" != "true" ] && [ -z "$CODE" ]; then
-            echo "::error::Nothing to do: check sync_screenshots and/or set promote_version_code." >&2
+          if [ "$LISTINGS" != "true" ] && [ "$SYNC" != "true" ] && [ -z "$CODE" ]; then
+            echo "::error::Nothing to do: check sync_listings/sync_screenshots and/or set promote_version_code." >&2
             exit 1
           fi
           if [ -z "$SA_JSON" ]; then
@@ -59,11 +65,13 @@ jobs:
       - name: Run listing update
         env:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          LISTINGS: ${{ inputs.sync_listings }}
           SYNC: ${{ inputs.sync_screenshots }}
           CODE: ${{ inputs.promote_version_code }}
         run: |
           set -euo pipefail
           args=()
+          [ "$LISTINGS" = "true" ] && args+=(--listings)
           [ "$SYNC" = "true" ] && args+=(--screenshots)
           [ -n "$CODE" ] && args+=(--promote "$CODE")
           python store/_publish_listing.py "${args[@]}"

@@ -31,8 +31,10 @@ class SettingsRepositoryTest {
         assertEquals(false, repo.isPinEnabled())
     }
 
-    @Test fun todo_reminders_are_opt_in_and_persist() = runTest {
+    @Test fun todo_reminders_default_on_and_persist_disabled_state() = runTest {
         val repo = newRepo()
+        assertTrue(repo.snapshot().todoReminders)
+        repo.setTodoReminders(false)
         assertEquals(false, repo.snapshot().todoReminders)
         repo.setTodoReminders(true)
         assertTrue(repo.snapshot().todoReminders)

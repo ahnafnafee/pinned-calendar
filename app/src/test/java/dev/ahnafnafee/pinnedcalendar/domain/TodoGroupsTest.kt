@@ -36,10 +36,19 @@ class TodoGroupsTest {
             today,
             zone,
         )
-        assertEquals(listOf("Overdue", "Today", "Upcoming", "No date", "Completed"), groups.map { it.first })
+        assertEquals(
+            listOf(
+                TodoGroup.OVERDUE,
+                TodoGroup.TODAY,
+                TodoGroup.UPCOMING,
+                TodoGroup.NO_DATE,
+                TodoGroup.COMPLETED,
+            ),
+            groups.map { it.first },
+        )
 
         val onlyToday = TodoGroups.of(listOf(todo("now", dueAt(today))), today, zone)
-        assertEquals(listOf("Today"), onlyToday.map { it.first })
+        assertEquals(listOf(TodoGroup.TODAY), onlyToday.map { it.first })
     }
 
     @Test
@@ -47,7 +56,7 @@ class TodoGroupsTest {
         // 03:00 UTC on June 3 is still June 2 in New York, so it belongs to Today, not Upcoming.
         val lateEvening = dueAt(today, LocalTime.of(23, 0))
         val groups = TodoGroups.of(listOf(todo("evening", lateEvening)), today, zone)
-        assertEquals(listOf("Today"), groups.map { it.first })
+        assertEquals(listOf(TodoGroup.TODAY), groups.map { it.first })
     }
 
     @Test
