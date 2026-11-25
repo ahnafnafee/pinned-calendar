@@ -42,6 +42,16 @@
             android:name=".notify.TodoReminderReceiver"
             android:exported="false" />
 
+        <!-- Not exported: only the system (alarm, clock and zone changes) and this app reach it. -->
+        <receiver
+            android:name=".notify.DayRolloverReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name=".work.BootReceiver"
             android:exported="true">

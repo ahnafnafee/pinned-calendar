@@ -38,15 +38,8 @@ object TodoReminderScheduler {
         alarms.cancel(snoozePendingIntent(context, todoId, dueMillis))
     }
 
-    private fun schedule(alarms: AlarmManager, triggerAtMillis: Long, intent: PendingIntent) {
-        // Exact when the user has allowed it; otherwise the inexact variant may land a few
-        // minutes late under Doze, which a reminder survives better than not firing at all.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarms.canScheduleExactAlarms()) {
-            alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent)
-        } else {
-            alarms.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent)
-        }
-    }
+    private fun schedule(alarms: AlarmManager, triggerAtMillis: Long, intent: PendingIntent) =
+        alarms.setWakeWhileIdle(triggerAtMillis, intent)
 
     private fun pendingIntent(context: Context): PendingIntent =
         PendingIntent.getBroadcast(
@@ -67,4 +60,16 @@ object TodoReminderScheduler {
             ),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
+}
+
+/**
+ * Wakes the app at [triggerAtMillis] even under Doze. Exact when the user has allowed it;
+ * otherwise the inexact variant may land a few minutes late, which beats not firing at all.
+ */
+internal fun AlarmManager.setWakeWhileIdle(triggerAtMillis: Long, intent: PendingIntent) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !canScheduleExactAlarms()) {
+        setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent)
+    } else {
+        setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent)
+    }
 }
