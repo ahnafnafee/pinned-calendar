@@ -3,27 +3,27 @@ import Base from './Base.astro';
 const { title, kicker, updated, path, other } = Astro.props;
 ---
 <Base title={title} path={path}>
-  <nav class="site-nav layer">
-    <div class="row" style="width:min(820px,92vw); margin-inline:auto;">
+  <nav class="site-nav legal-nav" aria-label="Primary">
+    <div class="row">
       <a class="brand" href="/">
-        <span class="ic"><img src="/app-icon.png" alt="Pinned Calendar" width="32" height="32" /></span>
-        <span class="name">PINNED&nbsp;CALENDAR</span>
+        <span class="ic"><img src="/app-icon.png" alt="" width="36" height="36" /></span>
+        <span class="name">Pinned Calendar</span>
       </a>
-      <a href="/" style="font-family:var(--mono); font-size:13px; letter-spacing:.5px;">← BACK TO SITE</a>
+      <a class="btn btn--tonal btn--sm" href="/"><span aria-hidden="true">←</span> Back to site</a>
     </div>
   </nav>
 
-  <main class="legal-main layer" style="width:min(720px,92vw); margin-inline:auto;">
+  <main id="main" class="legal-main">
     <div class="kicker">{kicker}</div>
     <h1>{title}</h1>
-    <div class="legal-updated">LAST UPDATED: {updated}</div>
+    <div class="legal-updated">Last updated: {updated}</div>
     <slot />
   </main>
 
-  <footer class="legal-footer layer">
-    <div class="row" style="width:min(820px,92vw); margin-inline:auto;">
-      <span>© 2026 PINNED CALENDAR</span>
-      <span style="display:flex; gap:20px;">
+  <footer class="legal-footer">
+    <div class="row">
+      <span>© 2026 Pinned Calendar</span>
+      <span class="links">
         <a href="/">Home</a>
         <a href={other.href}>{other.label}</a>
       </span>
