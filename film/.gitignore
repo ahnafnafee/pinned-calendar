@@ -1,0 +1,8 @@
+out/
+stills/
+frames/
+fonts/
+assets/
+events.json
+*.mp4
+!media/*.mp4

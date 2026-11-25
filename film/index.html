@@ -1,0 +1,506 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Pinned Calendar launch film</title>
+<style>
+  @font-face { font-family: "GSF"; src: url(fonts/GoogleSansFlex.ttf); font-weight: 1 1000; font-stretch: 25% 151%; }
+  html, body { margin: 0; background: #fff8f5; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: #fff8f5;
+    font-family: "GSF"; font-variation-settings: "ROND" 100; color: #221a15; }
+  canvas { position: absolute; left: 0; top: 0; }
+  #world { position: absolute; inset: 0; perspective: 2000px; perspective-origin: 69% 40%; }
+  .obj { position: absolute; left: 0; top: 0; transform-origin: 50% 0; display: none; transform-style: preserve-3d; }
+  .phone { background: #1c1b1f; border-radius: 64px; padding: 15px; box-sizing: border-box; }
+  .phone img { display: block; width: 100%; height: 100%; border-radius: 50px; object-fit: cover; }
+  .card { width: 780px; background: #e9e9f1; border-radius: 42px; box-sizing: border-box; padding: 30px 38px 34px; color: #1d1b20;
+    position: absolute; left: 0; top: 0; transform-origin: 50% 0; backface-visibility: hidden; }
+  .ch { display: flex; align-items: center; gap: 16px; font-size: 25px; color: #45464f; }
+  .ch img { width: 46px; height: 46px; border-radius: 23px; }
+  .wk { margin-top: 16px; font-size: 31px; font-weight: 700; color: #4a5a92; }
+  .day { margin: 18px 0 6px; font-size: 22px; font-weight: 700; letter-spacing: .09em; color: #5c5b63; }
+  .rows { position: relative; }
+  .row { position: absolute; left: 0; right: 0; height: 66px; display: flex; align-items: center; white-space: nowrap; }
+  .bar { width: 8px; height: 44px; border-radius: 4px; flex: none; }
+  .tm { width: 168px; margin-left: 24px; font-size: 28px; color: #5c5b63; flex: none; }
+  .tt { position: relative; font-size: 33px; }
+  .tt::after { content: ""; position: absolute; left: 0; top: 52%; height: 3px; width: var(--strike, 0%); background: #1d1b20; border-radius: 2px; }
+  .tag { margin-left: 18px; padding: 6px 16px; border-radius: 999px; background: #4a5a92; color: #fff; font-size: 22px; font-weight: 700; opacity: 0; }
+  .more { display: inline-block; margin-top: 14px; padding: 10px 22px; border-radius: 999px; background: #dcdeea; color: #4a5a92; font-size: 24px; font-weight: 700; }
+  .rem { width: 780px; background: #e9e9f1; border-radius: 40px; box-sizing: border-box; padding: 26px 38px 30px; color: #1d1b20; }
+  .rem .tl { margin-top: 18px; font-size: 38px; }
+  .rem .due { margin-top: 8px; font-size: 29px; color: #5c5b63; }
+  .rem .act { margin-top: 26px; display: flex; gap: 70px; font-size: 31px; font-weight: 600; color: #4a5a92; }
+  .panel { width: 1000px; background: #fff1e9; border-radius: 44px; box-sizing: border-box; padding: 34px 44px 40px; color: #221a15; }
+  .panel .pt { display: flex; align-items: center; gap: 18px; font-size: 36px; font-weight: 700; }
+  .panel .pt i { width: 22px; height: 22px; border-radius: 11px; background: #f9ab00; display: inline-block; }
+  .panel .lb { margin: 28px 0 14px; font-size: 27px; color: #52443b; }
+  .chips { position: relative; display: flex; flex-wrap: wrap; gap: 16px 18px; width: 820px; }
+  .chip { position: relative; height: 74px; padding: 0 34px; border-radius: 37px; background: #f3e2d8; font-size: 31px; line-height: 74px; }
+  .pill { position: absolute; left: 0; top: 0; height: 74px; border-radius: 37px; background: #8a5021; z-index: 1; }
+  .chip span { position: relative; z-index: 2; }
+  .week { display: flex; gap: 14px; margin-top: 34px; }
+  .dayt { width: 116px; height: 132px; border-radius: 26px; background: #f6e5dc; box-sizing: border-box; padding-top: 14px; text-align: center; font-size: 24px; color: #52443b; position: relative; }
+  .dayt b { display: block; font-size: 30px; color: #221a15; margin-top: 2px; }
+  .drop { position: absolute; left: 50%; bottom: 16px; width: 34px; height: 34px; margin-left: -17px; border-radius: 17px; background: #f9ab00; transform: scale(0); }
+  .card.blank > * { visibility: hidden; }
+  .dark .card, .dark .rem { background: #2b2930; color: #e6e1e9; }
+  .dark .ch, .dark .tm, .dark .day { color: #c9c5d0; }
+  .dark .wk, .dark .more { color: #b6c4ff; }
+  .dark .more { background: #3b3a45; }
+  .icon { width: 250px; height: 250px; border-radius: 62px; overflow: hidden; }
+  .icon img { width: 100%; height: 100%; display: block; }
+  #type { position: absolute; inset: 0; }
+  .t { position: absolute; left: 0; top: 0; white-space: nowrap; line-height: 1; transform-origin: 0 100%; display: none; }
+  .h { font-weight: 800; letter-spacing: -0.02em; }
+  .w { display: inline-block; white-space: pre; transform-origin: 0 100%; }
+  .lab { font-weight: 600; font-size: 34px; color: #52443b; display: flex; align-items: center; gap: 16px; }
+  .lab i { width: 18px; height: 18px; border-radius: 9px; display: inline-block; }
+  .c { text-align: center; transform-origin: 50% 100%; }
+</style>
+<div id="stage">
+  <canvas id="bg" width="1920" height="1080"></canvas>
+  <div id="world"></div>
+  <canvas id="fx" width="1920" height="1080"></canvas>
+  <div id="type"></div>
+</div>
+<script type="module">
+import { clamp, lerp, seg, ss, eio, eo, ei, back, spring, TAU } from '/core/lib.js';
+
+// ---- the cue grid: the score (mix.py) reads the same file ----------------------
+const CUES = await (await fetch('cues.json')).json();
+const BEAT = 60 / CUES.bpm, BAR = 4 * BEAT;
+const B = (bar, beat = 0) => (bar * 4 + beat) * BEAT;
+const DUR = CUES.bars * BAR;
+const SC = CUES.scenes.map(s => ({ ...s, t0: B(s.bar), t1: B(s.bar + s.bars) }));
+const S = Object.fromEntries(SC.map(s => [s.id, s]));
+const inKick = t => CUES.kick.some(([a, b]) => t >= B(a) - 1e-6 && t < B(b) - 1e-6);
+const kick = t => inKick(t) ? Math.exp(-(t % BEAT) / 0.12) : 0;
+const TURN = B(CUES.turn[0]);
+const SIL0 = CUES.silence[0] * BAR;
+const EV = [];
+const ev = (t, type, v = 1) => EV.push({ t: +t.toFixed(4), type, v });
+const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const css = (c, a = 1) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+const mix3 = (a, b, u) => [0, 1, 2].map(i => lerp(a[i], b[i], u));
+const hex = c => '#' + c.map(v => (v | 0).toString(16).padStart(2, '0')).join('');
+
+const CREAM = rgb('#fff8f5'), PEACH = rgb('#ffdcc5'), SUNSET = rgb('#f4a06a'), NIGHT = rgb('#2b2019'), DARK = rgb('#19120d');
+const ORANGE = rgb('#E07F2C'), INKC = rgb('#221a15'), LINE2 = rgb('#c75f14');
+const ACCENTS = ['#E07F2C', '#00897B', '#7E57C2', '#D81B60', '#1A73E8', '#43A047'].map(rgb);
+const OBJ_X = 1330;                       // where the scene's object hangs, in world x
+const CARD_TOP = 262;
+
+// ---- time of day: the spine of the film ------------------------------------------
+// [film second, minutes since midnight of Wed]; the clock runs between keys like a fast-forward.
+const CLOCK = [[0, 570], [6.0, 570], [6.5, 600], [7.0, 660], [7.5, 780], [8.5, 990], [9.6, 1080], [10.4, 1138], [13.9, 1150],
+  [14.4, 1150], [17.8, 1170], [18.3, 1200], [21.8, 1290], [22.4, 1350], [23.2, 1438], [24.0, 1439], [TURN - 0.001, 1439], [TURN, 1440], [DUR, 1440]];
+function clockAt(t) {
+  let i = 0; while (i < CLOCK.length - 2 && t >= CLOCK[i + 1][0]) i++;
+  const [a, m0] = CLOCK[i], [b, m1] = CLOCK[i + 1];
+  return Math.floor(lerp(m0, m1, eio(seg(t, a, b))));
+}
+function clockText(m) {
+  const day = m >= 1440 ? 'Thu 26' : 'Wed 25', mm = m % 1440, h = Math.floor(mm / 60), mi = mm % 60;
+  return `${(h % 12) || 12}:${String(mi).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}  ·  ${day}`;
+}
+
+// ---- accent and theme: the "Make it yours" scene recolors the stage on each beat --------
+function accent(t) {
+  if (t >= S.yours.t0 && t < S.yours.t1 - BEAT) { const k = Math.floor((t - S.yours.t0) / BEAT); return ACCENTS[Math.min(k, 5)]; }
+  return ORANGE;
+}
+const darkFlip = t => t >= B(10, 2) && t < B(10, 3);
+// the evening: cream, then a sunset, then night; morning comes back with the turn
+const nightU = t => ss(seg(t, S.midnight.t0, S.midnight.t0 + 2.6)) * (1 - ss(seg(t, TURN, TURN + 0.3)));
+const ramp = u => u < 0.4 ? mix3(CREAM, SUNSET, u / 0.4) : mix3(SUNSET, NIGHT, (u - 0.4) / 0.6);
+const lum = c => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
+// type switches to light only once the sky is darker than the type would be readable on
+const lightText = t => ss(seg(lum(background(t)), 0.30, 0.20));
+function background(t) { return darkFlip(t) ? DARK : ramp(nightU(t)); }
+
+// ---- camera: one world -> screen function for everything that moves ----------------
+function cam(t) {
+  let dx = 9 * Math.sin(t * 0.6), dy = 6 * Math.cos(t * 0.47), zoom = 1, fx = 960, fy = 540;
+  // the push toward the pin before midnight, held in the silence, released on the turn
+  const push = ss(seg(t, S.midnight.t0 + 0.5, SIL0)) * (1 - eo(seg(t, TURN, TURN + 0.8)));
+  zoom += 0.16 * push; fx = lerp(960, OBJ_X, push); fy = lerp(540, CARD_TOP + 120, push);
+  if (t >= S.logo.t0) zoom *= lerp(1.06, 1, eo(seg(t, S.logo.t0, DUR)));   // the end card pulls back slowly
+  for (const T of PIN_HITS) {                                               // a small shake when the pin lands
+    const d = t - T; if (d >= 0 && d < 0.4) { const k = 7 * Math.exp(-d / 0.09); dx += k * Math.sin(d * 90); dy += k * Math.cos(d * 77); }
+  }
+  return { dx, dy, zoom, fx, fy };
+}
+function project(c, x, y) {
+  return [c.fx + (x - c.fx + c.dx) * c.zoom, c.fy + (y - c.fy + c.dy) * c.zoom];
+}
+
+// ---- plates -------------------------------------------------------------------------
+const world = document.getElementById('world');
+const loading = [];
+function obj(html, cls = '') {
+  const el = document.createElement('div'); el.className = 'obj ' + cls; el.innerHTML = html; world.appendChild(el);
+  el.querySelectorAll('img').forEach(im => loading.push(im.decode().catch(() => {})));
+  return el;
+}
+// put an object by its top-center anchor (the pin sits there)
+function put(el, c, { x = OBJ_X, y = CARD_TOP, s = 1, rx = 0, ry = 0, rz = 0, o = 1, shadow = 0.18, blur = 0 }) {
+  if (o <= 0.002 || s <= 0.002) { el.style.display = 'none'; return; }
+  const [sx, sy] = project(c, x, y), w = el.offsetWidth || +el.dataset.w;
+  const st = el.style;
+  st.display = 'block'; st.opacity = clamp(o);
+  st.transform = `translate3d(${(sx - w / 2).toFixed(2)}px,${sy.toFixed(2)}px,0) scale(${(s * c.zoom).toFixed(4)}) rotateZ(${rz.toFixed(3)}deg) rotateY(${ry.toFixed(3)}deg) rotateX(${rx.toFixed(3)}deg)`;
+  st.filter = `${blur > 0.3 ? `blur(${blur.toFixed(1)}px) ` : ''}drop-shadow(0 ${30 * s | 0}px ${60 * s | 0}px rgba(79,37,0,${shadow}))`;
+}
+const hide = el => { el.style.display = 'none'; };
+
+// the real shade pull-down, recorded on the emulator, as frames
+const FOOT_N = 93;
+const phone = obj(`<img src="frames/0001.jpg">`, 'phone'); phone.style.width = '470px'; phone.style.height = '1036px'; phone.dataset.w = 470;
+const phoneImg = phone.querySelector('img');
+let phoneFrame = 1;
+const pending = [];
+function footage(src) {
+  const f = clamp(Math.round(src * 30) + 1, 1, FOOT_N);
+  if (f === phoneFrame) return;
+  phoneFrame = f; phoneImg.src = `frames/${String(f).padStart(4, '0')}.jpg`; pending.push(phoneImg.decode().catch(() => {}));
+}
+
+// the pinned agenda, rebuilt in the app's own layout so its rows can act
+const DAY1 = [
+  { tm: '10:00 AM', tt: 'Standup, cameras optional', col: '#00897B', done: B(3, 1) },
+  { tm: '11:00 AM', tt: 'Reply to that 2019 email', col: '#8D8D8D', later: B(3, 2) },
+  { tm: '1:00 PM', tt: 'Pitch the moonshot idea', col: '#00897B', done: B(3, 3) },
+  { tm: '4:30 PM', tt: 'Dentist (pretend I floss)', col: '#00897B', done: B(4, 1) },
+  { tm: '6:00 PM', tt: 'Water the plants, they noticed', col: '#F9AB00' },
+  { tm: '7:00 PM', tt: 'Return the drill to Dana', col: '#4285F4' },
+];
+const DAY2 = [
+  { tm: '9:00 AM', tt: 'Reply to that 2019 email', col: '#8D8D8D' },
+  { tm: '12:00 PM', tt: 'Pie pickup, the good one', col: '#0B8043' },
+  { tm: '5:00 PM', tt: "Friendsgiving at Sam's", col: '#EF6C00' },
+  { tm: '6:00 PM', tt: 'Water the plants, they noticed', col: '#F9AB00' },
+  { tm: '6:30 PM', tt: 'Call Grandma, she has gossip', col: '#F9AB00' },
+];
+const cardHTML = (count, dayLabel, rows, more) => `
+  <div class="ch"><img src="assets/icon.png"><span>Pinned Calendar · now</span></div>
+  <div class="wk">This week · ${count}</div>
+  <div class="day">${dayLabel}</div>
+  <div class="rows" style="height:${rows.length * 66}px">${rows.map(r => `
+    <div class="row"><div class="bar" style="background:${r.col}"></div><div class="tm">${r.tm}</div><div class="tt">${r.tt}</div><div class="tag">Tomorrow</div></div>`).join('')}
+  </div>
+  <div class="more">${more}</div>`;
+const pinned = obj('', 'pinned'); pinned.style.width = '780px'; pinned.dataset.w = 780;
+const back2 = document.createElement('div'); back2.className = 'card'; back2.innerHTML = cardHTML(12, 'TODAY · 26 THU', DAY2, '+7 more this week');
+const front = document.createElement('div'); front.className = 'card'; front.innerHTML = cardHTML(12, 'TODAY · 25 WED', DAY1, '+6 more this week');
+pinned.appendChild(back2); pinned.appendChild(front);
+pinned.style.perspective = '1500px'; pinned.style.perspectiveOrigin = '50% 0';   // the page turn keeps its depth inside the filtered plate
+const rowEls = [...front.querySelectorAll('.row')], rowsBox = front.querySelector('.rows');
+[...back2.querySelectorAll('.row')].forEach((el, i) => { el.style.transform = `translate(0px,${i * 66}px)`; });
+
+const rem = obj(`<div class="rem">
+  <div class="ch"><img src="assets/icon.png"><span>Pinned Calendar · now</span></div>
+  <div class="tl">Pull the cake out of the oven</div><div class="due">Due now</div>
+  <div class="act"><span class="md">Mark done</span><span>Snooze 30 min</span></div></div>`);
+rem.style.width = '780px'; rem.dataset.w = 780;
+
+const CHIPS = ['Never', 'Daily', 'Weekly', 'Monthly', 'Yearly', 'Custom…'];
+const WEEK = [['W', 25], ['T', 26], ['F', 27], ['S', 28], ['S', 29], ['M', 30], ['T', 1]];
+const panel = obj(`<div class="panel">
+  <div class="pt"><i></i>Water the plants, they noticed</div>
+  <div class="lb">Repeat</div>
+  <div class="chips"><div class="pill"></div>${CHIPS.map(c => `<div class="chip"><span>${c}</span></div>`).join('')}</div>
+  <div class="week">${WEEK.map(([d, n]) => `<div class="dayt">${d}<b>${n}</b><div class="drop"></div></div>`).join('')}</div></div>`);
+panel.style.width = '1000px'; panel.dataset.w = 1000;
+const pill = panel.querySelector('.pill'), chipEls = [...panel.querySelectorAll('.chip')], drops = [...panel.querySelectorAll('.drop')];
+
+const icon = obj(`<div class="icon"><img src="assets/icon.png"></div>`); icon.style.width = '250px'; icon.dataset.w = 250;
+
+// ---- background: the cream stage and the app's scalloped "cookie" ---------------------
+const bg = document.getElementById('bg').getContext('2d');
+const fx = document.getElementById('fx').getContext('2d');
+function cookiePath(g, x, y, r, rot, k = 0.075, n = 12) {
+  g.beginPath();
+  for (let i = 0; i <= 240; i++) {
+    const a = i / 240 * TAU, rr = r * (1 + k * Math.cos(n * (a + rot)));
+    const px = x + Math.cos(a) * rr, py = y + Math.sin(a) * rr;
+    i ? g.lineTo(px, py) : g.moveTo(px, py);
+  }
+  g.closePath();
+}
+function drawBackground(t, c) {
+  const base = background(t);
+  bg.fillStyle = css(base); bg.fillRect(0, 0, 1920, 1080);
+  const acc = accent(t), dusk = darkFlip(t) ? 1 : nightU(t);
+  const tint = mix3(mix3(PEACH, acc, t >= S.yours.t0 && t < S.yours.t1 ? 0.35 : 0), base, 0.15 + 0.55 * dusk);
+  const logo = seg(t, S.logo.t0 - 0.3, S.logo.t0 + 0.2);
+  const [x, y] = project(c, lerp(OBJ_X, 960, eo(logo)), lerp(600, 300, eo(logo)));
+  const r = lerp(470, 235, eo(logo)) * c.zoom * (1 + 0.012 * kick(t));
+  cookiePath(bg, x, y, r, t * 0.05); bg.fillStyle = css(tint); bg.fill();
+}
+
+// ---- the pin: where it is, and drawing it ---------------------------------------------
+const PIN_HITS = [B(1), S.repeat.t0, S.yours.t0, S.logo.t0];
+const PIN_END = [960 + 50, 300 - 33];                     // the pin ring drawn in the app icon
+function pinState(t) {
+  // drop in from above at bar 1, ride the card, hop between objects on the downbeat
+  const land = (t0, x, y) => { const u = seg(t, t0 - 0.32, t0); return { x, y: lerp(y - 240, y, ei(u)), s: lerp(1.5, 1, ei(u)), o: seg(u, 0, 0.25) }; };
+  if (t < B(1)) return t > B(1) - 0.32 ? land(B(1), ...cardAnchor(B(1))) : null;
+  if (t < S.repeat.t0 - 0.32) return { ...pt(cardAnchor(t)), s: 1, o: 1 };
+  if (t < S.repeat.t0) return hop(t, cardAnchor(S.repeat.t0 - 0.32), panelAnchor(S.repeat.t0), S.repeat.t0);
+  if (t < S.yours.t0 - 0.32) return { ...pt(panelAnchor(t)), s: 1, o: 1 };
+  if (t < S.yours.t0) return hop(t, panelAnchor(S.yours.t0 - 0.32), cardAnchor(S.yours.t0), S.yours.t0);
+  if (t < S.logo.t0 - 0.4) return { ...pt(cardAnchor(t)), s: 1, o: 1 };
+  if (t < S.logo.t0) return hop(t, cardAnchor(S.logo.t0 - 0.4), PIN_END, S.logo.t0, 0.4);
+  return { x: PIN_END[0], y: PIN_END[1], s: 1 - eo(seg(t, S.logo.t0, S.logo.t0 + 0.12)), o: 1 - seg(t, S.logo.t0, S.logo.t0 + 0.12) };
+}
+const pt = ([x, y]) => ({ x, y });
+function hop(t, [x0, y0], [x1, y1], t1, d = 0.32) {
+  const u = seg(t, t1 - d, t1), arc = Math.sin(Math.PI * u) * 170;
+  return { x: lerp(x0, x1, eio(u)), y: lerp(y0, y1, eio(u)) - arc, s: 1 + 0.35 * Math.sin(Math.PI * u), o: 1 };
+}
+function drawPin(t, c) {
+  const p = pinState(t); if (!p || p.o <= 0) return;
+  const [x, y] = project(c, p.x, p.y), r = 25 * p.s * c.zoom, col = accent(t);
+  fx.save(); fx.globalAlpha = clamp(p.o);
+  fx.fillStyle = 'rgba(40,20,5,0.28)'; fx.beginPath(); fx.ellipse(x + 8 * p.s, y + 14 * p.s, r * 0.95, r * 0.6, 0.3, 0, TAU); fx.fill();
+  const g = fx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
+  g.addColorStop(0, css(mix3(col, [255, 255, 255], 0.55))); g.addColorStop(0.55, css(col)); g.addColorStop(1, css(mix3(col, [0, 0, 0], 0.35)));
+  fx.fillStyle = g; fx.beginPath(); fx.arc(x, y, r, 0, TAU); fx.fill();
+  fx.fillStyle = 'rgba(255,255,255,0.75)'; fx.beginPath(); fx.ellipse(x - r * 0.38, y - r * 0.42, r * 0.22, r * 0.14, -0.6, 0, TAU); fx.fill();
+  fx.restore();
+}
+
+// ---- where each object is, scene by scene ------------------------------------------------
+// The footage card's place inside the phone (fractions of the screen), measured on the last frame.
+const PH = { x: 1300, y: 22, w: 470, h: 1036, pad: 15 };
+const FOOT_CARD = { l: 0.0375, t: 0.2563, r: 0.9609 };
+function phoneCardRect() {
+  const sw = PH.w - 2 * PH.pad, sh = PH.h - 2 * PH.pad;
+  return { cx: PH.x, top: PH.y + PH.pad + FOOT_CARD.t * sh, w: (FOOT_CARD.r - FOOT_CARD.l) * sw };
+}
+function cardPose(t) {
+  // open: it lifts out of the phone on bar 1 and settles at the object spot
+  const pr = phoneCardRect(), lift = back(seg(t, B(1), B(1) + 0.9), 1.3);
+  let x = lerp(pr.cx, OBJ_X, lift), y = lerp(pr.top, CARD_TOP, lift), s = lerp(pr.w / 780, 1, lift), o = 1, rz = 0, rx = 0;
+  // leaves for the repeat scene (unpinned: it drops), comes back for the colors, leaves for the logo
+  const out1 = ei(seg(t, S.repeat.t0 - 0.32, S.repeat.t0 + 0.05)), in2 = back(seg(t, S.yours.t0 - 0.36, S.yours.t0), 1.2);
+  const out3 = ei(seg(t, S.logo.t0 - 0.4, S.logo.t0));
+  if (t >= S.repeat.t0 - 0.32 && t < S.yours.t0 - 0.36) { y += 1250 * out1; rz = 9 * out1; }
+  else if (t >= S.yours.t0 - 0.36 && t < S.yours.t0) { y += 1250 * (1 - in2); rz = 9 * (1 - in2); }
+  if (t >= S.logo.t0 - 0.4) { y += 1250 * out3; rz = -8 * out3; o = 1 - seg(t, S.logo.t0 - 0.1, S.logo.t0); }
+  // the nudge: the card steps back under the reminder
+  const under = seg(t, S.nudge.t0 + BEAT, S.nudge.t0 + BEAT + 0.25) * (1 - seg(t, B(6, 0.5), B(6, 1)));
+  s *= 1 - 0.04 * under; y += 250 * under;
+  return { x, y, s, o, rz, rx, under };
+}
+const cardAnchor = t => { const p = cardPose(t); return [p.x, p.y - 4]; };
+function panelPose(t) {
+  const inn = back(seg(t, S.repeat.t0 - 0.32, S.repeat.t0), 1.2), out = ei(seg(t, S.yours.t0 - 0.32, S.yours.t0));
+  return { x: OBJ_X - 30, y: 250 + 1250 * (1 - inn) + 1250 * out, rz: 8 * (1 - inn) - 9 * out, o: t >= S.repeat.t0 - 0.32 && t < S.yours.t0 ? 1 : 0 };
+}
+const panelAnchor = t => { const p = panelPose(t); return [p.x, p.y - 4]; };
+
+function plates(t, c) {
+  // the phone: the real recording, a slow push, then it sinks away as the card lifts out
+  if (t < B(1) + 1.2) {
+    footage(Math.max(0, t + 0.45));
+    const sink = ei(seg(t, B(1) + 0.15, B(1) + 1.1)), push = lerp(1, 1.035, seg(t, 0, B(1)));
+    put(phone, c, { x: PH.x, y: PH.y + 1100 * sink, s: push, rz: 6 * sink, o: 1 - seg(t, B(1) + 0.8, B(1) + 1.1), shadow: 0.22 });
+  } else hide(phone);
+  // the pinned card
+  if (t >= B(1) && t < S.logo.t0) {
+    const p = cardPose(t);
+    put(pinned, c, { x: p.x, y: p.y, s: p.s, rz: p.rz, o: p.o * (1 - 0.15 * p.under) });
+    rowsAct(t);
+    // midnight: the page turns over the pin; the new day is underneath
+    const turn = seg(t, TURN, TURN + 0.75);
+    front.style.transform = `rotateX(${(-180 * eio(turn)).toFixed(2)}deg)`;
+    front.style.display = turn >= 1 ? 'none' : 'block';
+    front.classList.toggle('blank', eio(turn) > 0.5);            // past upright we see the back of the page: blank paper
+    back2.style.display = t >= TURN ? 'block' : 'none';
+    pinned.classList.toggle('dark', darkFlip(t));
+  } else hide(pinned);
+  // the reminder: drops in on a ding, the tap folds it away
+  if (t >= S.nudge.t0 + BEAT - 0.3 && t < B(6, 1.2)) {
+    const inn = back(seg(t, S.nudge.t0 + BEAT - 0.3, S.nudge.t0 + BEAT), 1.4), gone = ei(seg(t, B(6, 0.5), B(6, 1)));
+    put(rem, c, { x: OBJ_X, y: lerp(-420, 36, inn) - 520 * gone, s: 1 - 0.1 * gone, o: 1 - gone * 0.8, shadow: 0.28 });
+  } else hide(rem);
+  // the repeat panel: the pill hops chip to chip and lands on Daily; the chore copies across the week
+  const pp = panelPose(t);
+  if (pp.o > 0) { put(panel, c, { x: pp.x, y: pp.y, rz: pp.rz, o: 1 }); chipsAct(t); } else hide(panel);
+  // the icon at the end
+  if (t >= S.logo.t0 - 0.05) {
+    const pop = back(seg(t, S.logo.t0, S.logo.t0 + 0.4), 2.0);
+    put(icon, c, { x: 960, y: 300 - 125 * pop, s: pop, o: seg(t, S.logo.t0, S.logo.t0 + 0.08), shadow: 0.3 });
+  } else hide(icon);
+}
+
+// rows: checked off on beats, the email swiped to tomorrow, the gap closing up
+function rowsAct(t) {
+  let y = 0;
+  DAY1.forEach((r, i) => {
+    const el = rowEls[i], tt = el.children[2], tag = el.children[3];
+    let h = 66, x = 0, o = 1, strike = 0;
+    if (r.done !== undefined) {
+      strike = eo(seg(t, r.done, r.done + 0.16));
+      el.children[0].style.background = t >= r.done ? '#2e7d32' : r.col;
+      const fold = eio(seg(t, r.done + 0.3, r.done + 0.55)); h = 66 * (1 - fold); o = 1 - fold;
+    }
+    if (r.later !== undefined) {
+      tag.style.opacity = seg(t, r.later - 0.05, r.later + 0.05);
+      x = 820 * ei(seg(t, r.later + 0.18, r.later + 0.42));
+      const fold = eio(seg(t, r.later + 0.35, r.later + 0.6)); h = 66 * (1 - fold); o = 1 - seg(t, r.later + 0.3, r.later + 0.42);
+    }
+    tt.style.setProperty('--strike', (strike * 100).toFixed(1) + '%');
+    el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`; el.style.opacity = o.toFixed(3);
+    y += h;
+  });
+  rowsBox.style.height = y.toFixed(1) + 'px';
+}
+let chipPos = null;
+function chipsAct(t) {
+  if (!chipPos) chipPos = chipEls.map(el => [el.offsetLeft, el.offsetTop, el.offsetWidth]);
+  // hops on eighth notes: Never, Daily, Weekly, Monthly, Yearly, Custom, then it lands back on Daily
+  const seq = [0, 1, 2, 3, 4, 5, 1], t0 = S.repeat.t0;
+  const k = clamp(Math.floor((t - t0) / (BEAT / 2)), 0, seq.length - 1), u = eo(seg(t - t0 - k * BEAT / 2, 0, 0.16));
+  const a = chipPos[seq[Math.max(0, k - 1)]], b = chipPos[seq[k]], landed = k === seq.length - 1;
+  const x = lerp(a[0], b[0], k ? u : 1), y = lerp(a[1], b[1], k ? u : 1), w = lerp(a[2], b[2], k ? u : 1);
+  const sq = landed ? 1 + 0.1 * Math.exp(-(t - t0 - k * BEAT / 2) / 0.08) * Math.sin((t - t0 - k * BEAT / 2) * 40) : 1;
+  Object.assign(pill.style, { transform: `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${sq.toFixed(3)})`, width: w.toFixed(1) + 'px' });
+  chipEls.forEach((el, i) => { el.style.color = i === seq[k] && u > 0.5 ? '#fff' : '#221a15'; });
+  drops.forEach((d, i) => { const s = back(seg(t, B(8) + i * BEAT / 4, B(8) + i * BEAT / 4 + 0.14), 2.4); d.style.transform = `scale(${s.toFixed(3)})`; });
+}
+
+// ---- foreground effects: the pin, the tap, the swatches -----------------------------------
+function drawFx(t, c) {
+  fx.clearRect(0, 0, 1920, 1080);
+  // the tap on Mark done
+  const tap = B(6);
+  if (t >= tap - 0.25 && t < tap + 0.5) {
+    const md = rem.querySelector('.md'), r = md.getBoundingClientRect();
+    const x = r.left + r.width / 2, y = r.top + r.height / 2, u = seg(t, tap, tap + 0.45);
+    fx.fillStyle = `rgba(74,90,146,${(0.35 * (1 - u)).toFixed(3)})`; fx.beginPath(); fx.arc(x, y, 30 + 120 * eo(u), 0, TAU); fx.fill();
+    const fin = seg(t, tap - 0.25, tap), up = seg(t, tap, tap + 0.2);
+    fx.fillStyle = `rgba(34,26,21,${(0.18 * fin * (1 - up)).toFixed(3)})`; fx.beginPath(); fx.arc(x + 6, y + 10, 34 * lerp(1.3, 0.9, fin), 0, TAU); fx.fill();
+  }
+  // six accents above the card; the chosen one turns into the app's cookie
+  if (t >= S.yours.t0 - 0.1 && t < S.yours.t1 + 0.2) {
+    const k = clamp(Math.floor((t - S.yours.t0) / BEAT), 0, 5), inn = eo(seg(t, S.yours.t0, S.yours.t0 + 0.3)), out = ei(seg(t, S.yours.t1 - 0.1, S.yours.t1 + 0.2));
+    ACCENTS.forEach((col, i) => {
+      const [x, y] = project(c, OBJ_X - 5 * 68 + i * 136, 790 + 90 * (1 - inn) + 140 * out);
+      const sel = i === k ? eo(seg(t - S.yours.t0 - k * BEAT, 0, 0.18)) : (i === k - 1 ? 1 - seg(t - S.yours.t0 - k * BEAT, 0, 0.12) : 0);
+      const r = (42 + 8 * sel) * c.zoom;
+      fx.save(); fx.globalAlpha = inn * (1 - out);
+      if (sel > 0.02) { cookiePath(fx, x, y, r + 10 * c.zoom, t * 0.6, 0.09 * sel, 10); fx.fillStyle = css(mix3(col, [255, 255, 255], 0.55)); fx.fill(); }
+      cookiePath(fx, x, y, r, t * 0.6, 0.1 * sel, 10); fx.fillStyle = css(col); fx.fill();
+      fx.restore();
+    });
+  }
+  drawPin(t, c);
+}
+
+// ---- type: the clock label and the two-tone headline of each scene, word by word --------------
+const typeRoot = document.getElementById('type');
+const meas = document.createElement('canvas').getContext('2d');
+const TEXT = [];
+const label = document.createElement('div'); label.className = 't lab'; label.innerHTML = '<i></i><span></span>';
+label.style.left = '132px'; label.style.top = '300px'; typeRoot.appendChild(label);
+function wordsInto(parent, text) {
+  return text.split(' ').map((w, i, all) => { const s = document.createElement('span'); s.className = 'w'; s.textContent = w + (i < all.length - 1 ? ' ' : ''); parent.appendChild(s); return s; });
+}
+function headline(scene, l1, l2, { at1 = 1, at2 = 2, out = scene.t1, x = 130, y = 520, cap = 132, max = 760 } = {}) {
+  meas.font = '800 100px GSF';
+  const size = Math.min(cap, max / Math.max(meas.measureText(l1).width, meas.measureText(l2).width) * 100);
+  const mk = top => { const d = document.createElement('div'); d.className = 't h'; d.style.cssText = `left:${x}px;top:${top}px;font-size:${size.toFixed(1)}px`; typeRoot.appendChild(d); return d; };
+  const a = mk(y - size * 1.08), b = mk(y);
+  TEXT.push({ scene, lines: [[a, wordsInto(a, l1), scene.t0 + at1 * BEAT, 1], [b, wordsInto(b, l2), scene.t0 + at2 * BEAT, 2]], out, id: scene.id, text: `${l1} ${l2}` });
+}
+function centerLine(scene, text, y, size, weight, color, t0, out = DUR + 9) {
+  const d = document.createElement('div'); d.className = 't c'; d.textContent = text;
+  d.style.cssText = `left:0;width:1920px;top:${y}px;font-size:${size}px;font-weight:${weight};color:${color}`;
+  typeRoot.appendChild(d); TEXT.push({ scene, single: d, t0, out, id: scene.id + ':' + text, text });
+}
+function drawType(t) {
+  const dusk = lightText(t);
+  const ink = mix3(INKC, rgb('#f0dfd6'), dusk), acc = t >= S.yours.t0 && t < S.yours.t1 ? accent(t) : LINE2;
+  const line2 = mix3(acc, rgb('#ffb783'), dusk * (t >= S.yours.t0 && t < S.yours.t1 ? 0 : 1));
+  // the clock label
+  const lv = t >= 0.2 && t < S.logo.t0 - 0.2;
+  label.style.display = lv ? 'flex' : 'none';
+  if (lv) {
+    label.lastChild.textContent = clockText(clockAt(t));
+    label.firstChild.style.background = css(accent(t));
+    label.style.color = css(mix3(rgb('#3a2f28'), rgb('#e9ddd4'), dusk));
+    label.style.opacity = seg(t, 0.2, 0.45) * (1 - seg(t, S.logo.t0 - 0.4, S.logo.t0 - 0.2));
+  }
+  for (const T of TEXT) {
+    const gone = seg(t, T.out - 0.16, T.out - 0.01);
+    if (T.single) {
+      const u = seg(t, T.t0, T.t0 + 0.3);
+      if (u <= 0 || gone >= 1) { T.single.style.display = 'none'; continue; }
+      T.single.style.display = 'block'; T.single.style.opacity = u;
+      T.single.style.transform = `translateY(${(30 * (1 - eo(u))).toFixed(1)}px) scaleY(${(1 - ei(gone)).toFixed(3)})`;
+      continue;
+    }
+    for (const [el, ws, t0, n] of T.lines) {
+      if (t < t0 - 0.02 || gone >= 1) { el.style.display = 'none'; continue; }
+      el.style.display = 'block'; el.style.transform = `scaleY(${(1 - ei(gone)).toFixed(3)})`;
+      el.style.color = css(n === 1 ? ink : line2);
+      if (n === 2) el.style.filter = `brightness(${(1 + 0.12 * kick(t)).toFixed(3)})`;
+      ws.forEach((w, i) => {
+        const u = seg(t, t0 + i * BEAT * 0.5 - 0.03, t0 + i * BEAT * 0.5 + 0.17), s = back(u, 2.2);
+        w.style.opacity = seg(u, 0, 0.3).toFixed(3);
+        w.style.transform = `translateY(${(40 * (1 - s)).toFixed(1)}px) scale(${lerp(1.4, 1, s).toFixed(3)})`;
+      });
+    }
+  }
+}
+
+// ---- load, lay out the text and export the cues ---------------------------------------------
+await Promise.all([document.fonts.load('800 100px GSF'), document.fonts.load('600 34px GSF'), document.fonts.load('400 30px GSF')]);
+await Promise.all(loading);
+headline(S.open, 'Your week,', 'pinned.', { at1: 5, at2: 6 });
+headline(S.day, 'Ticks off', 'your day.');
+headline(S.nudge, 'Mark it done.', 'Or snooze it.');
+headline(S.repeat, 'Set it once.', 'It repeats.');
+headline(S.yours, 'Make it', 'yours.');
+headline(S.midnight, 'Midnight?', 'Already tomorrow.', { at1: 1, at2: (TURN - S.midnight.t0) / BEAT + 0.5 });
+centerLine(S.logo, 'Pinned Calendar', 545, 132, 800, '#221a15', S.logo.t0 + BEAT);
+centerLine(S.logo, 'Your week, pinned.', 705, 60, 700, '#c75f14', S.logo.t0 + 2 * BEAT);
+centerLine(S.logo, 'Free on Google Play. No account.', 800, 38, 500, '#52443b', S.logo.t0 + 3 * BEAT);
+
+// sound events: one per visible action, exported with events.mjs
+for (const T of TEXT) for (const l of T.lines || []) l[1].forEach((_, i) => ev(l[2] + i * BEAT * 0.5, 'slam', T.scene === S.logo ? 1.1 : 0.8));
+for (const T of TEXT) if (T.single) ev(T.t0, 'slam', 1.0);
+for (let b = 0; b < 2; b++) for (let k = 0; k < 4; k++) ev(B(b, k), 'tick', 0.9);      // the opening: a clock and a room
+ev(B(0, 2) - 0.08, 'swipe');
+PIN_HITS.forEach(t => ev(t, 'pin', 1));
+ev(B(1), 'drop');
+DAY1.forEach(r => { if (r.done !== undefined) ev(r.done, 'check'); if (r.later !== undefined) ev(r.later + 0.18, 'swish'); });
+ev(S.nudge.t0 + BEAT - 0.5, 'ding');                                                   // a J-cut: the ding a beat early
+ev(B(6), 'tap'); ev(B(6, 0.6), 'pop');
+for (let k = 1; k < 7; k++) ev(S.repeat.t0 + k * BEAT / 2, k === 6 ? 'land' : 'click');
+for (let i = 0; i < 7; i++) ev(B(8) + i * BEAT / 4, 'dot', i);
+for (let k = 0; k < 6; k++) ev(S.yours.t0 + k * BEAT, 'color', k);
+ev(B(10, 2), 'switch'); ev(B(10, 3), 'switch');
+for (let k = 0; k < 6; k++) ev(B(10, 3) + k * BEAT * (1 + k * 0.12), 'tick', 0.8 - k * 0.05);   // an L-cut: midnight's ticks start under the colors, slowing
+ev(TURN, 'flip'); ev(TURN, 'impact');
+[S.repeat.t0, S.yours.t0, S.logo.t0].forEach(t => ev(t - 0.32, 'whoosh'));
+ev(S.logo.t0, 'chime');
+EV.sort((a, b) => a.t - b.t);
+
+window.DUR = DUR; window.EV = EV;
+window.TEXTS = t => {
+  const out = TEXT.filter(T => (T.single ? t >= T.t0 : t >= T.lines[0][2]) && t < T.out - 0.16).map(T => {
+    const r = (T.single || T.lines[0][0]).getBoundingClientRect(), r2 = T.single ? r : T.lines[1][0].getBoundingClientRect();
+    return { id: T.id, text: T.text, x0: Math.max(0, Math.min(r.left, r2.left)), y0: r.top, x1: Math.min(1920, Math.max(r.right, r2.right)), y1: r2.bottom };
+  });
+  if (label.style.display !== 'none') { const r = label.getBoundingClientRect(); out.push({ id: 'clock', text: label.textContent, x0: r.left, y0: r.top, x1: r.right, y1: r.bottom, pass: true }); }
+  return out;
+};
+window.render = async t => {
+  const c = cam(t);
+  drawBackground(t, c); plates(t, c); drawFx(t, c); drawType(t);
+  if (pending.length) await Promise.all(pending.splice(0));
+};
+window.READY = true;
+</script>
