@@ -1,0 +1,76 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Pinned Calendar link preview</title>
+<!--
+  The link-preview card for the website (Open Graph, 1200x630) and the GitHub repository
+  (social preview, 1280x640). Render with design/previews/render.sh; the size comes from the
+  viewport, and everything is laid out in units of the height so both sizes share one design.
+-->
+<style>
+  @font-face { font-family: "GSF"; src: url(../../app/src/main/res/font/google_sans_flex.ttf); font-weight: 1 1000; font-stretch: 25% 151%; }
+  html, body { margin: 0; overflow: hidden; background: #fff8f5; }
+  body { --u: calc(100vh / 630); font-family: "GSF"; font-variation-settings: "ROND" 100; color: #221a15; }
+  #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+  #cookie { position: absolute; }
+  .brand { position: absolute; left: calc(72 * var(--u)); top: calc(76 * var(--u)); display: flex; align-items: center; gap: calc(18 * var(--u)); }
+  .brand img { width: calc(68 * var(--u)); height: calc(68 * var(--u)); border-radius: calc(17 * var(--u)); }
+  .brand span { font-size: calc(36 * var(--u)); font-weight: 700; }
+  .h { position: absolute; left: calc(70 * var(--u)); font-weight: 800; letter-spacing: -0.02em; line-height: 1; white-space: nowrap; }
+  .h1 { top: calc(212 * var(--u)); font-size: calc(104 * var(--u)); }
+  .h2 { top: calc(322 * var(--u)); font-size: calc(104 * var(--u)); color: #c75f14; }
+  .foot { position: absolute; left: calc(74 * var(--u)); top: calc(486 * var(--u)); font-size: calc(26 * var(--u)); color: #52443b; white-space: nowrap; }
+  .holder { position: absolute; top: calc(112 * var(--u)); width: 780px; transform-origin: 50% 0; }
+  .card { width: 780px; background: #e9e9f1; border-radius: 42px; box-sizing: border-box; padding: 30px 38px 34px; color: #1d1b20;
+    filter: drop-shadow(0 30px 50px rgba(79, 37, 0, 0.22)); }
+  .ch { display: flex; align-items: center; gap: 16px; font-size: 25px; color: #45464f; }
+  .ch img { width: 46px; height: 46px; border-radius: 23px; }
+  .wk { margin-top: 16px; font-size: 31px; font-weight: 700; color: #4a5a92; }
+  .day { margin: 18px 0 6px; font-size: 22px; font-weight: 700; letter-spacing: .09em; color: #5c5b63; }
+  .row { height: 66px; display: flex; align-items: center; white-space: nowrap; }
+  .bar { width: 8px; height: 44px; border-radius: 4px; flex: none; }
+  .tm { width: 168px; margin-left: 24px; font-size: 28px; color: #5c5b63; flex: none; }
+  .tt { font-size: 33px; }
+  .more { display: inline-block; margin-top: 14px; padding: 10px 22px; border-radius: 999px; background: #dcdeea; color: #4a5a92; font-size: 24px; font-weight: 700; }
+  .pin { position: absolute; left: 50%; top: -22px; width: 52px; height: 52px; margin-left: -26px; border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, #f7c69a 0%, #e07f2c 48%, #94531d 100%);
+    box-shadow: 9px 14px 10px rgba(40, 20, 5, 0.25); }
+  .pin::after { content: ""; position: absolute; left: 10px; top: 9px; width: 13px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.75); transform: rotate(-35deg); }
+</style>
+<div id="stage">
+  <svg id="cookie"><path fill="#ffdcc5"/></svg>
+  <div class="brand"><img src="../assets/icon-512.png" alt=""><span>Pinned Calendar</span></div>
+  <div class="h h1">Your week,</div>
+  <div class="h h2">pinned.</div>
+  <div class="foot">Free on Google Play · No account · Open source</div>
+  <div class="holder">
+    <div class="card">
+      <div class="ch"><img src="../assets/icon-512.png" alt=""><span>Pinned Calendar · now</span></div>
+      <div class="wk">This week · 12</div>
+      <div class="day">TODAY · 25 WED</div>
+      <div class="row"><div class="bar" style="background:#00897B"></div><div class="tm">10:00 AM</div><div class="tt">Standup, cameras optional</div></div>
+      <div class="row"><div class="bar" style="background:#8D8D8D"></div><div class="tm">11:00 AM</div><div class="tt">Reply to that 2019 email</div></div>
+      <div class="row"><div class="bar" style="background:#00897B"></div><div class="tm">1:00 PM</div><div class="tt">Pitch the moonshot idea</div></div>
+      <div class="row"><div class="bar" style="background:#00897B"></div><div class="tm">4:30 PM</div><div class="tt">Dentist (pretend I floss)</div></div>
+      <div class="row"><div class="bar" style="background:#F9AB00"></div><div class="tm">6:00 PM</div><div class="tt">Water the plants, they noticed</div></div>
+      <div class="row"><div class="bar" style="background:#4285F4"></div><div class="tm">7:00 PM</div><div class="tt">Return the drill to Dana</div></div>
+      <div class="more">+6 more this week</div>
+    </div>
+    <div class="pin"></div>
+  </div>
+</div>
+<script>
+  // Lay out the right half in units of the height, so the 1200x630 and 1280x640 renders match.
+  const W = innerWidth, H = innerHeight, u = H / 630, cx = W - 340 * u;
+  const holder = document.querySelector('.holder');
+  holder.style.left = (cx - 390) + 'px';
+  holder.style.transform = `scale(${(0.6 * u).toFixed(4)}) rotate(-3deg)`;
+  // the scalloped "cookie" from the app's accent swatch, behind the card
+  const svg = document.getElementById('cookie'), r = 300 * u, cy = 300 * u;
+  Object.assign(svg.style, { left: '0px', top: '0px', width: W + 'px', height: H + 'px' });
+  let d = '';
+  for (let i = 0; i <= 240; i++) {
+    const a = i / 240 * Math.PI * 2, rr = r * (1 + 0.075 * Math.cos(12 * (a + 0.2)));
+    d += (i ? 'L' : 'M') + (cx + Math.cos(a) * rr).toFixed(1) + ' ' + (cy + Math.sin(a) * rr).toFixed(1);
+  }
+  svg.querySelector('path').setAttribute('d', d + 'Z');
+</script>
