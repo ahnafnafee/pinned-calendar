@@ -2,11 +2,9 @@
 
 <div align="center">
 
-<img src="design/assets/icon-rounded-512.png" height="120" alt="Pinned Calendar app icon" />
+<img src="design/assets/github-social-preview.png" width="100%" alt="Pinned Calendar: your week, pinned. The pinned agenda notification lists today's events and to-dos, with a pushpin on top." />
 
-# Pinned Calendar
-
-Your week's Google Calendar events and to-dos in a single persistent Android notification.<br/>
+Your week's calendar events and to-dos in one persistent Android notification.<br/>
 No sign-in, no cloud, no internet permission. Your schedule never leaves the phone.
 
 **[Website][website-link]** · **[Google Play][play-link]** · [Releases][releases-link] · [Privacy][privacy-link] · [Report an issue][issues-link]
@@ -27,16 +25,16 @@ No sign-in, no cloud, no internet permission. Your schedule never leaves the pho
 
 <table>
   <tr>
-    <td align="center"><b>Pinned agenda (light)</b></td>
-    <td align="center"><b>Pinned agenda (dark)</b></td>
-    <td align="center"><b>To-dos tab</b></td>
-    <td align="center"><b>Settings tab</b></td>
+    <td><img src="store/screenshots/screen_1_agenda_1080x1920.png" width="200" alt="Your week, pinned: the agenda in the notification shade" /></td>
+    <td><img src="store/screenshots/screen_2_reminders_1080x1920.png" width="200" alt="Mark it done or snooze it: a reminder with Mark done and Snooze 30 min actions" /></td>
+    <td><img src="store/screenshots/screen_3_week_1080x1920.png" width="200" alt="Plans and to-dos at one glance: the week overview card" /></td>
+    <td><img src="store/screenshots/screen_4_repeat_1080x1920.png" width="200" alt="Set it once, it repeats: the recurrence options" /></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/notification-light.png" width="200" alt="Persistent calendar notification showing the week's agenda in light mode" /></td>
-    <td><img src="docs/screenshots/notification-dark.png" width="200" alt="Persistent calendar notification showing the week's agenda in dark mode" /></td>
-    <td><img src="docs/screenshots/todos.png" width="200" alt="To-dos tab with the week overview card and task list" /></td>
-    <td><img src="docs/screenshots/settings.png" width="200" alt="Settings tab with Material You cards for notifications, time window, and calendars" /></td>
+    <td><img src="store/screenshots/screen_5_layout_1080x1920.png" width="200" alt="Pin it your way: the notification layout preview" /></td>
+    <td><img src="store/screenshots/screen_6_appearance_1080x1920.png" width="200" alt="Make it yours: accent colors and palettes" /></td>
+    <td><img src="store/screenshots/screen_7_privacy_1080x1920.png" width="200" alt="Private by design: no account, no ads, no tracking, works offline, open source, free" /></td>
+    <td align="center"><b><a href="#launch-film">Watch the<br/>launch film</a></b></td>
   </tr>
 </table>
 
@@ -48,51 +46,50 @@ No sign-in, no cloud, no internet permission. Your schedule never leaves the pho
 <details>
 <summary><kbd>Table of contents</kbd></summary>
 
-#### TOC
-
-- [✨ Features](#-features)
-- [📦 Installation](#-installation)
-- [🧭 Configuration](#-configuration)
-- [🏗️ How it works](#%EF%B8%8F-how-it-works)
-- [🔒 Privacy and permissions](#-privacy-and-permissions)
-- [🧰 Tech stack](#-tech-stack)
-- [⌨️ Building from source](#%EF%B8%8F-building-from-source)
-- [🗺️ Roadmap](#%EF%B8%8F-roadmap)
-- [🤝 Contributing](#-contributing)
-- [📝 License](#-license)
-- [🙏 Acknowledgements](#-acknowledgements)
+- [Features](#features)
+- [Launch film](#launch-film)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [How it works](#how-it-works)
+- [Privacy and permissions](#privacy-and-permissions)
+- [Tech stack](#tech-stack)
+- [Building from source](#building-from-source)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 </details>
 
-## ✨ Features
+## Features
 
-### `1` Always-on agenda pin
+### An agenda that stays pinned
 
-An ongoing notification keeps this week's events and to-dos at the top of the shade, and it is self-healing: swipe it away by accident and it re-posts itself. Set its priority to Top, Normal, or Silent. Top keeps it above your everyday notifications without ever popping up or making a sound, and an optional swipe-twice gesture dismisses it for good without opening settings. The pin restores itself after reboots and app updates.
+An ongoing notification keeps this week's events and to-dos at the top of the shade. It heals itself: swipe it away by accident and it posts again, and it comes back after reboots and app updates. Set its priority to Top, Normal or Silent. Top keeps it above your everyday notifications without popping up or making a sound, and an optional swipe-twice gesture dismisses it for good. At local midnight the pin refreshes on its own, so Today and Tomorrow are right when you wake up, even after Doze has held back background work all night.
 
-### `2` Rich to-dos
+### To-dos that remind and repeat
 
-Add quick tasks in the app and they merge into the same agenda, carrying forward day to day until completed or deleted. Tap a to-do to edit it: rename, schedule with quick chips (today, tomorrow, next week) or any date and time, set a priority flag whose color rides into the pin, and attach notes. Recurrence includes daily, weekly, monthly, and yearly presets plus custom intervals, selectable weekdays, and endings by date or occurrence count. Completing a recurring to-do advances it to the first upcoming occurrence, skipping missed dates while preserving month-end, leap-year, and local-time intent. The list groups into Overdue, Today, Upcoming, and Completed. Reminders are enabled by default and send an alerting, swipeable notification whenever a scheduled occurrence comes due, leaving the pin untouched. Each reminder can mark the occurrence done or snooze it for 30 minutes. Android can show it as a heads-up alert when system notification settings allow.
+Quick tasks you add in the app merge into the same agenda and carry forward day to day until you complete or delete them. Tap a to-do to rename it, schedule it with quick chips (today, tomorrow, next week) or any date and time, give it a priority flag whose color rides into the pin, and attach notes. Repeat it daily, weekly, monthly or yearly, or build your own rule with intervals, weekdays and an ending by date or count. Checking off a recurring to-do moves it to its next date and keeps month ends, leap years and local time intact. Reminders are on by default: each one alerts when an occurrence comes due, without touching the pin, and offers **Mark done** and **Snooze 30 min** right in the notification.
 
-### `3` The pin, your way
+### The pin, your way
 
-A live preview in settings renders the actual notification (collapsed or expanded) as you tune it: density presets (Compact, Cozy, Comfortable, or Custom sliders), how many rows show before expanding, day grouping with Today, Tomorrow, and weekday sections, and heading toggles. Tap an event row to open it in Google Calendar; tap anywhere else on the pin to jump into the app.
+A live preview in Settings renders the real notification, collapsed or expanded, while you tune it: density presets (Compact, Cozy, Comfortable or Custom sliders), how many rows show before it expands, day grouping with Today, Tomorrow and weekday sections, and the heading toggles. Tap an event row to open it in Google Calendar, or tap anywhere else on the pin to open the app.
 
-### `4` Material You theming
+### Material You theming
 
-Wallpaper-based dynamic color, seed colors, palette styles, AMOLED black, selectable fonts, and light, dark, or system themes, plus a theme- and accent-adaptive launcher icon.
+Wallpaper-based dynamic color, six accent seeds, four palette styles, AMOLED black, five fonts, and light, dark or system themes, plus a launcher icon that adapts to the theme and accent.
 
-### `5` 15 languages
+### 15 languages
 
-The complete app and reminder experience is localized in English, Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Spanish, Turkish, and Vietnamese. Arabic includes right-to-left layout support, and Android 13+ exposes these choices in the system app-language picker.
+The whole app, reminders included, is translated into English, Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Portuguese, Spanish, Turkish and Vietnamese. Arabic gets a right-to-left layout, and Android 13 and later list these languages in the system app-language picker.
 
-### `6` Private by design
+### Private by design
 
-No accounts, no ads, no trackers, no cloud, and no `INTERNET` permission. The app reads your device calendars with per-calendar colors and sends nothing anywhere.
+No accounts, no ads, no trackers, no cloud and no `INTERNET` permission. The app reads your device calendars, keeps each calendar's color, and sends nothing anywhere.
 
-### `7` Light on battery
+### Light on battery
 
-No foreground service. Background refresh runs on WorkManager with a ContentObserver for instant updates when a calendar changes, plus an optional battery-optimization exemption for aggressive OEMs.
+There is no foreground service. Background refresh runs on WorkManager, a ContentObserver updates the pin as soon as a calendar changes, and one alarm at local midnight rolls the day over. An optional battery-optimization exemption helps on aggressive OEMs.
 
 <div align="right">
 
@@ -100,16 +97,32 @@ No foreground service. Background refresh runs on WorkManager with a ContentObse
 
 </div>
 
-## 📦 Installation
+## Launch film
+
+<div align="center">
+
+<img src="docs/media/launch-film-midnight.gif" width="720" alt="At 11:59 PM the pinned card turns its page by itself, and Thursday's agenda appears: Midnight? Already tomorrow." />
+
+</div>
+
+A 36-second film follows one day on the pinned card, from the first swipe at 9:30 AM to the page turning at midnight. The clip above is the midnight turn. The film's source, its treatment and a one-command build are in [`film/`](film/): run `sh film/build.sh` to render `pinned-calendar-launch.mp4` (1920x1080, 60 fps). The picture is made in code from real app captures, and the score is synthesized.
+
+<div align="right">
+
+[![][back-to-top]](#readme-top)
+
+</div>
+
+## Installation
 
 The easiest way is Google Play:
 
 <a href="https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="64" alt="Get it on Google Play" /></a>
 
-Prefer sideloading? Grab the signed APK from the [latest release][releases-link] and install it (you may need to allow installs from unknown sources).
+Prefer sideloading? Get the signed APK from the [latest release][releases-link] and install it. You may need to allow installs from unknown sources.
 
 > \[!TIP]
-> On first launch, grant Calendar and Notification access, then turn on "Pin to notifications". On aggressive OEMs, also enable "Ignore battery optimizations" under Reliability so the pin keeps updating.
+> On first launch, grant Calendar and Notification access, then turn on "Pin to notifications". On aggressive OEMs, also allow "Ignore battery optimizations" under Reliability, and allow "Alarms and reminders" in the app's system settings so reminders and the midnight refresh fire on time.
 
 <div align="right">
 
@@ -117,25 +130,25 @@ Prefer sideloading? Grab the signed APK from the [latest release][releases-link]
 
 </div>
 
-## 🧭 Configuration
+## Configuration
 
-The app is split into two tabs.
+The app has two tabs.
 
 **To-dos**, the week at a glance:
 
-- Week overview card: how many items are pinned, day by day.
-- Add, complete, and delete local to-dos that merge into the pinned agenda.
-- Tap a to-do to edit it: rename, schedule (today · tomorrow · next week · any date and time), choose preset or custom recurrence rules, set a priority flag that colors its bar in the pin, and attach notes.
+- The week overview card: how many items are pinned, day by day.
+- Add, complete and delete local to-dos that merge into the pinned agenda.
+- Tap a to-do to edit it: rename it, schedule it (today · tomorrow · next week · any date and time), choose a preset or custom recurrence, set a priority flag that colors its bar in the pin, and attach notes.
 
-**Settings**, everything else, Material You styled:
+**Settings**, everything else:
 
-- Notifications: pin on/off, priority (Top · Normal · Silent), optional swipe-twice-to-remove, and default-on to-do reminders with done and 30-minute snooze actions.
+- Notifications: pin on or off, priority (Top · Normal · Silent), optional swipe-twice-to-remove, and to-do reminders with Mark done and 30-minute snooze actions.
 - Notification layout: a live preview of the pin, density presets (Compact · Cozy · Comfortable · Custom), rows shown before expanding, and the heading toggles.
 - Time window: 3 days · this week · 7 days · 14 days.
-- Calendars: toggle each synced calendar on or off.
-- Display: group by day, hide completed to-dos, 24-hour time, and a max-items cap.
-- Appearance: theme, Material You, AMOLED, accent seed, palette style, and font.
-- Reliability: battery-optimization exemption.
+- Calendars: turn each synced calendar on or off.
+- Display: group by day, hide completed to-dos, 24-hour time and a maximum number of items.
+- Appearance: theme, Material You, AMOLED black, accent seed, palette style and font.
+- Reliability: the battery-optimization exemption.
 
 <div align="right">
 
@@ -143,17 +156,17 @@ The app is split into two tabs.
 
 </div>
 
-## 🏗️ How it works
+## How it works
 
 ```
 Device Calendar Provider ─┐
                           ├─► AgendaRepository ─► NotificationContentBuilder ─► ongoing notification
 Local to-dos (DataStore) ─┘            ▲                                              │ deleteIntent
                                        │                                              ▼
-              WorkManager (15-min refresh) + ContentObserver        SelfHealReceiver re-posts on swipe
+   WorkManager refresh + ContentObserver + midnight alarm          SelfHealReceiver posts it again
 ```
 
-A pure-Kotlin core (windowing, day-bucketing, content building) is unit-tested and decoupled from Android, and the platform layer (RemoteViews, WorkManager, receivers) consumes it. There is no foreground service: the notification persists on its own, and a delete-intent receiver makes it self-healing.
+A pure-Kotlin core (windowing, day bucketing, content building) is unit-tested and independent of Android, and the platform layer (RemoteViews, WorkManager, alarms, receivers) consumes it. There is no foreground service: the notification persists on its own, and a delete-intent receiver makes it heal itself. Every refresh also sets one allow-while-idle alarm for the next local midnight, and that alarm refreshes the pin directly, so the day rolls over even when the system defers background jobs. Changes to the clock or time zone refresh it too.
 
 <div align="right">
 
@@ -161,19 +174,19 @@ A pure-Kotlin core (windowing, day-bucketing, content building) is unit-tested a
 
 </div>
 
-## 🔒 Privacy and permissions
+## Privacy and permissions
 
-Pinned Calendar is offline-first. It has no `INTERNET` permission and sends nothing off the device.
+Pinned Calendar works offline. It has no `INTERNET` permission and sends nothing off the device.
 
 | Permission | Why it's needed |
 |---|---|
 | `READ_CALENDAR` | Read the events already synced on your device. |
 | `POST_NOTIFICATIONS` | Show the pinned agenda (Android 13+). |
-| `RECEIVE_BOOT_COMPLETED` | Re-pin the agenda after a reboot. |
-| `SCHEDULE_EXACT_ALARM` | Fire enabled to-do reminders on time; falls back to inexact when denied. |
+| `RECEIVE_BOOT_COMPLETED` | Pin the agenda again after a reboot. |
+| `SCHEDULE_EXACT_ALARM` | Fire to-do reminders and the midnight refresh on time; both fall back to inexact alarms when it is denied. |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Optional: keep background refresh reliable on aggressive devices. |
 
-No accounts, ads, trackers, or cloud. Full policy: [pinnedcalendar.ahnafnafee.dev/privacy][privacy-link].
+No accounts, ads, trackers or cloud. The full policy is at [pinnedcalendar.ahnafnafee.dev/privacy][privacy-link].
 
 <div align="right">
 
@@ -181,14 +194,14 @@ No accounts, ads, trackers, or cloud. Full policy: [pinnedcalendar.ahnafnafee.de
 
 </div>
 
-## 🧰 Tech stack
+## Tech stack
 
 | Area | Technology |
 |---|---|
 | Language | Kotlin 2.2 |
 | UI | Jetpack Compose · Material 3 |
 | Dynamic color | [MaterialKolor](https://github.com/jordond/MaterialKolor) · Material You |
-| Background work | WorkManager · `ContentObserver` · `AlarmManager` (reminders) |
+| Background work | WorkManager · `ContentObserver` · `AlarmManager` (reminders and the midnight refresh) |
 | Storage | DataStore (Preferences) |
 | Calendar | `CalendarContract` (Calendar Provider) |
 | Notification | `NotificationCompat` · custom `RemoteViews` |
@@ -200,19 +213,19 @@ No accounts, ads, trackers, or cloud. Full policy: [pinnedcalendar.ahnafnafee.de
 
 </div>
 
-## ⌨️ Building from source
+## Building from source
 
-Prerequisites: Android Studio (latest), JDK 17+, and Android SDK Platform 36.
+Prerequisites: Android Studio (latest), JDK 17+ and Android SDK Platform 36.
 
 ```bash
 git clone https://github.com/ahnafnafee/pinned-calendar.git
 cd pinned-calendar
 ./gradlew :app:assembleDebug          # build a debug APK
-./gradlew :app:installDebug           # install on a connected device/emulator
+./gradlew :app:installDebug           # install on a connected device or emulator
 ./gradlew :app:testDebugUnitTest      # run the unit tests
 ```
 
-Or open the project in Android Studio and run it.
+Or open the project in Android Studio and run it. The marketing assets build from source too: `store/` holds the Play listing, `design/previews/` the link previews, `web/` the website and `film/` the launch film.
 
 <div align="right">
 
@@ -220,14 +233,15 @@ Or open the project in Android Studio and run it.
 
 </div>
 
-## 🗺️ Roadmap
+## Roadmap
 
-- [ ] Full color-picker for custom seed colors
+- [ ] Full color picker for custom seed colors
 - [ ] Home-screen widget companion
 - [x] Per-to-do due-date picker
-- [x] To-do priorities, notes, and due-time reminders
+- [x] To-do priorities, notes and due-time reminders
 - [ ] Google Tasks integration (opt-in)
-- [x] Recurring-task support
+- [x] Recurring to-dos
+- [x] Refresh at midnight, even under Doze
 - [ ] Wear OS tile
 
 Have an idea? [Open an issue][issues-link].
@@ -238,9 +252,9 @@ Have an idea? [Open an issue][issues-link].
 
 </div>
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome. Fork the repo, create a feature branch, run `./gradlew :app:testDebugUnitTest`, and open a pull request. For larger changes, open an issue first to discuss the approach.
+Contributions are welcome. Fork the repo, create a feature branch, run `./gradlew :app:testDebugUnitTest` and open a pull request. For larger changes, open an issue first to discuss the approach.
 
 <div align="right">
 
@@ -248,14 +262,15 @@ Contributions are welcome. Fork the repo, create a feature branch, run `./gradle
 
 </div>
 
-## 📝 License
+## License
 
 Released under the MIT License. See [`LICENSE`](LICENSE).
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 - [MaterialKolor](https://github.com/jordond/MaterialKolor) for seed-based Material You theming.
 - The bundled fonts (Figtree, Outfit, Inter, Google Sans Flex) and the Material 3 design system.
+- [Lemo-Opuscar](https://github.com/lemomo-ai/lemo-opuscar) for the render and mixing tools behind the launch film (MIT).
 - Google Play and the Google Play logo are trademarks of Google LLC.
 
 <div align="right">
