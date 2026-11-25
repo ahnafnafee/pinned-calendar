@@ -12,4 +12,4 @@ Rules:
 - Add the file for a version **before** dispatching its Play release — the workflow
   preflight fails fast if any locale is missing or exceeds the limit.
 
-Latest: [`distribution/whatsnew/3.3.0/`](../distribution/whatsnew/3.3.0/).
+Latest: [`distribution/whatsnew/3.3.1/`](../distribution/whatsnew/3.3.1/).

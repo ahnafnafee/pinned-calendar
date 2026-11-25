@@ -11,6 +11,7 @@ import dev.ahnafnafee.pinnedcalendar.domain.NotificationContentBuilder
 import dev.ahnafnafee.pinnedcalendar.R
 import dev.ahnafnafee.pinnedcalendar.localization.LocalePatterns
 import java.time.Clock
+import java.time.ZonedDateTime
 
 /** Reads current settings, builds the agenda, and posts (or cancels) the pinned notification. */
 class AgendaNotifier(
@@ -49,6 +50,7 @@ class AgendaNotifier(
             timeColumnWidthDp = s.notificationTimeColumnWidthDp,
             useContentPadding = s.notificationContentPadding,
         )
+        DayRolloverReceiver.sync(context, enabled = s.pinEnabled, now = ZonedDateTime.now(clock))
 
         // Every refresh re-arms (or cancels) the single due-time reminder alarm, so boots,
         // edits, and completions all keep it pointed at the next upcoming to-do.
