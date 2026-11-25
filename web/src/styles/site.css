@@ -117,11 +117,6 @@ h1, h2, h3 { margin: 0; font-weight: 700; }
   display: inline-block; font-size: 15px; font-weight: 600; letter-spacing: 0.1px;
   color: var(--primary);
 }
-.chip {
-  display: inline-flex; align-items: center; min-height: 32px; padding: 0 16px;
-  border-radius: 999px; background: var(--secondary-container); color: var(--on-secondary-container);
-  font-size: 14px; font-weight: 600;
-}
 .accent { color: var(--primary); }
 
 /* buttons: pills with a state layer; shape tightens on press */
@@ -160,9 +155,9 @@ h1, h2, h3 { margin: 0; font-weight: 700; }
 @media (max-width: 640px) { .nav-links a:not(.btn) { display: none; } }
 
 /* hero */
-.hero { text-align: center; padding: clamp(40px, 7vw, 80px) 0 clamp(8px, 2vw, 24px); }
+.hero { text-align: center; padding: clamp(56px, 9vw, 112px) 0 clamp(8px, 2vw, 24px); }
 .hero h1 {
-  margin: 24px 0 0; font-size: clamp(40px, 11vw, 104px); line-height: 0.98;
+  margin: 0; font-size: clamp(40px, 11vw, 104px); line-height: 0.98;
   letter-spacing: -0.045em; font-weight: 650; text-wrap: balance;
 }
 .br-lg { display: none; }
