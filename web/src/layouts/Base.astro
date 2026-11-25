@@ -56,7 +56,13 @@ const jsonLd = {
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -76,6 +82,34 @@ const jsonLd = {
           });
         }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
         els.forEach(function (el) { io.observe(el); });
+      })();
+    </script>
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var metas = document.querySelectorAll('meta[name="theme-color"]');
+        var original = Array.prototype.map.call(metas, function (m) { return m.content; });
+        // A forced theme overrides the media-keyed tags; read the live page color so no hex is repeated here.
+        function syncMeta() {
+          var forced = root.getAttribute('data-theme');
+          var color = forced ? getComputedStyle(document.body).backgroundColor : null;
+          Array.prototype.forEach.call(metas, function (m, i) { m.content = color || original[i]; });
+        }
+        var current = root.getAttribute('data-theme') || 'system';
+        document.querySelectorAll('input[name="theme"]').forEach(function (input) {
+          input.checked = input.value === current;
+          input.addEventListener('change', function () {
+            try {
+              if (input.value === 'system') { root.removeAttribute('data-theme'); localStorage.removeItem('theme'); }
+              else { root.setAttribute('data-theme', input.value); localStorage.setItem('theme', input.value); }
+            } catch (e) {
+              if (input.value === 'system') root.removeAttribute('data-theme');
+              else root.setAttribute('data-theme', input.value);
+            }
+            syncMeta();
+          });
+        });
+        syncMeta();
       })();
     </script>
   </body>

@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import ThemeSwitch from '../components/ThemeSwitch.astro';
 import { APP_NAME, GITHUB, RELEASES, PLAY_URL, PLAY_AVAILABLE, CONTACT_URL } from '../config.mjs';
 
 const playHref = PLAY_AVAILABLE ? PLAY_URL : RELEASES;
@@ -39,7 +40,8 @@ const cookie = (() => {
       <div class="nav-links">
         <a href="#features">Features</a>
         <a href="#privacy">Privacy</a>
-        <a class="btn btn--filled btn--sm" href="#get">Get the app</a>
+        <ThemeSwitch />
+        <a class="btn btn--filled btn--sm nav-cta" href="#get">Get the app</a>
       </div>
     </div>
   </nav>

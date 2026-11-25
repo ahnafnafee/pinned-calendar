@@ -1,5 +1,6 @@
 ---
 import Base from './Base.astro';
+import ThemeSwitch from '../components/ThemeSwitch.astro';
 const { title, kicker, updated, path, other } = Astro.props;
 ---
 <Base title={title} path={path}>
@@ -9,7 +10,10 @@ const { title, kicker, updated, path, other } = Astro.props;
         <span class="ic"><img src="/app-icon.png" alt="" width="36" height="36" /></span>
         <span class="name">Pinned Calendar</span>
       </a>
-      <a class="btn btn--tonal btn--sm" href="/"><span aria-hidden="true">←</span> Back to site</a>
+      <div class="nav-links">
+        <ThemeSwitch />
+        <a class="btn btn--tonal btn--sm" href="/"><span aria-hidden="true">←</span> Back to site</a>
+      </div>
     </div>
   </nav>
 

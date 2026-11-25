@@ -3,32 +3,32 @@
    Google Sans Flex, pill controls, squircle cards. The palette is the app's
    own tonal-spot scheme; rules below use the role tokens only. */
 
-/* Dark is the default because it is how the app is presented in the store. */
 :root {
-  color-scheme: dark;
-
-  --background: #19120d;
-  --surface-container-lowest: #140d08;
-  --surface-container-low: #221a15;
-  --surface-container: #261e18;
-  --surface-container-high: #312822;
-  --surface-container-highest: #3c332d;
-  --surface-bright: #413731;
-  --on-surface: #f0dfd6;
-  --on-surface-variant: #d6c3b7;
-  --outline: #9f8d83;
-  --outline-variant: #52443b;
-  --primary: #ffb783;
-  --on-primary: #4f2500;
-  --primary-container: #6d390b;
-  --on-primary-container: #ffdcc5;
-  --secondary: #e4bfa7;
-  --secondary-container: #5b412f;
-  --on-secondary-container: #ffdcc5;
-  --tertiary: #c7ca94;
-  --tertiary-container: #464920;
-  --on-tertiary-container: #e4e6ae;
-  --error: #ffb4ab;
+  /* Each role is authored once as light-dark(light, dark). The scheme is chosen
+     by color-scheme below: dark by default, light when the device asks for it,
+     and either one when the visitor forces it through the theme switch. */
+  --background: light-dark(#fff8f5, #19120d);
+  --surface-container-lowest: light-dark(#ffffff, #140d08);
+  --surface-container-low: light-dark(#fff1e9, #221a15);
+  --surface-container: light-dark(#fbebe1, #261e18);
+  --surface-container-high: light-dark(#f6e5dc, #312822);
+  --surface-container-highest: light-dark(#f0dfd6, #3c332d);
+  --surface-bright: light-dark(#fff8f5, #413731);
+  --on-surface: light-dark(#221a15, #f0dfd6);
+  --on-surface-variant: light-dark(#52443b, #d6c3b7);
+  --outline: light-dark(#84746a, #9f8d83);
+  --outline-variant: light-dark(#d6c3b7, #52443b);
+  --primary: light-dark(#8a5021, #ffb783);
+  --on-primary: light-dark(#ffffff, #4f2500);
+  --primary-container: light-dark(#ffdcc5, #6d390b);
+  --on-primary-container: light-dark(#6d390b, #ffdcc5);
+  --secondary: light-dark(#755945, #e4bfa7);
+  --secondary-container: light-dark(#ffdcc5, #5b412f);
+  --on-secondary-container: light-dark(#5b412f, #ffdcc5);
+  --tertiary: light-dark(#5e6135, #c7ca94);
+  --tertiary-container: light-dark(#e4e6ae, #464920);
+  --on-tertiary-container: light-dark(#464920, #e4e6ae);
+  --error: light-dark(#ba1a1a, #ffb4ab);
 
   --font: 'Google Sans Flex', 'Google Sans', 'Segoe UI', system-ui, sans-serif;
 
@@ -42,35 +42,11 @@
   --r-card-sm: 28px;
 }
 
-/* Light follows the device, like the app's System theme. */
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-
-    --background: #fff8f5;
-    --surface-container-lowest: #ffffff;
-    --surface-container-low: #fff1e9;
-    --surface-container: #fbebe1;
-    --surface-container-high: #f6e5dc;
-    --surface-container-highest: #f0dfd6;
-    --surface-bright: #fff8f5;
-    --on-surface: #221a15;
-    --on-surface-variant: #52443b;
-    --outline: #84746a;
-    --outline-variant: #d6c3b7;
-    --primary: #8a5021;
-    --on-primary: #ffffff;
-    --primary-container: #ffdcc5;
-    --on-primary-container: #6d390b;
-    --secondary: #755945;
-    --secondary-container: #ffdcc5;
-    --on-secondary-container: #5b412f;
-    --tertiary: #5e6135;
-    --tertiary-container: #e4e6ae;
-    --on-tertiary-container: #464920;
-    --error: #ba1a1a;
-  }
-}
+/* Dark is the default because it is how the app is presented in the store. */
+:root { color-scheme: dark; }
+@media (prefers-color-scheme: light) { :root { color-scheme: light; } }
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; }
@@ -323,3 +299,31 @@ html.js [data-reveal].in { opacity: 1; transform: none; }
 /* Keep the nav on one line down to the narrowest phones. */
 .brand .name, .btn--sm { white-space: nowrap; }
 @media (max-width: 380px) { .brand .name { font-size: 16px; } .btn--sm { padding: 0 16px; } .brand { gap: 10px; } }
+
+/* theme switch: three segmented pills, selected one in primary like the app's Appearance setting */
+.theme-switch { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: var(--surface-container-high); }
+.theme-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; margin: 0; }
+.theme-switch label {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-width: 36px; height: 36px; padding: 0 9px; border-radius: 999px; cursor: pointer;
+  color: var(--on-surface-variant); font-size: 14px; font-weight: 600; line-height: 1;
+  transition: background-color 0.2s var(--ease-emph), color 0.2s var(--ease-emph);
+}
+.theme-switch label:hover { color: var(--on-surface); }
+.theme-switch input:checked + label { background: var(--primary); color: var(--on-primary); }
+.theme-switch input:focus-visible + label { outline: 3px solid var(--primary); outline-offset: 2px; }
+/* Icons on narrow screens, words on wide ones. The words stay readable to assistive tech either way. */
+.theme-switch .tl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (min-width: 760px) {
+  .theme-switch label { padding: 0 16px; }
+  .theme-switch svg { display: none; }
+  .theme-switch .tl { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
+}
+/* Without JS the switch cannot do anything, and System already follows the device. */
+html:not(.js) .theme-switch { display: none; }
+.nav-links .theme-switch { margin-right: 8px; }
+@media (max-width: 520px) {
+  .nav-cta { display: none; }
+  .legal-nav .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .nav-links .theme-switch { margin-right: 0; }
+}
