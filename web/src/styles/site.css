@@ -327,3 +327,13 @@ html:not(.js) .theme-switch { display: none; }
   .legal-nav .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .nav-links .theme-switch { margin-right: 0; }
 }
+
+/* Screenshots follow the effective theme, including a forced choice. The hidden
+   variant is display:none, so a lazy image for the other scheme is never fetched. */
+.shot-light { display: none; }
+:root[data-theme="light"] .shot-dark { display: none; }
+:root[data-theme="light"] .shot-light { display: block; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .shot-dark { display: none; }
+  :root:not([data-theme="dark"]) .shot-light { display: block; }
+}

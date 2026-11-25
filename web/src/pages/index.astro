@@ -6,7 +6,7 @@ import { APP_NAME, GITHUB, RELEASES, PLAY_URL, PLAY_AVAILABLE, CONTACT_URL } fro
 const playHref = PLAY_AVAILABLE ? PLAY_URL : RELEASES;
 const reps = Array.from({ length: 6 });
 const shots = [
-  { file: 'notification-dark.webp', alt: 'The pinned agenda in the notification shade, with this week grouped by day' },
+  { file: 'notification.webp', alt: 'The pinned agenda in the notification shade, with this week grouped by day' },
   { file: '1.webp', alt: 'A to-do reminder in the shade with Mark done and Snooze actions' },
   { file: '2.webp', alt: 'The to-do list grouped into today, upcoming and completed' },
   { file: '3.webp', alt: 'The to-do sheet with schedule, repeat and priority options' },
@@ -157,7 +157,12 @@ const cookie = (() => {
     </div>
     <div class="wrap showcase-band"><div class="marquee-mask">
       <div class="marquee">
-        {reps.map(() => shots.map((s) => <img src={`/shots/${s.file}`} width="224" height="500" loading="lazy" alt={s.alt} />))}
+        {reps.map(() => shots.map((s) => (
+          <>
+            <img class="shot-dark" src={`/shots/${s.file}`} width="224" height="500" loading="lazy" alt={s.alt} />
+            <img class="shot-light" src={`/shots/${s.file.replace('.webp', '-light.webp')}`} width="224" height="500" loading="lazy" alt={s.alt} />
+          </>
+        )))}
       </div>
     </div></div>
   </section>
