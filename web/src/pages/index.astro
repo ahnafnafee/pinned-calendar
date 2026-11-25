@@ -4,7 +4,14 @@ import { APP_NAME, GITHUB, RELEASES, PLAY_URL, PLAY_AVAILABLE, CONTACT_URL } fro
 
 const playHref = PLAY_AVAILABLE ? PLAY_URL : RELEASES;
 const reps = Array.from({ length: 6 });
-const shots = ['1.png', '2.png', '3.png', 'notification-dark.png'];
+const shots = [
+  { file: 'notification-dark.webp', alt: 'The pinned agenda in the notification shade, with this week grouped by day' },
+  { file: '1.webp', alt: 'A to-do reminder in the shade with Mark done and Snooze actions' },
+  { file: '2.webp', alt: 'The to-do list grouped into today, upcoming and completed' },
+  { file: '3.webp', alt: 'The to-do sheet with schedule, repeat and priority options' },
+  { file: 'settings-layout.webp', alt: 'Settings with a live preview of the notification layout' },
+  { file: 'appearance.webp', alt: 'Appearance settings with Material You, accent colors and palettes' },
+];
 
 // The store mark takes the button's own text color so it keeps contrast in both schemes.
 const PlaySvg = `<svg width="24" height="26" viewBox="0 0 24 26" fill="currentColor" aria-hidden="true"><path d="M2 2.2C1.6 2.5 1.4 3 1.4 3.7v18.6c0 .7.2 1.2.6 1.5l10.3-10.4L2 2.2z"/><path d="M16.4 9.1 12.3 13.4l4.1 4.3 4.6-2.6c1-.6 1-2 0-2.6l-4.6-3.4z" opacity=".75"/><path d="M2 2.2 12.3 13.4 16.4 9.1 4.4.9C3.6.4 2.7.7 2 2.2z" opacity=".9"/><path d="M12.3 13.4 2 23.8c.7 1.4 1.6 1.7 2.4 1.2l12-7z" opacity=".6"/></svg>`;
@@ -44,7 +51,7 @@ const cookie = (() => {
   <!-- HERO -->
   <section class="hero wrap-tight" aria-labelledby="hero-title">
     <div class="rise d1"><span class="chip">Agenda, always on</span></div>
-    <h1 id="hero-title" class="rise d2">Your whole week,<br /><span class="accent">pinned</span> where you'll<br />actually see it.</h1>
+    <h1 id="hero-title" class="rise d2">Your whole week, <br class="br-lg" /><span class="accent">pinned</span> where you'll <br class="br-lg" />actually see it.</h1>
     <p class="lead rise d3">This week's events and to-dos, kept right in your notification shade. One swipe down and it's there. No app to open, nothing in the cloud.</p>
     <div id="get" class="actions rise d4">
       <a class="btn btn--filled btn--store" href={playHref} target="_blank" rel="noopener">
@@ -75,16 +82,18 @@ const cookie = (() => {
                   <span class="notif-app"><img src="/app-icon.png" alt="" width="36" height="36" /></span>
                   <div style="flex:1; min-width:0;">
                     <div class="notif-title">Pinned Calendar</div>
-                    <div class="notif-sub">This week · 10</div>
+                    <div class="notif-sub">This week · 12</div>
                   </div>
                   <svg class="notif-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 15l6-6 6 6"/></svg>
                 </div>
-                <div class="notif-day">TODAY · THU 11</div>
+                <div class="notif-day">TODAY · WED 25</div>
                 <div class="notif-rows">
-                  <div class="notif-row" style="animation-delay:1.5s;"><span class="bar bar--low"></span><span class="t">8:10</span><span class="ev">Water the plants</span></div>
-                  <div class="notif-row" style="animation-delay:1.62s;"><span class="bar bar--mid"></span><span class="t">9:30</span><span class="ev">Project sync</span></div>
-                  <div class="notif-row" style="animation-delay:1.74s;"><span class="bar bar--mid"></span><span class="t">13:00</span><span class="ev">Design review</span></div>
-                  <div class="notif-row" style="animation-delay:1.86s;"><span class="bar bar--ok"></span><span class="t">18:00</span><span class="ev">Throw recycling</span></div>
+                  <div class="notif-row" style="animation-delay:1.50s;"><span class="bar bar--teal"></span><span class="t">10:00 AM</span><span class="ev">Standup, cameras optional</span></div>
+                  <div class="notif-row" style="animation-delay:1.62s;"><span class="bar bar--gray"></span><span class="t">11:00 AM</span><span class="ev">Reply to that 2019 email</span></div>
+                  <div class="notif-row" style="animation-delay:1.74s;"><span class="bar bar--teal"></span><span class="t">1:00 PM</span><span class="ev">Pitch the moonshot idea</span></div>
+                  <div class="notif-row" style="animation-delay:1.86s;"><span class="bar bar--teal"></span><span class="t">4:30 PM</span><span class="ev">Dentist (pretend I floss)</span></div>
+                  <div class="notif-row" style="animation-delay:1.98s;"><span class="bar bar--amber"></span><span class="t">6:00 PM</span><span class="ev">Water the plants, they noticed</span></div>
+                  <div class="notif-row" style="animation-delay:2.10s;"><span class="bar bar--blue"></span><span class="t">7:00 PM</span><span class="ev">Return the drill to Dana</span></div>
                 </div>
                 <div class="notif-more">+6 more this week</div>
               </div>
@@ -147,7 +156,7 @@ const cookie = (() => {
     </div>
     <div class="wrap showcase-band"><div class="marquee-mask">
       <div class="marquee">
-        {reps.map(() => shots.map((s) => <img src={`/shots/${s}`} width="224" height="498" loading="lazy" alt="Pinned Calendar screenshot" />))}
+        {reps.map(() => shots.map((s) => <img src={`/shots/${s.file}`} width="224" height="500" loading="lazy" alt={s.alt} />))}
       </div>
     </div></div>
   </section>
