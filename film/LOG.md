@@ -38,6 +38,14 @@ about 25 seconds.
 - Loudness: -14.0 LUFS, peak -1.4 dBFS.
 - `blackdetect`: no black frames.
 
+## The README clip
+
+`docs/media/launch-film-midnight.gif` is the midnight turn, cut from the release cut:
+
+```sh
+ffmpeg -ss 22.3 -t 7.25 -i film/pinned-calendar-launch.mp4 -vf "fps=12,scale=720:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=192:stats_mode=full[p];[b][p]paletteuse=dither=bayer:bayer_scale=4" -loop 0 docs/media/launch-film-midnight.gif
+```
+
 ## Open
 
 - No person has watched it at full speed with sound yet. The checks above are from frames and
