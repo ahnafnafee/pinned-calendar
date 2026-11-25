@@ -19,9 +19,9 @@ store/
     └── screen_N_<feature>_1080x1920.png     Play-ready phone shots (from design/assets/screenshot-N.png)
 ```
 
-Image assets are authored in **`design/assets/`** (the orange pin icon + 5 captioned
-screenshots, dark/orange theme); `_generate_assets.py` copies them into `store/` with
-Play-ready names and builds the feature graphic (the one asset not in the design folder).
+Image assets live in **`design/assets/`** (the orange pin icon and the captioned
+screenshots). `_generate_assets.py` copies them into `store/` with Play-ready names and
+builds the feature graphic (the one asset not in the design folder).
 
 ---
 
@@ -30,7 +30,7 @@ Play-ready names and builds the feature graphic (the one asset not in the design
 **Graphics — done ✅**
 - [x] App icon — `play_icon_512.png` (512×512, the orange pin icon from `design/assets/`)
 - [x] Feature graphic — `play_feature_graphic_1024x500.png` (1024×500, dark + orange)
-- [x] Phone screenshots — **5** in `screenshots/` (1080×1920, exact 9:16, 24-bit). Play needs 2–8.
+- [x] Phone screenshots: **7** in `screenshots/` (1080×1920, exact 9:16, 24-bit). Play needs 2 to 8.
 
 **Text — done ✅** → `listings/`, `play-listing.md`, `release-notes.md`
 
@@ -172,18 +172,22 @@ Locale codes: `ar`, `bn-BD`, `de-DE`, `en-US`, `es-ES`, `fr-FR`, `hi-IN`, `id`,
 
 ## Screenshots
 
-Five polished, captioned screenshots (1080×1920, dark + orange theme), in carousel order:
+Captioned screenshots (1080×1920) on the app's light theme, built from real emulator
+captures with sample data. In carousel order:
 
-1. `screen_1_agenda` — “Never miss what’s next” — the pin in the notification shade
-2. `screen_2_week` — “Your week, pinned” — To-dos tab + week overview
-3. `screen_3_controls` — “Pin it your way” — notifications / priority / time window
-4. `screen_4_appearance` — “Make it yours” — Material You theming
-5. `screen_5_privacy` — “Private by design” — offline / no sign-in / open source
+1. `screen_1_agenda`: "Your week, pinned." The pin in the notification shade
+2. `screen_2_reminders`: "Mark it done. Or snooze it." A reminder with its actions
+3. `screen_3_week`: "Plans and to-dos. One glance." The week overview
+4. `screen_4_repeat`: "Set it once. It repeats." Recurring to-dos
+5. `screen_5_layout`: "Pin it your way." The notification layout preview
+6. `screen_6_appearance`: "Make it yours." Material You theming
+7. `screen_7_privacy`: "Private by design." Offline, no sign-in, open source
 
 ### To change or add screenshots
-1. Edit and re-export in the design tool to `design/assets/screenshot-N.png`.
-2. Adjust the `SHOTS` list (order + feature labels) in `_generate_assets.py` if needed.
-3. Run `python store/_generate_assets.py` — it rewrites `screenshots/screen_N_*` (and pads anything not already ≤ 2:1).
+1. Edit the boards in the Open Screenshot Generator project "Pinned Calendar Play screenshots"
+   and export each one to `design/assets/screenshot-N.png`.
+2. Adjust the `SHOTS` list (order and feature labels) in `_generate_assets.py` if needed.
+3. Run `python store/_generate_assets.py`. It rewrites `screenshots/screen_N_*` and pads anything not already within 2:1.
 
 ---
 
@@ -192,9 +196,8 @@ Five polished, captioned screenshots (1080×1920, dark + orange theme), in carou
 ```bash
 python store/_generate_assets.py
 ```
-Copies the icon (`design/assets/icon-512.png`) and the 5 screenshots
-(`design/assets/screenshot-N.png`) into `store/`, and builds the dark/orange
-feature graphic. Requires Pillow (`pip install pillow`).
+Copies the icon and every screenshot in `SHOTS` (`design/assets/screenshot-N.png`)
+into `store/`, and builds the dark/orange feature graphic. Requires Pillow (`pip install pillow`).
 
 ---
 
