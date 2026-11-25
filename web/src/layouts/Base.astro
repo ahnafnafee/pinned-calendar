@@ -3,7 +3,7 @@ import '../styles/site.css';
 import { SITE, APP_NAME, DESCRIPTION, GITHUB, RELEASES } from '../config.mjs';
 
 const { title, description = DESCRIPTION, path = '/' } = Astro.props;
-const pageTitle = title ? `${title} · ${APP_NAME}` : `${APP_NAME} — your week, pinned`;
+const pageTitle = title ? `${title} · ${APP_NAME}` : `${APP_NAME}: your week, pinned`;
 const canonical = new URL(path, SITE).href;
 const ogImage = new URL('/og-image.png', SITE).href;
 
@@ -41,7 +41,9 @@ const jsonLd = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <meta name="theme-color" content="#EFE6D3" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#19120d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fff8f5" media="(prefers-color-scheme: light)" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
@@ -50,14 +52,20 @@ const jsonLd = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght,ROND@6..144,1..1000,0..100&display=swap"
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
-    <div class="grain"></div>
+    <a class="skip-link" href="#main">Skip to content</a>
     <div class="page">
       <slot />
     </div>
@@ -74,6 +82,34 @@ const jsonLd = {
           });
         }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
         els.forEach(function (el) { io.observe(el); });
+      })();
+    </script>
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var metas = document.querySelectorAll('meta[name="theme-color"]');
+        var original = Array.prototype.map.call(metas, function (m) { return m.content; });
+        // A forced theme overrides the media-keyed tags; read the live page color so no hex is repeated here.
+        function syncMeta() {
+          var forced = root.getAttribute('data-theme');
+          var color = forced ? getComputedStyle(document.body).backgroundColor : null;
+          Array.prototype.forEach.call(metas, function (m, i) { m.content = color || original[i]; });
+        }
+        var current = root.getAttribute('data-theme') || 'system';
+        document.querySelectorAll('input[name="theme"]').forEach(function (input) {
+          input.checked = input.value === current;
+          input.addEventListener('change', function () {
+            try {
+              if (input.value === 'system') { root.removeAttribute('data-theme'); localStorage.removeItem('theme'); }
+              else { root.setAttribute('data-theme', input.value); localStorage.setItem('theme', input.value); }
+            } catch (e) {
+              if (input.value === 'system') root.removeAttribute('data-theme');
+              else root.setAttribute('data-theme', input.value);
+            }
+            syncMeta();
+          });
+        });
+        syncMeta();
       })();
     </script>
   </body>

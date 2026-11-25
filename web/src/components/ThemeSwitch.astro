@@ -1,0 +1,19 @@
+---
+// System / Light / Dark segmented control, mirroring the app's Appearance setting.
+// Native radio inputs give arrow-key navigation and a correct accessible role for free.
+const icon = (d: string) =>
+  `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const options = [
+  { value: 'system', label: 'System', svg: icon('<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>') },
+  { value: 'light', label: 'Light', svg: icon('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>') },
+  { value: 'dark', label: 'Dark', svg: icon('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>') },
+];
+---
+<div class="theme-switch" role="radiogroup" aria-label="Color theme">
+  {options.map((o) => (
+    <>
+      <input type="radio" name="theme" id={`theme-${o.value}`} value={o.value} checked={o.value === 'system'} />
+      <label for={`theme-${o.value}`}><Fragment set:html={o.svg} /><span class="tl">{o.label}</span></label>
+    </>
+  ))}
+</div>

@@ -1,0 +1,19 @@
+Pinned Calendar launch film: third-party material
+
+Fonts
+- Google Sans Flex (variable), by Google. SIL Open Font License 1.1. The same file the app
+  ships in app/src/main/res/font/google_sans_flex.ttf.
+
+Tools
+- Lemo-Opuscar by Lemomo (LemoLab), https://github.com/lemomo-ai/lemo-opuscar
+  The render, mux and sound helper code in its core/ folder is used under the MIT License.
+  No file of the library is part of the film.
+
+Sound
+- The score and every sound effect are synthesized in mix.py. No samples, no recordings.
+
+App footage and screens
+- media/shade-pull-640x1428.mp4: an emulator screen recording of the Pinned Calendar app
+  (the app's own interface, owned by the project). The calendar entries and to-dos in it,
+  and in the cards rebuilt in index.html, are invented sample data.
+- assets/icon.png: the Pinned Calendar app icon, owned by the project.
