@@ -30,11 +30,13 @@ MUTED = (176, 166, 152)
 
 # Carousel order: design screenshot file -> feature label baked into the filename.
 SHOTS = [
-    ("screenshot-1.png", "agenda"),      # "Never miss what's next" — the pin in the shade
-    ("screenshot-2.png", "week"),        # "Your week, pinned" — to-dos + week overview
-    ("screenshot-3.png", "controls"),    # "Pin it your way" — settings / priority
-    ("screenshot-4.png", "appearance"),  # "Make it yours" — Material You
-    ("screenshot-5.png", "privacy"),     # "Private by design"
+    ("screenshot-1.png", "agenda"),      # "Your week, pinned.": the pin in the shade
+    ("screenshot-2.png", "reminders"),   # "Mark it done. Or snooze it.": reminder actions
+    ("screenshot-3.png", "week"),        # "Plans and to-dos. One glance.": week overview
+    ("screenshot-4.png", "repeat"),      # "Set it once. It repeats.": recurring to-dos
+    ("screenshot-5.png", "layout"),      # "Pin it your way.": notification layout
+    ("screenshot-6.png", "appearance"),  # "Make it yours.": Material You
+    ("screenshot-7.png", "privacy"),     # "Private by design."
 ]
 
 
